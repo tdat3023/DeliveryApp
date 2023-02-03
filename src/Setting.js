@@ -1,11 +1,11 @@
 import { View, Text, StyleSheet, StatusBar } from "react-native";
 import React from "react";
 
-export default function HomeScreen() {
+export default function Setting() {
   return (
     <View style={styles.AndroidSafeArea}>
       <View style={styles.container}>
-        <Text>HomeScreen</Text>
+        <Text>Setting</Text>
       </View>
     </View>
   );

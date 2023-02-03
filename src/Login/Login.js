@@ -9,7 +9,7 @@ import {
 } from "react-native";
 import { useState, useEffect, useRef } from "react";
 import React from "react";
-import { Entypo, Ionicons } from "@expo/vector-icons";
+import { Entypo, Ionicons, Feather } from "@expo/vector-icons";
 import { isValidEmail, isValidPassword } from "../utilies/Validations";
 
 export default function Login({ navigation }) {
@@ -108,6 +108,7 @@ export default function Login({ navigation }) {
                   console.log("email:" + email);
                   console.log("errorEmail:" + errorEmail);
                   console.log("password:" + password);
+                  navigation.navigate("HomeTabs");
                 }}
               >
                 <Text>Login</Text>
