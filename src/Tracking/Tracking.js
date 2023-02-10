@@ -1,40 +1,14 @@
 import { View, Text, StyleSheet, StatusBar } from "react-native";
 import React from "react";
-import { useState, useEffect } from "react";
-import * as Location from "expo-location";
+import MapViewComponent from "./MapScreen";
 
 export default function Tracking() {
-  const [location, setLocation] = useState(null);
-  const [errorMsg, setErrorMsg] = useState(null);
-
-  useEffect(() => {
-    (async () => {
-      let { status } = await Location.requestPermissionsAsync();
-      if (status !== "granted") {
-        setErrorMsg("Permission to access location was denied");
-      }
-
-      let location = await Location.getCurrentPositionAsync({});
-      setLocation(location);
-      console.log("Location", location);
-    })();
-  }, []);
-
-  if (errorMsg) {
-    return <Text>{errorMsg}</Text>;
-  }
-  if (location) {
-    return (
-      <Text>
-        Latitude: {location.coords.latitude}
-        Longitude: {location.coords.longitude}
-      </Text>
-    );
-  }
-
   return (
     <View style={styles.AndroidSafeArea}>
       <View style={styles.container}>
+        <View style={{ width: "100%", flex: 1 }}>
+          <MapViewComponent />
+        </View>
         <Text>Waiting for location...</Text>
       </View>
     </View>
@@ -51,5 +25,9 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#F8F8F9",
     alignItems: "center",
+  },
+  map: {
+    backgroundColor: "black",
+    flex: 1,
   },
 });

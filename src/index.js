@@ -28,7 +28,7 @@ function MyTabs({ route }) {
         component={HomeScreen}
         options={{
           headerShown: false,
-          tabBarLabel: "Home",
+          tabBarLabel: "Đơn Hàng",
           tabBarColor: "#009387",
           tabBarIcon: ({ color }) => (
             <Ionicons name="home-outline" size={25} color="black" />
@@ -38,12 +38,9 @@ function MyTabs({ route }) {
       <Tab.Screen
         name="History"
         component={History}
-        //options={{headerShown: false,
-        // }}
-
         options={{
           headerShown: false,
-          tabBarLabel: "History",
+          tabBarLabel: "Lịch Sử",
           tabBarColor: "#009387",
           tabBarIcon: ({ color }) => (
             <MaterialIcons name="history" size={25} color="black" />
@@ -67,23 +64,10 @@ function MyTabs({ route }) {
         component={About}
         options={{
           headerShown: false,
-          tabBarLabel: "About",
+          tabBarLabel: "Cá Nhân",
           tabBarColor: "#694fad",
           tabBarIcon: ({ color }) => (
             <Ionicons name="person-outline" color="black" size={25} />
-          ),
-        }}
-      />
-      <Tab.Screen
-        name="Setting"
-        component={Setting}
-        //  options={, }}
-        options={{
-          headerShown: false,
-          tabBarLabel: "Setting",
-          tabBarColor: "#694fad",
-          tabBarIcon: ({ color }) => (
-            <AntDesign name="setting" size={24} color="black" />
           ),
         }}
       />
