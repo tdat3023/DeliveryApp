@@ -29,7 +29,7 @@ const SearchBar = ({ onTermSubmit }) => {
         <AntDesign
           style={styles.iconStyle}
           name="search1"
-          size={24}
+          size={20}
           color="black"
         />
       </TouchableOpacity>
@@ -43,7 +43,6 @@ const styles = StyleSheet.create({
     height: 50,
     borderRadius: 5,
     marginHorizontal: 15,
-    marginTop: 10,
     flexDirection: "row",
     alignItems: "center",
   },

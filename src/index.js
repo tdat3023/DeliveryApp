@@ -7,7 +7,7 @@ import Register from "./Login/Register";
 import Recover from "./Login/Recover";
 import HomeScreen from "./HomeScreen";
 import About from "./About";
-import History from "./History";
+import History from "./History/History";
 import Setting from "./Setting";
 import Tracking from "./Tracking/Tracking";
 
