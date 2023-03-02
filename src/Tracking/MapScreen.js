@@ -1,47 +1,69 @@
-import React, { Component, useState } from "react";
+import React, { useState, useEffect } from "react";
+import { StyleSheet, View, Text } from "react-native";
 import MapView, { Marker } from "react-native-maps";
-import { StyleSheet, View } from "react-native";
-// import Geolocation from "react-native-geolocation-service";
+import * as Permissions from "expo-permissions";
+import * as Location from "expo-location";
 
 const MapViewComponent = () => {
-  const [region, setRegion] = useState({
-    latitude: 37.78855,
-    longitude: -122.4524,
-    latitudeDelta: 0.0922,
-    longitudeDelta: 0.0421,
-  });
+  const [location, setLocation] = useState(null);
+  const [errorMsg, setErrorMsg] = useState(null);
 
-  const onRegionChange = (newRegion) => {
-    console.log(newRegion);
-  };
+  useEffect(() => {
+    (async () => {
+      let { status } = await Permissions.askAsync(Permissions.LOCATION);
+      if (status !== "granted") {
+        setErrorMsg("Permission to access location was denied");
+        return;
+      }
+
+      Location.watchPositionAsync(
+        {
+          accuracy: Location.Accuracy.High,
+          timeInterval: 1000,
+          distanceInterval: 10,
+        },
+        (location) => setLocation(location),
+        (error) => setErrorMsg(error)
+      );
+    })();
+  }, []);
 
   return (
-    <MapView
-      style={{ flex: 1 }}
-      initialRegion={region}
-      onRegionChange={onRegionChange}
-      onRegionChangeComplete={onRegionChange}
-    >
-      <Marker
-        coordinate={{ latitude: region.latitude, longitude: region.longitude }}
-        title="Current Location"
-        description="This is your current location"
-      />
-    </MapView>
+    <View style={styles.container}>
+      {location && (
+        <MapView
+          style={styles.map}
+          region={{
+            latitude: location.coords.latitude,
+            longitude: location.coords.longitude,
+            latitudeDelta: 0.01,
+            longitudeDelta: 0.01,
+          }}
+        >
+          <Marker
+            coordinate={{
+              latitude: location.coords.latitude,
+              longitude: location.coords.longitude,
+            }}
+          />
+        </MapView>
+      )}
+      {errorMsg && <Text style={styles.errorText}>{errorMsg}</Text>}
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
-    ...StyleSheet.absoluteFillObject,
     flex: 1,
-
-    justifyContent: "center",
     alignItems: "center",
+    justifyContent: "center",
   },
   map: {
     ...StyleSheet.absoluteFillObject,
   },
+  errorText: {
+    color: "red",
+  },
 });
-
 export default MapViewComponent;
