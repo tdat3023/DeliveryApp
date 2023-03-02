@@ -7,9 +7,11 @@ import {
   FlatList,
 } from "react-native";
 import React, { useState } from "react";
-import SearchBar from "../component/Sreach";
-import OrderItem from "../component/OrderItem";
-export default function History({ navigation }) {
+import moment from "moment";
+import SearchBar from "./component/Sreach";
+import OrderItem from "./component/OrderItem";
+
+export default function Order({ navigation }) {
   const [selectedTab, setSelectedTab] = useState("All");
 
   const orders = [
@@ -29,27 +31,6 @@ export default function History({ navigation }) {
     { id: 14, product: "item4", status: "cancelled" },
     { id: 15, product: "item5", status: "delivered" },
   ];
-
-  // Filter function to get only delivered orders
-  function getDeliveredOrders() {
-    return orders.filter((order) => order.status === "delivered");
-  }
-  const deliveredOrders = getDeliveredOrders();
-
-  // Filter function to get only cancelled orders
-  function getCancelledOrders() {
-    return orders.filter((order) => order.status === "cancelled");
-  }
-  const cancelledOrders = getCancelledOrders();
-
-  let dataToRender;
-  if (selectedTab === "All") {
-    dataToRender = orders;
-  } else if (selectedTab === "Cancelled") {
-    dataToRender = cancelledOrders;
-  } else {
-    dataToRender = deliveredOrders;
-  }
 
   const [term, setTerm] = useState("");
 
@@ -73,50 +54,18 @@ export default function History({ navigation }) {
   //   dataToRender = filteredOrders;
   // }
 
+  // ngày
+  const currentDate = moment().format("DD/MM/YYYY");
   return (
     <View style={styles.AndroidSafeArea}>
       <View style={styles.container}>
         <View style={{ width: "100%" }}>
-          <Text style={styles.textHeader}>Lịch sử đơn hàng</Text>
+          <Text style={styles.textHeader}>Đơn Hàng Trong Ngày</Text>
         </View>
-        {/* Phân loại */}
-        <View style={styles.orderStatus}>
-          <TouchableOpacity
-            style={styles.tab}
-            onPress={() => setSelectedTab("All")}
-          >
-            <Text
-              style={selectedTab === "All" ? styles.selectedText : styles.text}
-            >
-              Tất Cả
-            </Text>
-          </TouchableOpacity>
+        <View>
+          <Text>{currentDate}</Text>
+        </View>
 
-          <TouchableOpacity
-            style={styles.tab}
-            onPress={() => setSelectedTab("Delivered")}
-          >
-            <Text
-              style={
-                selectedTab === "Delivered" ? styles.selectedText : styles.text
-              }
-            >
-              Đã Giao
-            </Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={styles.tab}
-            onPress={() => setSelectedTab("Cancelled")}
-          >
-            <Text
-              style={
-                selectedTab === "Cancelled" ? styles.selectedText : styles.text
-              }
-            >
-              Đã Hủy
-            </Text>
-          </TouchableOpacity>
-        </View>
         {/* Tìm kiếm */}
         <View style={{ width: "100%" }}>
           <SearchBar onTermSubmit={handleTermSubmit} />
@@ -127,7 +76,7 @@ export default function History({ navigation }) {
 
         <FlatList
           style={styles.list}
-          data={dataToRender}
+          data={orders}
           renderItem={({ item }) => (
             <OrderItem item={item} navigation={navigation} />
           )}

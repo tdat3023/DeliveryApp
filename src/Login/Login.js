@@ -118,11 +118,7 @@ export default function Login({ navigation }) {
             {/* Sign in */}
             <View style={styles.recoverPassword}>
               <Text>Do you already have an account?</Text>
-              <TouchableOpacity
-                onPress={() => {
-                  navigation.navigate("Register");
-                }}
-              >
+              <TouchableOpacity>
                 <Text style={{ color: "#FFD658" }}> Sign In</Text>
               </TouchableOpacity>
             </View>

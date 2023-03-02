@@ -1,40 +1,42 @@
-import React, { Component } from "react";
+import React, { Component, useState } from "react";
 import MapView, { Marker } from "react-native-maps";
 import { StyleSheet, View } from "react-native";
+// import Geolocation from "react-native-geolocation-service";
 
-class MapViewComponent extends Component {
-  render() {
-    return (
-      <View style={styles.container}>
-        <MapView
-          style={styles.map}
-          initialRegion={{
-            latitude: 37.78825,
-            longitude: -122.4324,
-            latitudeDelta: 0.0922,
-            longitudeDelta: 0.0421,
-          }}
-        >
-          <Marker
-            coordinate={{
-              latitude: 37.78825,
-              longitude: -122.4324,
-            }}
-            title="My Marker"
-            description="This is my marker description"
-          />
-        </MapView>
-      </View>
-    );
-  }
-}
+const MapViewComponent = () => {
+  const [region, setRegion] = useState({
+    latitude: 37.78855,
+    longitude: -122.4524,
+    latitudeDelta: 0.0922,
+    longitudeDelta: 0.0421,
+  });
+
+  const onRegionChange = (newRegion) => {
+    console.log(newRegion);
+  };
+
+  return (
+    <MapView
+      style={{ flex: 1 }}
+      initialRegion={region}
+      onRegionChange={onRegionChange}
+      onRegionChangeComplete={onRegionChange}
+    >
+      <Marker
+        coordinate={{ latitude: region.latitude, longitude: region.longitude }}
+        title="Current Location"
+        description="This is your current location"
+      />
+    </MapView>
+  );
+};
 
 const styles = StyleSheet.create({
   container: {
     ...StyleSheet.absoluteFillObject,
-    height: 400,
-    width: 400,
-    justifyContent: "flex-end",
+    flex: 1,
+
+    justifyContent: "center",
     alignItems: "center",
   },
   map: {

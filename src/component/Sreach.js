@@ -1,11 +1,5 @@
 import React, { useState } from "react";
-import {
-  View,
-  TextInput,
-  StyleSheet,
-  TouchableOpacity,
-  Image,
-} from "react-native";
+import { View, TextInput, StyleSheet, TouchableOpacity } from "react-native";
 import { AntDesign } from "@expo/vector-icons";
 
 const SearchBar = ({ onTermSubmit }) => {
@@ -17,13 +11,21 @@ const SearchBar = ({ onTermSubmit }) => {
 
   return (
     <View style={styles.backgroundStyle}>
+      <TouchableOpacity onPress={handleSubmit}>
+        <AntDesign
+          style={styles.iconStyle}
+          name="scan1"
+          size={20}
+          color="black"
+        />
+      </TouchableOpacity>
       <TextInput
         autoCapitalize="none"
         autoCorrect={false}
         style={styles.inputStyle}
         placeholder="Search"
         value={term}
-        onChangeText={(newTerm) => setTerm(newTerm)}
+        onChangeText={(term) => setTerm(term)}
       />
       <TouchableOpacity onPress={handleSubmit}>
         <AntDesign

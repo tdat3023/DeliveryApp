@@ -6,53 +6,95 @@ import {
   TouchableOpacity,
   Image,
 } from "react-native";
-import React from "react";
+import React, { useState } from "react";
+import { FontAwesome, MaterialIcons } from "@expo/vector-icons";
 
 export default function About() {
+  const [changePassword, setChangPassword] = useState(false);
+  const [moreProfile, setMoreProfile] = useState(false);
+  const hiddenInfo = [
+    {
+      name: "Nguyễn Văn A",
+      age: 25,
+      address: "Hà Nội",
+      phone: "0123456789",
+    },
+  ];
   return (
     <View style={styles.AndroidSafeArea}>
       <View style={styles.container}>
         <Text style={{ fontWeight: "bold", fontSize: 16 }}>
-          Personal Information
+          Thông tin cá nhân:
         </Text>
-        <View style={{ marginTop: 20 }}>
-          <Text style={{ fontWeight: "bold" }}>Name: </Text>
-          <Text>John Doe</Text>
-        </View>
-        <View style={{ marginTop: 20 }}>
-          <Text style={{ fontWeight: "bold" }}>Email: </Text>
-          <Text>johndoe@example.com</Text>
-        </View>
-        <View style={{ marginTop: 20 }}>
-          <Text style={{ fontWeight: "bold" }}>Phone: </Text>
-          <Text>555-555-5555</Text>
-        </View>
-        <View style={{ marginTop: 20 }}>
-          <Text style={{ fontWeight: "bold", fontSize: 16 }}>
-            Order Statistics
-          </Text>
-          <View style={{ marginTop: 10 }}>
-            <Text style={{ fontWeight: "bold" }}>Total Orders: </Text>
-            <Text>20</Text>
+
+        {/* profile setting */}
+        <View style={styles.viewMore}>
+          <View style={styles.viewMore1}>
+            <FontAwesome name="sliders" size={24} color="white" />
+            <Text style={styles.text1}>Profile Setting</Text>
+            <TouchableOpacity
+              style={styles.touchMore}
+              onPress={() => setMoreProfile(!moreProfile)}
+            >
+              {!moreProfile ? (
+                <MaterialIcons name="expand-more" size={24} color="white" />
+              ) : (
+                <MaterialIcons name="expand-less" size={24} color="white" />
+              )}
+            </TouchableOpacity>
           </View>
-          <View style={{ marginTop: 10 }}>
-            <Text style={{ fontWeight: "bold" }}>Pending Orders: </Text>
-            <Text>5</Text>
-          </View>
-          <View style={{ marginTop: 10 }}>
-            <Text style={{ fontWeight: "bold" }}>Completed Orders: </Text>
-            <Text>15</Text>
-          </View>
+          {moreProfile ? (
+            <View style={styles.viewHidden}>
+              {hiddenInfo.map((info, index) => (
+                <View
+                  key={index}
+                  style={{
+                    width: "100%",
+                  }}
+                >
+                  <Text style={{ fontWeight: "bold" }}>Tên: {info.name}</Text>
+                  <Text>Tuổi: {info.age}</Text>
+                  <Text>Địa chỉ: {info.address}</Text>
+                  <Text>Số điện thoại: {info.phone}</Text>
+                </View>
+              ))}
+            </View>
+          ) : null}
         </View>
-        <View style={{ flexDirection: "row", marginTop: 10 }}>
-          <Text style={{ fontWeight: "bold" }}>Redeemed Rewards: </Text>
-          <Text>10</Text>
-        </View>
-        <View style={{ marginTop: 40 }}>
-          <Text style={{ fontWeight: "bold", fontSize: 16 }}>Cài Đặt</Text>
-          <TouchableOpacity style={{ marginTop: 20 }}>
-            <Text style={{ color: "blue" }}>Chỉnh Sửa Hồ Sơ</Text>
-          </TouchableOpacity>
+
+        {/* change password */}
+        <View style={styles.viewMore}>
+          <View style={styles.viewMore1}>
+            <FontAwesome name="sliders" size={24} color="white" />
+            <Text style={styles.text1}>Change Password</Text>
+            <TouchableOpacity
+              style={styles.touchMore}
+              onPress={() => setChangPassword(!changePassword)}
+            >
+              {!changePassword ? (
+                <MaterialIcons name="expand-more" size={24} color="white" />
+              ) : (
+                <MaterialIcons name="expand-less" size={24} color="white" />
+              )}
+            </TouchableOpacity>
+          </View>
+          {changePassword ? (
+            <View style={styles.viewHidden}>
+              {hiddenInfo.map((info, index) => (
+                <View
+                  key={index}
+                  style={{
+                    width: "100%",
+                  }}
+                >
+                  <Text style={{ fontWeight: "bold" }}>Tên: {info.name}</Text>
+                  <Text>Tuổi: {info.age}</Text>
+                  <Text>Địa chỉ: {info.address}</Text>
+                  <Text>Số điện thoại: {info.phone}</Text>
+                </View>
+              ))}
+            </View>
+          ) : null}
         </View>
       </View>
     </View>
@@ -67,7 +109,50 @@ const styles = StyleSheet.create({
   },
   container: {
     flex: 1,
-    backgroundColor: "#F8F8F9",
+    backgroundColor: "#fbf4ef",
     alignItems: "center",
   },
+
+  card: {
+    marginTop: 10,
+    alignItems: "stretch",
+  },
+
+  viewMore: {
+    marginTop: 10,
+
+    width: "100%",
+    alignItems: "center",
+  },
+
+  viewMore1: {
+    backgroundColor: "#743f7e",
+    width: "90%",
+    flexDirection: "row",
+    justifyContent: "space-between",
+    borderRadius: 10,
+    alignItems: "center",
+    paddingHorizontal: 20,
+    paddingVertical: 10,
+    borderWidth: 1,
+    borderColor: "#743f7e",
+  },
+  viewHidden: {
+    width: "90%",
+    flexDirection: "row",
+    justifyContent: "space-between",
+    borderBottomRightRadius: 10,
+    borderBottomLeftRadius: 10,
+    alignItems: "center",
+    paddingHorizontal: 20,
+    paddingVertical: 10,
+    borderWidth: 1,
+  },
+
+  text1: {
+    fontSize: 20,
+    color: "white",
+  },
+
+  touchMore: { marginLeft: "35%" },
 });
