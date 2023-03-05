@@ -28,7 +28,7 @@ function MyTabs({ route }) {
         options={{
           headerShown: false,
           tabBarLabel: "Thống Kê",
-          tabBarColor: "#009387",
+          tabBarColor: "#743f7e",
           tabBarIcon: ({ color }) => (
             <Ionicons name="home-outline" size={25} color={color} />
           ),
@@ -40,7 +40,7 @@ function MyTabs({ route }) {
         options={{
           headerShown: false,
           tabBarLabel: "Đơn Hàng",
-          tabBarColor: "#009387",
+          tabBarColor: "#743f7e",
           tabBarIcon: ({ color }) => (
             <Octicons name="package" size={25} color={color} />
           ),
@@ -51,8 +51,8 @@ function MyTabs({ route }) {
         component={Tracking}
         options={{
           headerShown: false,
-          tabBarLabel: "Tracking",
-          tabBarColor: "#694fad",
+          tabBarLabel: "Hành Trình",
+          tabBarColor: "#743f7e",
           tabBarIcon: ({ color }) => (
             <Feather name="map-pin" size={25} color={color} />
           ),
@@ -64,7 +64,7 @@ function MyTabs({ route }) {
         options={{
           headerShown: false,
           tabBarLabel: "Lịch Sử",
-          tabBarColor: "#009387",
+          tabBarColor: "#743f7e",
           tabBarIcon: ({ color }) => (
             <MaterialIcons name="history" size={25} color={color} />
           ),
@@ -77,7 +77,7 @@ function MyTabs({ route }) {
         options={{
           headerShown: false,
           tabBarLabel: "Cá Nhân",
-          tabBarColor: "#694fad",
+          tabBarColor: "#743f7e",
           tabBarIcon: ({ color }) => (
             <Ionicons name="person-outline" color={color} size={25} />
           ),

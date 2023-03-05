@@ -8,7 +8,11 @@ import {
 import React, { useState } from "react";
 import MapViewComponent from "./MapScreen";
 import { Feather } from "@expo/vector-icons";
-import { MaterialCommunityIcons, MaterialIcons } from "@expo/vector-icons";
+import {
+  MaterialCommunityIcons,
+  MaterialIcons,
+  AntDesign,
+} from "@expo/vector-icons";
 export default function Tracking() {
   const [index, setIndex] = useState(1);
 
@@ -28,21 +32,21 @@ export default function Tracking() {
     <View style={styles.AndroidSafeArea}>
       <View style={styles.container}>
         <View style={styles.map}>
-          <MapViewComponent />
+          <MapViewComponent></MapViewComponent>
         </View>
 
         {/* nút */}
         <View style={styles.viewMore}>
           <View style={styles.viewMore1}>
-            <Text style={styles.text1}>Tracking Number</Text>
+            <Text style={{ color: "#743f7e" }}>Tracking Number</Text>
             <TouchableOpacity
               style={styles.touchMore}
               onPress={() => setMoreProfile(!moreProfile)}
             >
               {!moreProfile ? (
-                <MaterialIcons name="expand-less" size={24} color="white" />
+                <MaterialIcons name="expand-less" size={24} color="#743f7e" />
               ) : (
-                <MaterialIcons name="expand-more" size={24} color="white" />
+                <MaterialIcons name="expand-more" size={24} color="743f7e" />
               )}
             </TouchableOpacity>
           </View>
@@ -71,7 +75,13 @@ export default function Tracking() {
                             styles.circle,
                             index >= 1 && styles.activeColor,
                           ]}
-                        ></View>
+                        >
+                          <AntDesign
+                            name="checkcircleo"
+                            size={10}
+                            color="white"
+                          />
+                        </View>
                       </View>
 
                       <View style={styles.statusText}>
@@ -91,7 +101,13 @@ export default function Tracking() {
                             styles.circle,
                             index >= 2 && styles.activeColor,
                           ]}
-                        ></View>
+                        >
+                          <AntDesign
+                            name="checkcircleo"
+                            size={10}
+                            color="white"
+                          />
+                        </View>
                       </View>
 
                       <View style={styles.statusText}>
@@ -111,7 +127,13 @@ export default function Tracking() {
                             styles.circle,
                             index >= 3 && styles.activeColor,
                           ]}
-                        ></View>
+                        >
+                          <AntDesign
+                            name="checkcircleo"
+                            size={10}
+                            color="white"
+                          />
+                        </View>
                       </View>
 
                       <View style={styles.statusText}>
@@ -129,7 +151,13 @@ export default function Tracking() {
                             styles.circle,
                             index >= 4 && styles.activeColor,
                           ]}
-                        ></View>
+                        >
+                          <AntDesign
+                            name="checkcircleo"
+                            size={10}
+                            color="white"
+                          />
+                        </View>
                       </View>
 
                       <View style={styles.statusText}>
@@ -155,7 +183,9 @@ export default function Tracking() {
                       if (index < 4) setIndex(index + 1);
                     }}
                   >
-                    <Text>{getStatus(index)}</Text>
+                    <Text style={{ color: "white", fontSize: 15 }}>
+                      {getStatus(index)}
+                    </Text>
                   </TouchableOpacity>
                 </View>
               </View>
@@ -171,14 +201,12 @@ const styles = StyleSheet.create({
   AndroidSafeArea: {
     flex: 1,
     paddingTop: Platform.OS === "android" ? StatusBar.currentHeight : 0,
-    backgroundColor: "brown",
   },
   container: {
     flex: 1,
   },
 
   map: {
-    backgroundColor: "yellow",
     flex: 1,
   },
   underMap: {
@@ -200,12 +228,13 @@ const styles = StyleSheet.create({
     backgroundColor: "#666",
   },
   activeColor: {
-    backgroundColor: "yellow",
+    backgroundColor: "#743f7e",
   },
   btn: {
-    backgroundColor: "green",
-    width: "80%",
-    height: 40,
+    backgroundColor: "#743f7e",
+    width: "90%",
+    height: 50,
+    padding: 10,
     justifyContent: "center",
     alignItems: "center",
     borderRadius: 10,
@@ -244,7 +273,7 @@ const styles = StyleSheet.create({
   },
 
   textColor: {
-    color: "yellow",
+    color: "#743f7e",
   },
 
   trackingNumber: {
@@ -258,12 +287,13 @@ const styles = StyleSheet.create({
   },
 
   viewMore: {
-    width: "100%",
+    backgroundColor: "#fbf4ef",
+
     alignItems: "center",
   },
 
   viewMore1: {
-    backgroundColor: "#743f7e",
+    backgroundColor: "#fbf4ef",
     width: "90%",
     flexDirection: "row",
     justifyContent: "space-between",
@@ -272,8 +302,9 @@ const styles = StyleSheet.create({
     alignItems: "center",
     paddingHorizontal: 20,
     paddingVertical: 10,
-    borderWidth: 1,
-    borderColor: "#743f7e",
+    borderTopWidth: 1,
+    borderLeftWidth: 1,
+    borderRightWidth: 1,
   },
   viewHidden: {
     width: "90%",
@@ -284,6 +315,8 @@ const styles = StyleSheet.create({
     alignItems: "center",
     paddingHorizontal: 20,
     paddingBottom: 10,
-    borderWidth: 1,
+    borderBottomWidth: 1,
+    borderLeftWidth: 1,
+    borderRightWidth: 1,
   },
 });
