@@ -4,6 +4,27 @@ import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 
 function OrderItem({ navigation, item }) {
+  function checkStatus(status) {
+    if (status === "chuanhan") {
+      return (
+        <View style={styles.button}>
+          <TouchableOpacity>
+            <Text>Nhận</Text>
+          </TouchableOpacity>
+        </View>
+      );
+    } else if (status === "danhan") {
+      return (
+        <View style={styles.button}>
+          <TouchableOpacity>
+            <Text>Bắt đầu</Text>
+          </TouchableOpacity>
+        </View>
+      );
+    } else {
+      return null;
+    }
+  }
   return (
     <TouchableOpacity
       onPress={() => {
@@ -22,6 +43,7 @@ function OrderItem({ navigation, item }) {
           <Text>Tên đơn: {item.product}</Text>
           <Text>Trạng thái: {item.status}</Text>
         </View>
+        {checkStatus(item.status)}
       </View>
     </TouchableOpacity>
   );
@@ -50,7 +72,19 @@ const styles = StyleSheet.create({
   image: {},
 
   inforView: {
-    marginLeft: 10,
+    marginHorizontal: 10,
+    flex: 1,
+  },
+
+  button: {
+    marginRight: 10,
+    justifyContent: "center",
+    alignItems: "center",
+    width: 70,
+    backgroundColor: "yellow",
+    padding: 5,
+    borderRadius: 10,
+    borderWidth: 1,
   },
 });
 export default OrderItem;

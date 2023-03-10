@@ -5,58 +5,61 @@ import {
   StatusBar,
   TouchableOpacity,
   FlatList,
+  ScrollView,
 } from "react-native";
 import React, { useState } from "react";
-import moment from "moment";
 import SearchBar from "../component/Sreach";
 import OrderItem from "../component/OrderItem";
-export default function History({ navigation }) {
-  const [selectedTab, setSelectedTab] = useState("All");
+
+export default function Order({ navigation }) {
+  const [selectedTab, setSelectedTab] = useState("chuanhan");
 
   const orders = [
-    { id: 1, product: "item1", status: "delivered" },
-    { id: 2, product: "item2", status: "pending" },
-    { id: 3, product: "item3", status: "delivered" },
-    { id: 4, product: "item4", status: "cancelled" },
-    { id: 5, product: "item5", status: "delivered" },
-    { id: 6, product: "item1", status: "delivered" },
-    { id: 7, product: "item2", status: "pending" },
-    { id: 8, product: "item3", status: "delivered" },
-    { id: 9, product: "item4", status: "cancelled" },
-    { id: 10, product: "item5", status: "delivered" },
-    { id: 11, product: "item1", status: "delivered" },
-    { id: 12, product: "item2", status: "pending" },
-    { id: 13, product: "item3", status: "delivered" },
-    { id: 14, product: "item4", status: "cancelled" },
-    { id: 15, product: "item5", status: "delivered" },
+    { id: 1, product: "item1", status: "danhan" },
+    { id: 2, product: "item2", status: "chuanhan" },
+    { id: 3, product: "item3", status: "tamgiu" },
+    { id: 4, product: "item4", status: "chuanhan" },
+    { id: 5, product: "item5", status: "chuanhan" },
+    { id: 6, product: "item1", status: "tamgiu" },
+    { id: 7, product: "item2", status: "tamgiu" },
+    { id: 8, product: "item3", status: "tamgiu" },
+    { id: 9, product: "item4", status: "tamgiu" },
+    { id: 10, product: "item5", status: "danhan" },
   ];
-
-  // Filter function to get only delivered orders
-  function getDeliveredOrders() {
-    return orders.filter((order) => order.status === "delivered");
-  }
-  const deliveredOrders = getDeliveredOrders();
-
-  // Filter function to get only cancelled orders
-  function getCancelledOrders() {
-    return orders.filter((order) => order.status === "cancelled");
-  }
-  const cancelledOrders = getCancelledOrders();
-
-  let dataToRender;
-  if (selectedTab === "All") {
-    dataToRender = orders;
-  } else if (selectedTab === "Cancelled") {
-    dataToRender = cancelledOrders;
-  } else {
-    dataToRender = deliveredOrders;
-  }
 
   const [term, setTerm] = useState("");
 
   const handleTermSubmit = (term) => {
     setTerm(term);
+    alert(term);
   };
+
+  // chua nhan
+  function getCNOrders() {
+    return orders.filter((orders) => orders.status === "chuanhan");
+  }
+  const cnOrders = getCNOrders();
+
+  // đã nhận
+  function getDNOrders() {
+    return orders.filter((orders) => orders.status === "danhan");
+  }
+  const dnOrders = getDNOrders();
+
+  // tạm giữ
+  function getTGOrders() {
+    return orders.filter((orders) => orders.status === "tamgiu");
+  }
+  const tGOrders = getTGOrders();
+
+  let dataToRender;
+  if (selectedTab === "chuanhan") {
+    dataToRender = cnOrders;
+  } else if (selectedTab === "tamgiu") {
+    dataToRender = tGOrders;
+  } else {
+    dataToRender = dnOrders;
+  }
 
   // Tìm
   const searchResult = orders.filter((item) => item.id === term);
@@ -74,53 +77,50 @@ export default function History({ navigation }) {
   //   dataToRender = filteredOrders;
   // }
 
-  // ngày
-  const currentDate = moment().format("DD/MM/YYYY");
   return (
     <View style={styles.AndroidSafeArea}>
       <View style={styles.container}>
         <View style={{ width: "100%" }}>
-          <Text style={styles.textHeader}>Lịch sử đơn hàng</Text>
+          <Text style={styles.textHeader}>Đơn Hàng Trong Ngày</Text>
         </View>
-        {/* Ngày tháng */}
-        <View>
-          <Text>{currentDate}</Text>
-        </View>
+
         {/* Phân loại */}
         <View style={styles.orderStatus}>
           <TouchableOpacity
             style={styles.tab}
-            onPress={() => setSelectedTab("All")}
+            onPress={() => setSelectedTab("chuanhan")}
           >
             <Text
-              style={selectedTab === "All" ? styles.selectedText : styles.text}
+              style={
+                selectedTab === "chuanhan" ? styles.selectedText : styles.text
+              }
             >
-              Tất Cả
+              Chưa Nhận
             </Text>
           </TouchableOpacity>
 
           <TouchableOpacity
             style={styles.tab}
-            onPress={() => setSelectedTab("Delivered")}
+            onPress={() => setSelectedTab("danhan")}
           >
             <Text
               style={
-                selectedTab === "Delivered" ? styles.selectedText : styles.text
+                selectedTab === "danhan" ? styles.selectedText : styles.text
               }
             >
-              Đã Giao
+              Đã Nhận
             </Text>
           </TouchableOpacity>
           <TouchableOpacity
             style={styles.tab}
-            onPress={() => setSelectedTab("Cancelled")}
+            onPress={() => setSelectedTab("tamgiu")}
           >
             <Text
               style={
-                selectedTab === "Cancelled" ? styles.selectedText : styles.text
+                selectedTab === "tamgiu" ? styles.selectedText : styles.text
               }
             >
-              Đã Hủy
+              Tạm Giữ
             </Text>
           </TouchableOpacity>
         </View>
@@ -128,10 +128,10 @@ export default function History({ navigation }) {
         {/* Tìm kiếm */}
         <View style={{ width: "100%" }}>
           <SearchBar onTermSubmit={handleTermSubmit} />
-          {/* <Text>{term}</Text> */}
         </View>
 
         {/* Danh sách */}
+
         <FlatList
           style={styles.list}
           data={dataToRender}
@@ -173,22 +173,22 @@ const styles = StyleSheet.create({
   },
 
   orderStatus: {
-    width: "100%",
     flexDirection: "row",
-    justifyContent: "space-between",
-    paddingHorizontal: 20,
+    marginHorizontal: 10,
     paddingVertical: 10,
     backgroundColor: "#fff",
-    borderBottomWidth: 1,
     borderBottomColor: "#ddd",
   },
+
   tab: {
+    height: 40,
     padding: 5,
-    width: 100,
+    width: 110,
     borderWidth: 1,
     justifyContent: "center",
     alignItems: "center",
     borderRadius: 10,
+    marginHorizontal: 5,
   },
   textStatus: {
     fontSize: 16,
@@ -201,7 +201,6 @@ const styles = StyleSheet.create({
   },
 
   list: {
-    flex: 1,
     width: "100%",
   },
 });

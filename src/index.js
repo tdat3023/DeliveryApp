@@ -8,7 +8,7 @@ import HomeScreen from "./HomeScreen";
 import About from "./About";
 import History from "./History/History";
 import Tracking from "./Tracking/Tracking";
-import Order from "./Order";
+import Order from "./Order/Order";
 import OrderDetail from "./component/OrderDetail";
 
 import { Ionicons } from "@expo/vector-icons";
