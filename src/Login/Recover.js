@@ -17,13 +17,10 @@ export default function Recover({ navigation }) {
         {/* top */}
         <View style={styles.topView}>
           <Text style={{ fontSize: 30, marginBottom: 10, fontWeight: "bold" }}>
-            Reset Password
+            Lấy lại mật khẩu
           </Text>
-          <Text style={{ fontSize: 16 }}>
-            Enter your Email and we will be able to
-          </Text>
-          <Text style={{ fontSize: 16 }}>
-            share you a new password with you
+          <Text style={{ fontSize: 16, width: "90%" }}>
+            Nhập số điện thoại để lấy mã OTP gửi về.
           </Text>
         </View>
 
@@ -37,14 +34,14 @@ export default function Recover({ navigation }) {
             <View style={styles.viewInput}>
               <TextInput
                 style={{ paddingLeft: 10 }}
-                placeholder="Email"
+                placeholder="Số điện thoại"
               ></TextInput>
             </View>
 
             {/* btn login */}
             <View>
               <TouchableOpacity style={styles.btn}>
-                <Text>Send a new password </Text>
+                <Text>Lấy mã </Text>
               </TouchableOpacity>
             </View>
 
@@ -57,7 +54,7 @@ export default function Recover({ navigation }) {
                 }}
               >
                 <Text style={{ color: "#FFD658", marginLeft: 10 }}>
-                  Sign Up
+                  Đăng nhập
                 </Text>
               </TouchableOpacity>
             </View>

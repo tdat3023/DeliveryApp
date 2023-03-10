@@ -11,6 +11,10 @@ import { useState, useEffect, useRef } from "react";
 import React from "react";
 import { Entypo, Ionicons, Feather } from "@expo/vector-icons";
 import { isValidEmail, isValidPassword } from "../utilies/Validations";
+import firebase from "firebase";
+import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
+import { firebaseConfig } from "../../firebaseConfig";
+import { initializeApp } from "firebase/app";
 
 export default function Login({ navigation }) {
   const [getPassWordVisible, setPassWordVisible] = useState(false);
@@ -40,7 +44,7 @@ export default function Login({ navigation }) {
           <View style={styles.input}>
             {/* email */}
             <Text style={{ fontSize: 30, marginBottom: 10, font: "urbanist" }}>
-              Log in
+              Đăng Nhập
             </Text>
             <View style={styles.viewInput}>
               <TextInput
@@ -49,11 +53,11 @@ export default function Login({ navigation }) {
                   setErrorEmail(
                     isValidEmail(text) == true
                       ? "ok"
-                      : "Email not in correct format"
+                      : "Số điện thoại không chính xác "
                   );
                   setEmail(text);
                 }}
-                placeholder="Email"
+                placeholder="Số điện thoại"
               ></TextInput>
             </View>
 
@@ -65,7 +69,7 @@ export default function Login({ navigation }) {
                 onChangeText={(text) => {
                   setPassword(text);
                 }}
-                placeholder="Enter your password"
+                placeholder="Nhập mật khẩu"
                 secureTextEntry={getPassWordVisible ? false : true}
               ></TextInput>
               <View
@@ -111,22 +115,16 @@ export default function Login({ navigation }) {
                   navigation.navigate("HomeTabs");
                 }}
               >
-                <Text>Login</Text>
-              </TouchableOpacity>
-            </View>
-
-            {/* Sign in */}
-            <View style={styles.recoverPassword}>
-              <Text>Do you already have an account?</Text>
-              <TouchableOpacity>
-                <Text style={{ color: "#FFD658" }}> Sign In</Text>
+                <Text>Đăng nhập</Text>
               </TouchableOpacity>
             </View>
           </View>
 
           {/* more */}
           <View style={styles.downMore}>
-            <Text style={{ marginBottom: 10 }}>You can login with help</Text>
+            <Text style={{ marginBottom: 10 }}>
+              Đăng nhập bằng tài khoản khác
+            </Text>
             <View style={styles.downMoreHelp}>
               <TouchableOpacity>
                 <Entypo name="google--with-circle" size={30} color="black" />
@@ -141,7 +139,9 @@ export default function Login({ navigation }) {
                 navigation.navigate("Recover");
               }}
             >
-              <Text style={{ color: "#FFD658" }}>Forgot Password?</Text>
+              <Text style={{ color: "#FFD658", fontSize: 20 }}>
+                Quên mật khẩu
+              </Text>
             </TouchableOpacity>
           </View>
         </View>
