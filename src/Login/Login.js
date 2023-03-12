@@ -11,10 +11,13 @@ import { useState, useEffect, useRef } from "react";
 import React from "react";
 import { Entypo, Ionicons, Feather } from "@expo/vector-icons";
 import { isValidEmail, isValidPassword } from "../utilies/Validations";
-import firebase from "firebase";
-import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
-import { firebaseConfig } from "../../firebaseConfig";
-import { initializeApp } from "firebase/app";
+// import { auth, db } from "../../firebase/firebase";
+// import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
+// import { firebaseConfig } from "../../firebase/firebase";
+// import { initializeApp } from "firebase/app";
+
+// Khởi tạo Firebase
+// const firebaseApp = initializeApp(firebaseConfig);
 
 export default function Login({ navigation }) {
   const [getPassWordVisible, setPassWordVisible] = useState(false);
@@ -29,6 +32,25 @@ export default function Login({ navigation }) {
       isValidPassword(password) == true;
     // console.log(firebaseDatabase);
   };
+
+  // Khởi tạo đối tượng auth của Firebase
+  // const auth = getAuth();
+  // // Hàm kiểm tra xác thực đăng nhập
+  // const handleSignIn = () => {
+  //   signInWithEmailAndPassword(auth, email, password)
+  //     .then((userCredential) => {
+  //       // Đăng nhập thành công
+  //       const user = userCredential.user;
+  //       console.log(user);
+  //       navigation.navigate("HomeTabs");
+  //     })
+  //     .catch((error) => {
+  //       const errorCode = error.code;
+  //       const errorMessage = error.message;
+  //       console.log(errorCode, errorMessage);
+  //       // Xử lý lỗi đăng nhập
+  //     });
+  // };
 
   return (
     <View style={styles.AndroidSafeArea}>
@@ -113,6 +135,7 @@ export default function Login({ navigation }) {
                   console.log("errorEmail:" + errorEmail);
                   console.log("password:" + password);
                   navigation.navigate("HomeTabs");
+                  // handleSignIn;
                 }}
               >
                 <Text>Đăng nhập</Text>

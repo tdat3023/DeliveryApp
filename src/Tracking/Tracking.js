@@ -5,17 +5,22 @@ import {
   StatusBar,
   TouchableOpacity,
 } from "react-native";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import MapViewComponent from "./MapScreen";
 import { Feather } from "@expo/vector-icons";
 import {
   MaterialCommunityIcons,
   MaterialIcons,
   AntDesign,
+  Ionicons,
 } from "@expo/vector-icons";
+import MapView, { Marker } from "react-native-maps";
+import MapViewDirections from "react-native-maps-directions";
+import * as Permissions from "expo-permissions";
+import * as Location from "expo-location";
+
 export default function Tracking() {
   const [index, setIndex] = useState(1);
-
   function getStatus(index) {
     if (index === 1) {
       return "Bắt đầu";
@@ -28,11 +33,106 @@ export default function Tracking() {
     }
   }
   const [moreProfile, setMoreProfile] = useState(false);
+
+  const [location, setLocation] = useState(null);
+
+  // const [pickupCords, droplocationCords] = state;
+
+  useEffect(() => {
+    (async () => {
+      let { status } = await Permissions.askAsync(Permissions.LOCATION);
+      if (status !== "granted") {
+        // setErrorMsg("Permission to access location was denied");
+        return;
+      }
+
+      await Location.watchPositionAsync(
+        {
+          accuracy: Location.Accuracy.High,
+          timeInterval: 1000,
+          distanceInterval: 10,
+        },
+
+        // setLocation(location)
+
+        (location) => setLocation(location)
+      );
+    })();
+  }, []);
+  // const { latitude, longitude } = location.coords;
+  // console.log(latitude, longitude);
+  console.log(location);
+
+  const [pickupCords, setPickupCords] = useState({
+    latitude: 10.822024,
+    // location.latitude,
+    longitude: 106.687569,
+    //  location.longitude,
+    latitudeDelta: 0.01,
+    longitudeDelta: 0.01,
+  });
+
+  const [droplocationCords, setDropLocation] = useState({
+    latitude: 10.631142,
+    // location.latitude,
+    longitude: 107.052875,
+    //  location.longitude,
+    latitudeDelta: 0.01,
+    longitudeDelta: 0.01,
+  });
+
+  const batDau = () => {
+    const { latitudeDelta, longitudeDelta } = pickupCords;
+    setPickupCords({
+      latitude: location?.coords?.latitude,
+      longitude: location?.coords?.longitude,
+      latitudeDelta,
+      longitudeDelta,
+    });
+  };
+
   return (
     <View style={styles.AndroidSafeArea}>
       <View style={styles.container}>
         <View style={styles.map}>
-          <MapViewComponent></MapViewComponent>
+          {location && (
+            <MapView
+              style={styles.map}
+              region={{
+                latitude: location.coords.latitude,
+                longitude: location.coords.longitude,
+                latitudeDelta: 0.01,
+                longitudeDelta: 0.01,
+              }}
+            >
+              <Marker
+                coordinate={{
+                  latitude: pickupCords.latitude,
+                  // location.coords.latitude,
+                  longitude: pickupCords.longitude,
+                  // location.coords.longitude,
+                }}
+              >
+                <MaterialCommunityIcons
+                  name="source-commit-start"
+                  size={30}
+                  color="red"
+                />
+              </Marker>
+
+              <MapViewDirections
+                origin={pickupCords}
+                destination={droplocationCords}
+                strokeWidth={3}
+                strokeColor="blue"
+                optimizeWaypoints={true}
+                apikey="AIzaSyCz05MCIlmnpbQgr32Am783YW4muKdaiKQ"
+              />
+
+              <Marker coordinate={droplocationCords} />
+            </MapView>
+          )}
+          {/* {errorMsg && <Text style={styles.errorText}>{errorMsg}</Text>} */}
         </View>
 
         {/* nút */}
@@ -41,7 +141,9 @@ export default function Tracking() {
             <Text style={{ color: "#743f7e" }}>Tracking Number</Text>
             <TouchableOpacity
               style={styles.touchMore}
-              onPress={() => setMoreProfile(!moreProfile)}
+              onPress={() => {
+                setMoreProfile(!moreProfile);
+              }}
             >
               {!moreProfile ? (
                 <MaterialIcons name="expand-less" size={24} color="#743f7e" />
@@ -180,7 +282,10 @@ export default function Tracking() {
                   <TouchableOpacity
                     style={styles.btn}
                     onPress={() => {
-                      if (index < 4) setIndex(index + 1);
+                      {
+                        if (index < 4) setIndex(index + 1);
+                        batDau();
+                      }
                     }}
                   >
                     <Text style={{ color: "white", fontSize: 15 }}>
