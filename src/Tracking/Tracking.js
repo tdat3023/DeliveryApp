@@ -6,7 +6,6 @@ import {
   TouchableOpacity,
 } from "react-native";
 import React, { useState, useEffect } from "react";
-import MapViewComponent from "./MapScreen";
 import { Feather } from "@expo/vector-icons";
 import {
   MaterialCommunityIcons,
@@ -34,10 +33,8 @@ export default function Tracking() {
   }
   const [moreProfile, setMoreProfile] = useState(false);
 
+  // lấy vị trí hiện tại
   const [location, setLocation] = useState(null);
-
-  // const [pickupCords, droplocationCords] = state;
-
   useEffect(() => {
     (async () => {
       let { status } = await Permissions.askAsync(Permissions.LOCATION);
@@ -49,20 +46,15 @@ export default function Tracking() {
       await Location.watchPositionAsync(
         {
           accuracy: Location.Accuracy.High,
-          timeInterval: 1000,
+          timeInterval: 10,
           distanceInterval: 10,
         },
-
-        // setLocation(location)
-
         (location) => setLocation(location)
       );
     })();
   }, []);
-  // const { latitude, longitude } = location.coords;
-  // console.log(latitude, longitude);
-  console.log(location);
 
+  // điểm bắt đầu
   const [pickupCords, setPickupCords] = useState({
     latitude: 10.822024,
     // location.latitude,
@@ -72,6 +64,7 @@ export default function Tracking() {
     longitudeDelta: 0.01,
   });
 
+  // diểm giao hàng
   const [droplocationCords, setDropLocation] = useState({
     latitude: 10.631142,
     // location.latitude,
@@ -112,24 +105,40 @@ export default function Tracking() {
                   longitude: pickupCords.longitude,
                   // location.coords.longitude,
                 }}
+                title="Xuất Phát"
+              ></Marker>
+
+              <Marker
+                coordinate={{
+                  latitude: location.coords.latitude,
+                  longitude: location.coords.longitude,
+                }}
               >
-                <MaterialCommunityIcons
-                  name="source-commit-start"
-                  size={30}
-                  color="red"
-                />
+                <Ionicons name="play" size={30} color="red" />
               </Marker>
 
               <MapViewDirections
-                origin={pickupCords}
+                origin={{
+                  latitude: location.coords.latitude,
+                  longitude: location.coords.longitude,
+                }}
                 destination={droplocationCords}
-                strokeWidth={3}
-                strokeColor="blue"
+                strokeWidth={4}
+                strokeColor="red"
                 optimizeWaypoints={true}
                 apikey="AIzaSyCz05MCIlmnpbQgr32Am783YW4muKdaiKQ"
               />
 
-              <Marker coordinate={droplocationCords} />
+              <MapViewDirections
+                origin={pickupCords}
+                destination={droplocationCords}
+                strokeWidth={7}
+                strokeColor="#5061ff"
+                optimizeWaypoints={true}
+                apikey="AIzaSyCz05MCIlmnpbQgr32Am783YW4muKdaiKQ"
+              />
+
+              <Marker coordinate={droplocationCords} title="Nơi Giao" />
             </MapView>
           )}
           {/* {errorMsg && <Text style={styles.errorText}>{errorMsg}</Text>} */}
@@ -399,7 +408,7 @@ const styles = StyleSheet.create({
 
   viewMore1: {
     backgroundColor: "#fbf4ef",
-    width: "90%",
+    width: "100%",
     flexDirection: "row",
     justifyContent: "space-between",
     borderTopLeftRadius: 10,
@@ -412,7 +421,7 @@ const styles = StyleSheet.create({
     borderRightWidth: 1,
   },
   viewHidden: {
-    width: "90%",
+    width: "100%",
     flexDirection: "row",
     justifyContent: "center",
     borderBottomRightRadius: 10,

@@ -4,13 +4,14 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import Login from "./Login/Login";
 import Recover from "./Login/Recover";
-import HomeScreen from "./HomeScreen";
+import HomeScreen from "./statistical/HomeScreen";
 import About from "./About";
 import History from "./History/History";
 import Tracking from "./Tracking/Tracking";
 import Order from "./Order/Order";
 import OrderDetail from "./component/OrderDetail";
-
+import { Provider } from "react-redux";
+import { store, Store } from "./redux/store";
 import { Ionicons } from "@expo/vector-icons";
 import { MaterialIcons } from "@expo/vector-icons";
 import { Feather } from "@expo/vector-icons";
@@ -89,20 +90,22 @@ function MyTabs({ route }) {
 
 export default RootComponent = function () {
   return (
-    <NavigationContainer>
-      <Stack.Navigator
-        initialRouteName="Login"
-        screenOptions={{ headerShown: false }}
-      >
-        <Stack.Screen name="Login" component={Login} />
-        <Stack.Screen name="Recover" component={Recover} />
-        <Stack.Screen
-          name="HomeTabs"
-          component={MyTabs}
+    <Provider store={store}>
+      <NavigationContainer>
+        <Stack.Navigator
+          initialRouteName="Login"
           screenOptions={{ headerShown: false }}
-        />
-        <Stack.Screen name="OrderDetail" component={OrderDetail} />
-      </Stack.Navigator>
-    </NavigationContainer>
+        >
+          <Stack.Screen name="Login" component={Login} />
+          <Stack.Screen name="Recover" component={Recover} />
+          <Stack.Screen
+            name="HomeTabs"
+            component={MyTabs}
+            screenOptions={{ headerShown: false }}
+          />
+          <Stack.Screen name="OrderDetail" component={OrderDetail} />
+        </Stack.Navigator>
+      </NavigationContainer>
+    </Provider>
   );
 };
