@@ -7,25 +7,29 @@ import {
   FlatList,
   ScrollView,
 } from "react-native";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import SearchBar from "../component/Sreach";
 import OrderItem from "../component/OrderItem";
+import { useDispatch, useSelector } from "react-redux";
+import axios from "axios";
 
 export default function Order({ navigation }) {
+  const orderInfo = useSelector((state) => state.orderInfor);
+  // console.log(orderInfo);
   const [selectedTab, setSelectedTab] = useState("chuanhan");
-
-  const orders = [
-    { id: 1, product: "item1", status: "danhan" },
-    { id: 2, product: "item2", status: "chuanhan" },
-    { id: 3, product: "item3", status: "tamgiu" },
-    { id: 4, product: "item4", status: "chuanhan" },
-    { id: 5, product: "item5", status: "chuanhan" },
-    { id: 6, product: "item1", status: "tamgiu" },
-    { id: 7, product: "item2", status: "tamgiu" },
-    { id: 8, product: "item3", status: "tamgiu" },
-    { id: 9, product: "item4", status: "tamgiu" },
-    { id: 10, product: "item5", status: "danhan" },
-  ];
+  const [data, setData] = useState([]);
+  useEffect(() => {
+    axios
+      .get("https://640de7ebb07afc3b0db98769.mockapi.io/api/v1/order")
+      .then((response) => {
+        setData(response.data);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  }, []);
+  // console.log(data);
+  const orders = data;
 
   const [term, setTerm] = useState("");
 
@@ -64,14 +68,14 @@ export default function Order({ navigation }) {
   // Tìm
   const searchResult = orders.filter((item) => item.id === term);
   // function getFilteredOrders() {
-  console.log(term);
+  // console.log(term);
 
   //   return orders.filter((item) => item.id === term);
   // }
   // const filteredOrders = getFilteredOrders();
 
   // const [filteredOrders, setFilteredOrders] = useState(orders);
-  console.log(searchResult);
+  // console.log(searchResult);
 
   // if (term.length != 0) {
   //   dataToRender = filteredOrders;

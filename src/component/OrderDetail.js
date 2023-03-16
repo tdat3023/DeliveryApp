@@ -8,9 +8,13 @@ import {
 } from "react-native";
 import { AntDesign } from "@expo/vector-icons";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { useRoute } from "@react-navigation/native";
 
 function OrderDetail({ props, navigation }) {
-  //   const { id, product, status, time, customer } = route.params;
+  // const { route } = props.navigation.state;
+  const route = useRoute();
+  const { data } = route.params;
+  console.log(data.id);
   return (
     <View style={styles.AndroidSafeArea}>
       <View style={styles.container}>

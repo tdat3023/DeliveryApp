@@ -131,9 +131,9 @@ export default function Login({ navigation }) {
                 style={styles.btn}
                 disabled={isValidationOK() == false}
                 onPress={() => {
-                  console.log("email:" + email);
-                  console.log("errorEmail:" + errorEmail);
-                  console.log("password:" + password);
+                  // console.log("email:" + email);
+                  // console.log("errorEmail:" + errorEmail);
+                  // console.log("password:" + password);
                   navigation.navigate("HomeTabs");
                   // handleSignIn;
                 }}

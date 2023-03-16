@@ -1,14 +1,19 @@
 import React from "react";
 import { View, Text, StyleSheet, Image, TouchableOpacity } from "react-native";
-import { NavigationContainer } from "@react-navigation/native";
-import { createNativeStackNavigator } from "@react-navigation/native-stack";
 
 function OrderItem({ navigation, item }) {
+  const sendData = (item) => {
+    navigation.navigate("OrderDetail", { data: item.id });
+  };
   function checkStatus(status) {
     if (status === "chuanhan") {
       return (
         <View style={styles.button}>
-          <TouchableOpacity>
+          <TouchableOpacity
+            onPress={() => {
+              console.log(item.id);
+            }}
+          >
             <Text>Nhận</Text>
           </TouchableOpacity>
         </View>
@@ -16,7 +21,11 @@ function OrderItem({ navigation, item }) {
     } else if (status === "danhan") {
       return (
         <View style={styles.button}>
-          <TouchableOpacity>
+          <TouchableOpacity
+            onPress={() => {
+              console.log(item.id);
+            }}
+          >
             <Text>Bắt đầu</Text>
           </TouchableOpacity>
         </View>
@@ -26,11 +35,7 @@ function OrderItem({ navigation, item }) {
     }
   }
   return (
-    <TouchableOpacity
-      onPress={() => {
-        navigation.navigate("OrderDetail");
-      }}
-    >
+    <TouchableOpacity onPress={sendData}>
       <View style={styles.oneOrderView}>
         <View style={styles.imageView}>
           <Image
@@ -40,7 +45,7 @@ function OrderItem({ navigation, item }) {
         </View>
         <View style={styles.inforView}>
           <Text>Mã đơn hàng: {item.id}</Text>
-          <Text>Tên đơn: {item.product}</Text>
+          <Text>Tên đơn: {item.diachiNN}</Text>
           <Text>Trạng thái: {item.status}</Text>
         </View>
         {checkStatus(item.status)}

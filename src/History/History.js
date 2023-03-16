@@ -61,14 +61,11 @@ export default function History({ navigation }) {
   // Tìm
   const searchResult = orders.filter((item) => item.id === term);
   // function getFilteredOrders() {
-  console.log(term);
-
   //   return orders.filter((item) => item.id === term);
   // }
   // const filteredOrders = getFilteredOrders();
 
   // const [filteredOrders, setFilteredOrders] = useState(orders);
-  console.log(searchResult);
 
   // if (term.length != 0) {
   //   dataToRender = filteredOrders;
