@@ -3,7 +3,7 @@ import { View, Text, StyleSheet, Image, TouchableOpacity } from "react-native";
 
 function OrderItem({ navigation, item }) {
   const sendData = (item) => {
-    navigation.navigate("OrderDetail", { data: item.id });
+    navigation.navigate("OrderDetail", { data: JSON.stringify(item) });
   };
   function checkStatus(status) {
     if (status === "chuanhan") {

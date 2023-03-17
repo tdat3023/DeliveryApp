@@ -1,9 +1,9 @@
 import { combineReducers } from "redux";
 import info from "./infoRed";
-import orderInfo from "./orderInf";
+import orders from "./orderData";
 const reducers = combineReducers({
   // shipperInfor: info,
-  orderInfor: orderInfo,
+  orderInfor: orders,
 });
 
 export default (state, action) => reducers(state, action);

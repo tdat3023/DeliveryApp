@@ -10,34 +10,35 @@ import {
 import React, { useState, useEffect } from "react";
 import SearchBar from "../component/Sreach";
 import OrderItem from "../component/OrderItem";
-import { useDispatch, useSelector } from "react-redux";
 import axios from "axios";
-
+import { setData } from "../redux/reducers/orderData";
+import { useDispatch, useSelector } from "react-redux";
 export default function Order({ navigation }) {
-  const orderInfo = useSelector((state) => state.orderInfor);
-  // console.log(orderInfo);
-  const [selectedTab, setSelectedTab] = useState("chuanhan");
-  const [data, setData] = useState([]);
-  useEffect(() => {
-    axios
-      .get("https://640de7ebb07afc3b0db98769.mockapi.io/api/v1/order")
-      .then((response) => {
-        setData(response.data);
-      })
-      .catch((error) => {
+  const dispatch = useDispatch();
+  const fetchData = () => {
+    return async () => {
+      try {
+        const response = await axios.get(
+          "https://640de7ebb07afc3b0db98769.mockapi.io/api/v1/order"
+        );
+        dispatch(setData(response.data));
+      } catch (error) {
         console.log(error);
-      });
-  }, []);
-  // console.log(data);
-  const orders = data;
+      }
+    };
+  };
 
+  useEffect(() => {
+    dispatch(fetchData());
+  }, [dispatch]);
+  const orders = useSelector((state) => state.orderInfor.data);
+  console.log(orders);
   const [term, setTerm] = useState("");
-
+  const [selectedTab, setSelectedTab] = useState("chuanhan");
   const handleTermSubmit = (term) => {
     setTerm(term);
     alert(term);
   };
-
   // chua nhan
   function getCNOrders() {
     return orders.filter((orders) => orders.status === "chuanhan");
@@ -64,22 +65,6 @@ export default function Order({ navigation }) {
   } else {
     dataToRender = dnOrders;
   }
-
-  // Tìm
-  const searchResult = orders.filter((item) => item.id === term);
-  // function getFilteredOrders() {
-  // console.log(term);
-
-  //   return orders.filter((item) => item.id === term);
-  // }
-  // const filteredOrders = getFilteredOrders();
-
-  // const [filteredOrders, setFilteredOrders] = useState(orders);
-  // console.log(searchResult);
-
-  // if (term.length != 0) {
-  //   dataToRender = filteredOrders;
-  // }
 
   return (
     <View style={styles.AndroidSafeArea}>
@@ -135,7 +120,6 @@ export default function Order({ navigation }) {
         </View>
 
         {/* Danh sách */}
-
         <FlatList
           style={styles.list}
           data={dataToRender}

@@ -9,12 +9,9 @@ import {
 import { AntDesign } from "@expo/vector-icons";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { useRoute } from "@react-navigation/native";
+import { useDispatch, useSelector } from "react-redux";
 
-function OrderDetail({ props, navigation }) {
-  // const { route } = props.navigation.state;
-  const route = useRoute();
-  const { data } = route.params;
-  console.log(data.id);
+function OrderDetail({ route, navigation }) {
   return (
     <View style={styles.AndroidSafeArea}>
       <View style={styles.container}>

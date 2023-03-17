@@ -10,10 +10,8 @@ import React, { useState } from "react";
 import { FontAwesome, MaterialIcons } from "@expo/vector-icons";
 import { useDispatch, useSelector } from "react-redux";
 export default function About() {
-  // const info = useSelector((state) => state.shipperInfor);
   const [changePassword, setChangPassword] = useState(false);
   const [moreProfile, setMoreProfile] = useState(false);
-  // console.log("INFO", info);
   const hiddenInfo = [
     {
       name: "Nguyễn Văn A",
