@@ -1,17 +1,26 @@
 import React from "react";
 import { View, Text, StyleSheet, Image, TouchableOpacity } from "react-native";
+import { useDispatch, useSelector } from "react-redux";
+import { setStatus } from "../redux/reducers/oneOrder";
 
 function OrderItem({ navigation, item }) {
-  const sendData = (item) => {
-    navigation.navigate("OrderDetail", { data: JSON.stringify(item) });
+  // console.log(item);
+  // const sendData = (item) => {
+  //   navigation.navigate("OrderDetail");
+  //   console.log(item.id);
+  // };
+  const dispatch = useDispatch();
+  const buttonUpdate = (newStatus) => {
+    dispatch(setStatus(newStatus));
   };
+
   function checkStatus(status) {
     if (status === "chuanhan") {
       return (
         <View style={styles.button}>
           <TouchableOpacity
             onPress={() => {
-              console.log(item.id);
+              console.log(item);
             }}
           >
             <Text>Nhận</Text>
@@ -23,7 +32,7 @@ function OrderItem({ navigation, item }) {
         <View style={styles.button}>
           <TouchableOpacity
             onPress={() => {
-              console.log(item.id);
+              console.log(item);
             }}
           >
             <Text>Bắt đầu</Text>
@@ -35,7 +44,15 @@ function OrderItem({ navigation, item }) {
     }
   }
   return (
-    <TouchableOpacity onPress={sendData}>
+    <TouchableOpacity
+      // onPress={sendData}
+      onPress={() => {
+        navigation.navigate("OrderDetail", {
+          data: item,
+        });
+        console.log(item.id);
+      }}
+    >
       <View style={styles.oneOrderView}>
         <View style={styles.imageView}>
           <Image
@@ -47,6 +64,7 @@ function OrderItem({ navigation, item }) {
           <Text>Mã đơn hàng: {item.id}</Text>
           <Text>Tên đơn: {item.diachiNN}</Text>
           <Text>Trạng thái: {item.status}</Text>
+          <Text>Khoảng cách: </Text>
         </View>
         {checkStatus(item.status)}
       </View>
@@ -77,6 +95,7 @@ const styles = StyleSheet.create({
   image: {},
 
   inforView: {
+    paddingVertical: 5,
     marginHorizontal: 10,
     flex: 1,
   },

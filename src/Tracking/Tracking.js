@@ -123,15 +123,6 @@ export default function Tracking() {
                   longitude: location.coords.longitude,
                 }}
                 destination={droplocationCords}
-                strokeWidth={4}
-                strokeColor="red"
-                optimizeWaypoints={true}
-                apikey="AIzaSyCz05MCIlmnpbQgr32Am783YW4muKdaiKQ"
-              />
-
-              <MapViewDirections
-                origin={pickupCords}
-                destination={droplocationCords}
                 strokeWidth={7}
                 strokeColor="#5061ff"
                 optimizeWaypoints={true}

@@ -1,17 +1,20 @@
-import React, { Component } from "react";
+import React, { Component, useEffect } from "react";
 import {
   View,
   Text,
   StyleSheet,
   StatusBar,
   TouchableOpacity,
+  Dimensions,
 } from "react-native";
 import { AntDesign } from "@expo/vector-icons";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { useRoute } from "@react-navigation/native";
 import { useDispatch, useSelector } from "react-redux";
 
-function OrderDetail({ route, navigation }) {
+function OrderDetail({ navigation, route }) {
+  const data = route.params.data;
+
   return (
     <View style={styles.AndroidSafeArea}>
       <View style={styles.container}>
@@ -31,11 +34,11 @@ function OrderDetail({ route, navigation }) {
           </TouchableOpacity>
           <Text style={styles.headerText}>Chi tiết đơn hàng</Text>
         </View>
+
         {/* Trạng thái vận chuyển */}
         <View style={styles.statusView}>
-          <Text style={styles.statusText}>Đang giao hàng</Text>
-          <Text style={styles.statusText}>Đang giao hàng</Text>
-          <Text style={styles.statusText}>Đang giao hàng</Text>
+          <Text style={styles.statusText}>Trạng thái: {data.status}</Text>
+          <Text style={styles.statusText}>Khoảng các hiện tại: 10Km</Text>
         </View>
 
         {/* thông tin vận chuyển */}
@@ -45,20 +48,25 @@ function OrderDetail({ route, navigation }) {
             size={24}
             color="black"
           />
-          <Text style={styles.timeText}>Thông tin vận chuyển</Text>
+          <Text style={styles.timeText}>Thông tin đơn hàng</Text>
         </View>
         <View style={styles.customerView}>
           <Text style={styles.timeText}>Thời gian: 15:30 ngày 25/02/2023</Text>
           <Text style={styles.customerText}>Khách hàng: Nguyễn Văn A</Text>
-          <Text style={styles.customerText}>
-            Địa chỉ: 123 Đường ABC, Quận XYZ, TP. HCM
-          </Text>
-          <Text style={styles.customerText}>Số điện thoại: 0123456789</Text>
+          <Text style={styles.customerText}>Địa chỉ: {data.diachiNN}</Text>
+          <Text style={styles.customerText}>Số điện thoại: {data.sdtNN}</Text>
         </View>
+
         <View style={styles.orderView}>
           <Text style={styles.orderText}>Tên sản phẩm: Iphone 13 Pro Max</Text>
           <Text style={styles.orderText}>Số lượng: 1</Text>
           <Text style={styles.orderText}>Giá: 35,000,000 đ</Text>
+        </View>
+
+        <View style={styles.endContainer}>
+          <TouchableOpacity style={styles.button}>
+            <Text style={styles.buttonText}>Bắt đầu</Text>
+          </TouchableOpacity>
         </View>
       </View>
     </View>
@@ -115,11 +123,37 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
   orderView: {
+    marginHorizontal: 10,
     marginTop: 20,
   },
+
   orderText: {
     marginTop: 5,
     fontSize: 16,
+  },
+
+  endContainer: {
+    backgroundColor: "#f4511e",
+    position: "absolute",
+    bottom: 0,
+    width: "100%",
+    backgroundColor: "red",
+    height: 80,
+    padding: 10,
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  button: {
+    width: "80%",
+    backgroundColor: "#007AFF",
+    padding: 10,
+    borderRadius: 5,
+  },
+  buttonText: {
+    color: "#fff",
+    textAlign: "center",
+    fontWeight: "bold",
   },
 });
 

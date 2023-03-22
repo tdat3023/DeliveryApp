@@ -1,12 +1,12 @@
-// export const CAP_NHAT_STATUS = "CAP_NHAT_STATUS";
+// export const UPDATE_STATUS = "UPDATE_STATUS";
 export const SET_DATA = "SET_DATA";
 const initialState = {
   data: [],
 };
 
-// export default function actionForOrder(state = initialState, action) {
+// export default function updateStatsOrder(state = initialState, action) {
 //   switch (action.type) {
-//     case CAP_NHAT_STATUS:
+//     case UPDATE_STATUS:
 //       return state.map((item) => {
 //         if (item.id === action.id) {
 //           return {
@@ -21,10 +21,11 @@ const initialState = {
 //       return state;
 //   }
 // }
-// export const setData = (data) => ({
-//   type: "SET_DATA",
-//   payload: data,
-// });
+
+export const setData = (data) => ({
+  type: "SET_DATA",
+  payload: data,
+});
 
 const dataReducer = (state = initialState, action) => {
   switch (action.type) {

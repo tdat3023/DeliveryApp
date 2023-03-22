@@ -13,7 +13,10 @@ import OrderItem from "../component/OrderItem";
 import axios from "axios";
 import { setData } from "../redux/reducers/orderData";
 import { useDispatch, useSelector } from "react-redux";
+
 export default function Order({ navigation }) {
+  // const changeStatus ()
+
   const dispatch = useDispatch();
   const fetchData = () => {
     return async () => {
@@ -30,9 +33,11 @@ export default function Order({ navigation }) {
 
   useEffect(() => {
     dispatch(fetchData());
-  }, [dispatch]);
+  }, [dispatch, changeStatus]);
+
+  const changeStatus = useSelector((state) => state.updateStatus);
   const orders = useSelector((state) => state.orderInfor.data);
-  console.log(orders);
+  // console.log(orders);
   const [term, setTerm] = useState("");
   const [selectedTab, setSelectedTab] = useState("chuanhan");
   const handleTermSubmit = (term) => {
@@ -120,6 +125,7 @@ export default function Order({ navigation }) {
         </View>
 
         {/* Danh sách */}
+
         <FlatList
           style={styles.list}
           data={dataToRender}
