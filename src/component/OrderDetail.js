@@ -64,7 +64,15 @@ function OrderDetail({ navigation, route }) {
         </View>
 
         <View style={styles.endContainer}>
-          <TouchableOpacity style={styles.button}>
+          <TouchableOpacity
+            style={styles.button}
+            onPress={() => {
+              navigation.navigate("Tracking", {
+                data: data,
+              });
+              // console.log(data.id);
+            }}
+          >
             <Text style={styles.buttonText}>Bắt đầu</Text>
           </TouchableOpacity>
         </View>

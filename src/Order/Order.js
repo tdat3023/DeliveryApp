@@ -15,11 +15,9 @@ import { setData } from "../redux/reducers/orderData";
 import { useDispatch, useSelector } from "react-redux";
 
 export default function Order({ navigation }) {
-  // const changeStatus ()
-
   const dispatch = useDispatch();
   const fetchData = () => {
-    return async () => {
+    return async (dispatch) => {
       try {
         const response = await axios.get(
           "https://640de7ebb07afc3b0db98769.mockapi.io/api/v1/order"
@@ -30,10 +28,9 @@ export default function Order({ navigation }) {
       }
     };
   };
-
   useEffect(() => {
     dispatch(fetchData());
-  }, [dispatch, changeStatus]);
+  }, [dispatch]);
 
   const changeStatus = useSelector((state) => state.updateStatus);
   const orders = useSelector((state) => state.orderInfor.data);

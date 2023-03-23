@@ -21,8 +21,8 @@ import { isValidEmail, isValidPassword } from "../utilies/Validations";
 
 export default function Login({ navigation }) {
   const [getPassWordVisible, setPassWordVisible] = useState(false);
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [email, setEmail] = useState("0123456789");
+  const [password, setPassword] = useState("123456789");
   const [errorEmail, setErrorEmail] = useState("");
   const [errorPassword, setErrorPassword] = useState("");
   const isValidationOK = () => {
@@ -134,7 +134,7 @@ export default function Login({ navigation }) {
                   // console.log("email:" + email);
                   // console.log("errorEmail:" + errorEmail);
                   // console.log("password:" + password);
-                  navigation.navigate("HomeTabs");
+                  navigation.replace("HomeTabs");
                   // handleSignIn;
                 }}
               >

@@ -1,14 +1,49 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { View, Text, StyleSheet, Image, TouchableOpacity } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
 import { setStatus } from "../redux/reducers/oneOrder";
+import * as Permissions from "expo-permissions";
+import * as Location from "expo-location";
+import { getDistance } from "geolib";
 
 function OrderItem({ navigation, item }) {
-  // console.log(item);
-  // const sendData = (item) => {
-  //   navigation.navigate("OrderDetail");
-  //   console.log(item.id);
-  // };
+  // lấy vị trí hiện tại
+  const [location, setLocation] = useState(null);
+  useEffect(() => {
+    (async () => {
+      let { status } = await Permissions.askAsync(Permissions.LOCATION);
+      if (status !== "granted") {
+        // setErrorMsg("Permission to access location was denied");
+        return;
+      }
+
+      await Location.watchPositionAsync(
+        {
+          accuracy: Location.Accuracy.High,
+          timeInterval: 5 * 60 * 1000,
+          // distanceInterval: 1000,
+        },
+        (location) => setLocation(location)
+      );
+    })();
+  }, []);
+  // console.log(location.coords.latitude);
+  const lat1 = location?.coords?.latitude;
+  const lon1 = location?.coords?.longitude;
+  console.log("pick", lat1, lon1);
+  const lat2 = parseFloat(item.toado.latitude);
+  const lon2 = parseFloat(item.toado.longitude);
+  console.log("drop", lat2, lon2);
+  const calculateDistance = () => {
+    const dis = getDistance(
+      { latitude: lat1, longitude: lon1 },
+      { latitude: lat2, longitude: lon2 }
+    );
+    return `${dis / 1000} km`;
+  };
+  // console.log(calculateDistance());
+
+  // API change status
   const dispatch = useDispatch();
   const buttonUpdate = (newStatus) => {
     dispatch(setStatus(newStatus));
@@ -45,12 +80,10 @@ function OrderItem({ navigation, item }) {
   }
   return (
     <TouchableOpacity
-      // onPress={sendData}
       onPress={() => {
         navigation.navigate("OrderDetail", {
           data: item,
         });
-        console.log(item.id);
       }}
     >
       <View style={styles.oneOrderView}>
@@ -64,7 +97,10 @@ function OrderItem({ navigation, item }) {
           <Text>Mã đơn hàng: {item.id}</Text>
           <Text>Tên đơn: {item.diachiNN}</Text>
           <Text>Trạng thái: {item.status}</Text>
-          <Text>Khoảng cách: </Text>
+          <Text>
+            Khoảng cách:
+            {/* {calculateDistance()}  */}
+          </Text>
         </View>
         {checkStatus(item.status)}
       </View>

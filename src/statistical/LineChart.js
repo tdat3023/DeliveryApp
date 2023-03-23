@@ -29,11 +29,12 @@ function LineChartView() {
       <LineChart
         data={data}
         width={Dimensions.get("window").width - 20}
-        height={220}
+        height={280}
         chartConfig={chartConfig}
       />
-
       <Text style={{ marginTop: 5 }}>Từ tháng 1 đến tháng 6</Text>
+
+      <View></View>
     </View>
   );
 }

@@ -18,7 +18,13 @@ import MapViewDirections from "react-native-maps-directions";
 import * as Permissions from "expo-permissions";
 import * as Location from "expo-location";
 
-export default function Tracking() {
+export default function Tracking({ route }) {
+  const data = route.params.data.toado;
+
+  console.log(data);
+  const lat = parseFloat(data.latitude);
+  const lon = parseFloat(data.longitude);
+
   const [index, setIndex] = useState(1);
   function getStatus(index) {
     if (index === 1) {
@@ -46,7 +52,7 @@ export default function Tracking() {
       await Location.watchPositionAsync(
         {
           accuracy: Location.Accuracy.High,
-          timeInterval: 10,
+          timeInterval: 1 * 60 * 1000,
           distanceInterval: 10,
         },
         (location) => setLocation(location)
@@ -54,35 +60,36 @@ export default function Tracking() {
     })();
   }, []);
 
-  // điểm bắt đầu
-  const [pickupCords, setPickupCords] = useState({
-    latitude: 10.822024,
-    // location.latitude,
-    longitude: 106.687569,
-    //  location.longitude,
-    latitudeDelta: 0.01,
-    longitudeDelta: 0.01,
-  });
+  console.log(location);
+  // // điểm bắt đầu
+  // const [pickupCords, setPickupCords] = useState({
+  //   latitude: 10.822024,
+  //   // location.latitude,
+  //   longitude: 106.687569,
+  //   //  location.longitude,
+  //   latitudeDelta: 0.01,
+  //   longitudeDelta: 0.01,
+  // });
 
   // diểm giao hàng
-  const [droplocationCords, setDropLocation] = useState({
-    latitude: 10.631142,
-    // location.latitude,
-    longitude: 107.052875,
-    //  location.longitude,
-    latitudeDelta: 0.01,
-    longitudeDelta: 0.01,
-  });
+  // const [droplocationCords, setDropLocation] = useState({
+  //   latitude: 10.825225,
+  //   // location.latitude,
+  //   longitude: 106.687581,
+  //   //  location.longitude,
+  //   latitudeDelta: 0.01,
+  //   longitudeDelta: 0.01,
+  // });
 
-  const batDau = () => {
-    const { latitudeDelta, longitudeDelta } = pickupCords;
-    setPickupCords({
-      latitude: location?.coords?.latitude,
-      longitude: location?.coords?.longitude,
-      latitudeDelta,
-      longitudeDelta,
-    });
-  };
+  // const batDau = () => {
+  //   const { latitudeDelta, longitudeDelta } = pickupCords;
+  //   setPickupCords({
+  //     latitude: location?.coords?.latitude,
+  //     longitude: location?.coords?.longitude,
+  //     latitudeDelta,
+  //     longitudeDelta,
+  //   });
+  // };
 
   return (
     <View style={styles.AndroidSafeArea}>
@@ -100,13 +107,11 @@ export default function Tracking() {
             >
               <Marker
                 coordinate={{
-                  latitude: pickupCords.latitude,
-                  // location.coords.latitude,
-                  longitude: pickupCords.longitude,
-                  // location.coords.longitude,
+                  latitude: lat,
+                  longitude: lon,
                 }}
-                title="Xuất Phát"
-              ></Marker>
+                title="Nơi Giao"
+              />
 
               <Marker
                 coordinate={{
@@ -119,17 +124,18 @@ export default function Tracking() {
 
               <MapViewDirections
                 origin={{
-                  latitude: location.coords.latitude,
-                  longitude: location.coords.longitude,
+                  latitude: location?.coords?.latitude,
+                  longitude: location?.coords?.longitude,
                 }}
-                destination={droplocationCords}
+                destination={{
+                  latitude: lat,
+                  longitude: lon,
+                }}
                 strokeWidth={7}
-                strokeColor="#5061ff"
+                strokeColor="red"
                 optimizeWaypoints={true}
                 apikey="AIzaSyCz05MCIlmnpbQgr32Am783YW4muKdaiKQ"
               />
-
-              <Marker coordinate={droplocationCords} title="Nơi Giao" />
             </MapView>
           )}
           {/* {errorMsg && <Text style={styles.errorText}>{errorMsg}</Text>} */}
@@ -284,7 +290,7 @@ export default function Tracking() {
                     onPress={() => {
                       {
                         if (index < 4) setIndex(index + 1);
-                        batDau();
+                        // batDau();
                       }
                     }}
                   >
