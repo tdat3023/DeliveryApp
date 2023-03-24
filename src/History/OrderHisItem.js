@@ -2,61 +2,15 @@ import React, { useState, useEffect } from "react";
 import { View, Text, StyleSheet, Image, TouchableOpacity } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
 import { setStatus } from "../redux/reducers/oneOrder";
-import * as Permissions from "expo-permissions";
-import * as Location from "expo-location";
-import { getDistance } from "geolib";
-import { setLocation } from "../redux/reducers/CurentLocation";
 
 function OrderItem({ navigation, item }) {
   // lấy vị trí hiện tại
-  const dispatch = useDispatch();
-  useEffect(() => {
-    let locationSubscription;
-    (async () => {
-      let { status } = await Location.requestForegroundPermissionsAsync();
-      if (status !== "granted") {
-        console.log("Permission to access location was denied");
-        return;
-      }
-      locationSubscription = await Location.watchPositionAsync(
-        {
-          timeInterval: 5 * 60 * 1000,
-          distanceInterval: 500,
-        },
-        (location) => {
-          dispatch(setLocation(location));
-        }
-      );
-    })();
-    return () => {
-      if (locationSubscription) {
-        locationSubscription.remove();
-      }
-    };
-  }, []);
-  const location = useSelector((state) => state.locationCurrent.location);
-  console.log(location);
-
-  // const lat1 = location?.coords?.latitude;
-  // const lon1 = location?.coords?.longitude;
-  // console.log("pick", lat1, lon1);
-  // const lat2 = parseFloat(item.toado.latitude);
-  // const lon2 = parseFloat(item.toado.longitude);
-  // console.log("drop", lat2, lon2);
-  // const calculateDistance = () => {
-  //   const dis = getDistance(
-  //     { latitude: lat1, longitude: lon1 },
-  //     { latitude: lat2, longitude: lon2 }
-  //   );
-  //   return `${dis / 1000} km`;
-  // };
-  // console.log(calculateDistance());
 
   // API change status
-  // const dispatch = useDispatch();
-  // const buttonUpdate = (newStatus) => {
-  //   dispatch(setStatus(newStatus));
-  // };
+  const dispatch = useDispatch();
+  const buttonUpdate = (newStatus) => {
+    dispatch(setStatus(newStatus));
+  };
 
   function checkStatus(status) {
     if (status === "chuanhan") {
@@ -106,10 +60,6 @@ function OrderItem({ navigation, item }) {
           <Text>Mã đơn hàng: {item.id}</Text>
           <Text>Tên đơn: {item.diachiNN}</Text>
           <Text>Trạng thái: {item.status}</Text>
-          <Text>
-            Khoảng cách:
-            {/* {calculateDistance()} */}
-          </Text>
         </View>
         {checkStatus(item.status)}
       </View>

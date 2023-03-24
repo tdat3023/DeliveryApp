@@ -9,6 +9,7 @@ import {
 import React, { useState } from "react";
 import moment from "moment";
 import SearchBar from "../component/Sreach";
+import OrderHisItem from "./OrderHisItem";
 import OrderItem from "../component/OrderItem";
 export default function History({ navigation }) {
   const [selectedTab, setSelectedTab] = useState("All");
@@ -60,16 +61,6 @@ export default function History({ navigation }) {
 
   // Tìm
   const searchResult = orders.filter((item) => item.id === term);
-  // function getFilteredOrders() {
-  //   return orders.filter((item) => item.id === term);
-  // }
-  // const filteredOrders = getFilteredOrders();
-
-  // const [filteredOrders, setFilteredOrders] = useState(orders);
-
-  // if (term.length != 0) {
-  //   dataToRender = filteredOrders;
-  // }
 
   // ngày
   const currentDate = moment().format("DD/MM/YYYY");
@@ -133,7 +124,7 @@ export default function History({ navigation }) {
           style={styles.list}
           data={dataToRender}
           renderItem={({ item }) => (
-            <OrderItem item={item} navigation={navigation} />
+            <OrderHisItem item={item} navigation={navigation} />
           )}
           keyExtractor={(item) => item.id}
         />

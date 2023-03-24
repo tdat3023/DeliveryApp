@@ -15,15 +15,13 @@ import {
 } from "@expo/vector-icons";
 import MapView, { Marker } from "react-native-maps";
 import MapViewDirections from "react-native-maps-directions";
-import * as Permissions from "expo-permissions";
-import * as Location from "expo-location";
+import { useDispatch, useSelector } from "react-redux";
 
 export default function Tracking({ route }) {
-  const data = route.params.data.toado;
-
+  const data = route.params.data;
   console.log(data);
-  const lat = parseFloat(data.latitude);
-  const lon = parseFloat(data.longitude);
+  const lat = parseFloat(data.toado.latitude);
+  const lon = parseFloat(data.toado.longitude);
 
   const [index, setIndex] = useState(1);
   function getStatus(index) {
@@ -40,26 +38,7 @@ export default function Tracking({ route }) {
   const [moreProfile, setMoreProfile] = useState(false);
 
   // lấy vị trí hiện tại
-  const [location, setLocation] = useState(null);
-  useEffect(() => {
-    (async () => {
-      let { status } = await Permissions.askAsync(Permissions.LOCATION);
-      if (status !== "granted") {
-        // setErrorMsg("Permission to access location was denied");
-        return;
-      }
-
-      await Location.watchPositionAsync(
-        {
-          accuracy: Location.Accuracy.High,
-          timeInterval: 1 * 60 * 1000,
-          distanceInterval: 10,
-        },
-        (location) => setLocation(location)
-      );
-    })();
-  }, []);
-
+  const location = useSelector((state) => state.locationCurrent.location);
   console.log(location);
   // // điểm bắt đầu
   // const [pickupCords, setPickupCords] = useState({
@@ -105,13 +84,15 @@ export default function Tracking({ route }) {
                 longitudeDelta: 0.01,
               }}
             >
-              <Marker
-                coordinate={{
-                  latitude: lat,
-                  longitude: lon,
-                }}
-                title="Nơi Giao"
-              />
+              {data ? (
+                <Marker
+                  coordinate={{
+                    latitude: lat,
+                    longitude: lon,
+                  }}
+                  title="Nơi Giao"
+                />
+              ) : null}
 
               <Marker
                 coordinate={{
@@ -138,7 +119,6 @@ export default function Tracking({ route }) {
               />
             </MapView>
           )}
-          {/* {errorMsg && <Text style={styles.errorText}>{errorMsg}</Text>} */}
         </View>
 
         {/* nút */}
@@ -168,8 +148,9 @@ export default function Tracking({ route }) {
                       size={24}
                       color="black"
                     />
-                    <Text>#123456789</Text>
-                    <Feather name="copy" size={24} color="black" />
+                    <Text style={{ marginLeft: 10 }}>
+                      Mã đơn hàng: {data.id}
+                    </Text>
                   </View>
                 </View>
                 <View style={styles.wrap}>
@@ -394,12 +375,10 @@ const styles = StyleSheet.create({
   trackingInfor: {
     marginVertical: 5,
     flexDirection: "row",
-    justifyContent: "space-around",
   },
 
   viewMore: {
     backgroundColor: "#fbf4ef",
-
     alignItems: "center",
   },
 
