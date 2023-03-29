@@ -4,6 +4,7 @@ import {
   StyleSheet,
   StatusBar,
   TouchableOpacity,
+  Alert,
 } from "react-native";
 import React, { useState, useEffect } from "react";
 import { Feather } from "@expo/vector-icons";
@@ -17,12 +18,37 @@ import MapView, { Marker } from "react-native-maps";
 import MapViewDirections from "react-native-maps-directions";
 import { useDispatch, useSelector } from "react-redux";
 
-export default function Tracking({ route }) {
-  const data = route.params.data;
-  console.log(data);
+export default function Tracking({ navigation, route }) {
+  const data = route.params?.data;
+
+  if (!data) {
+    Alert.alert(
+      "Thông báo",
+      "Vui lòng nhận đơn hoặc chọn đơn hàng để sử dụng.",
+      [
+        {
+          text: "OK",
+          onPress: () => {
+            navigation.navigate("Order");
+          },
+        },
+      ]
+    );
+    return;
+  }
   const lat = parseFloat(data.toado.latitude);
   const lon = parseFloat(data.toado.longitude);
+  // lấy vị trí hiện tại
+  const location = useSelector((state) => state.locationCurrent.location);
+  const lat2 = location.coords.latitude;
+  const lon2 = location.coords.longitude;
 
+  const region = {
+    latitude: (lat + lat2) / 2,
+    longitude: (lon + lon2) / 2,
+    latitudeDelta: Math.abs(lat - lat2) * 2,
+    longitudeDelta: Math.abs(lon - lon2) * 2,
+  };
   const [index, setIndex] = useState(1);
   function getStatus(index) {
     if (index === 1) {
@@ -37,9 +63,7 @@ export default function Tracking({ route }) {
   }
   const [moreProfile, setMoreProfile] = useState(false);
 
-  // lấy vị trí hiện tại
-  const location = useSelector((state) => state.locationCurrent.location);
-  console.log(location);
+  // console.log(location);
   // // điểm bắt đầu
   // const [pickupCords, setPickupCords] = useState({
   //   latitude: 10.822024,
@@ -74,25 +98,15 @@ export default function Tracking({ route }) {
     <View style={styles.AndroidSafeArea}>
       <View style={styles.container}>
         <View style={styles.map}>
-          {location && (
-            <MapView
-              style={styles.map}
-              region={{
-                latitude: location.coords.latitude,
-                longitude: location.coords.longitude,
-                latitudeDelta: 0.01,
-                longitudeDelta: 0.01,
-              }}
-            >
-              {data ? (
-                <Marker
-                  coordinate={{
-                    latitude: lat,
-                    longitude: lon,
-                  }}
-                  title="Nơi Giao"
-                />
-              ) : null}
+          {
+            <MapView style={styles.map} region={region}>
+              <Marker
+                coordinate={{
+                  latitude: lat,
+                  longitude: lon,
+                }}
+                title="Nơi Giao"
+              />
 
               <Marker
                 coordinate={{
@@ -118,7 +132,7 @@ export default function Tracking({ route }) {
                 apikey="AIzaSyCz05MCIlmnpbQgr32Am783YW4muKdaiKQ"
               />
             </MapView>
-          )}
+          }
         </View>
 
         {/* nút */}
@@ -149,7 +163,8 @@ export default function Tracking({ route }) {
                       color="black"
                     />
                     <Text style={{ marginLeft: 10 }}>
-                      Mã đơn hàng: {data.id}
+                      Mã đơn hàng:
+                      {/* {data.id} */}
                     </Text>
                   </View>
                 </View>

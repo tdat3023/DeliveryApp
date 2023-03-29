@@ -18,7 +18,7 @@ import { isValidEmail, isValidPassword } from "../utilies/Validations";
 
 // Khởi tạo Firebase
 // const firebaseApp = initializeApp(firebaseConfig);
-
+import axios from "axios";
 export default function Login({ navigation }) {
   const [getPassWordVisible, setPassWordVisible] = useState(false);
   const [email, setEmail] = useState("0123456789");
@@ -51,6 +51,12 @@ export default function Login({ navigation }) {
   //       // Xử lý lỗi đăng nhập
   //     });
   // };
+  axios({
+    method: "get",
+    url: `http://localhost:4940/shipper/all`,
+  }).then((response) => {
+    console.log(response.data);
+  });
 
   return (
     <View style={styles.AndroidSafeArea}>

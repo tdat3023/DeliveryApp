@@ -14,6 +14,16 @@ import { useDispatch, useSelector } from "react-redux";
 
 function OrderDetail({ navigation, route }) {
   const data = route.params.data;
+  // console.log(data.status);
+  // const status = data.status;
+  // let label = "";
+  // if (status === "chuanhan") {
+  //   label = "Nhận hàng";
+  // } else if (status === "danhan") {
+  //   label = "Bắt đầu";
+  // } else if (status === "tamgiu") {
+  //   label = "Giao lại";
+  // }
 
   return (
     <View style={styles.AndroidSafeArea}>
@@ -70,7 +80,6 @@ function OrderDetail({ navigation, route }) {
               navigation.navigate("Tracking", {
                 data: data,
               });
-              // console.log(data.id);
             }}
           >
             <Text style={styles.buttonText}>Bắt đầu</Text>
