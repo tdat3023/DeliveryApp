@@ -1,7 +1,6 @@
-//validate email
-export const isValidEmail = (stringEmail) => {
-    return (/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(stringEmail))
-}
-    
+export const isValidUsername = (stringPhone) => {
+  return /^(0[0-9]{9})$/.test(stringPhone);
+};
+
 //validate password
-export const isValidPassword = (stringPassword) => stringPassword.length >= 3
+export const isValidPassword = (stringPassword) => stringPassword.length >= 3;

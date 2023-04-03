@@ -10,53 +10,44 @@ import {
 import { useState, useEffect, useRef } from "react";
 import React from "react";
 import { Entypo, Ionicons, Feather } from "@expo/vector-icons";
-import { isValidEmail, isValidPassword } from "../utilies/Validations";
-// import { auth, db } from "../../firebase/firebase";
-// import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
-// import { firebaseConfig } from "../../firebase/firebase";
-// import { initializeApp } from "firebase/app";
+import { isValidUsername, isValidPassword } from "../utilies/Validations";
 
-// Khởi tạo Firebase
-// const firebaseApp = initializeApp(firebaseConfig);
 import axios from "axios";
 export default function Login({ navigation }) {
   const [getPassWordVisible, setPassWordVisible] = useState(false);
-  const [email, setEmail] = useState("0123456789");
+  const [username, setUsername] = useState("0123456789");
   const [password, setPassword] = useState("123456789");
-  const [errorEmail, setErrorEmail] = useState("");
+  const [errorUsername, setErrorUsername] = useState("");
   const [errorPassword, setErrorPassword] = useState("");
   const isValidationOK = () => {
-    email.length > 0 &&
+    username.length > 0 &&
       password.length > 0 &&
-      isValidEmail(email) == true &&
+      isValidUsername(username) == true &&
       isValidPassword(password) == true;
-    // console.log(firebaseDatabase);
   };
+  axios
+    .get("http://192.168.88.111:4940/shipper/all")
+    .then((response) => {
+      console.log(response.data);
+    })
+    .catch((error) => {
+      console.log(error);
+    });
 
-  // Khởi tạo đối tượng auth của Firebase
-  // const auth = getAuth();
-  // // Hàm kiểm tra xác thực đăng nhập
-  // const handleSignIn = () => {
-  //   signInWithEmailAndPassword(auth, email, password)
-  //     .then((userCredential) => {
-  //       // Đăng nhập thành công
-  //       const user = userCredential.user;
-  //       console.log(user);
-  //       navigation.navigate("HomeTabs");
-  //     })
-  //     .catch((error) => {
-  //       const errorCode = error.code;
-  //       const errorMessage = error.message;
-  //       console.log(errorCode, errorMessage);
-  //       // Xử lý lỗi đăng nhập
-  //     });
-  // };
-  axios({
-    method: "get",
-    url: `http://localhost:4940/shipper/all`,
-  }).then((response) => {
-    console.log(response.data);
-  });
+  const handleLogin = async () => {
+    try {
+      const response = await axios.post(
+        "http://192.168.88.111:4940/shipper/login",
+        { username, password }
+      );
+      const token = response.data.token;
+      // Lưu token vào storage hoặc redux store để sử dụng ở những trang khác
+      // Nếu đăng nhập thành công thì chuyển hướng sang trang home
+      navigation.replace("HomeTabs");
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   return (
     <View style={styles.AndroidSafeArea}>
@@ -78,12 +69,12 @@ export default function Login({ navigation }) {
               <TextInput
                 style={{ paddingLeft: 10 }}
                 onChangeText={(text) => {
-                  setErrorEmail(
-                    isValidEmail(text) == true
-                      ? "ok"
-                      : "Số điện thoại không chính xác "
-                  );
-                  setEmail(text);
+                  // setErrorUsername(
+                  //   isValidUsername(text) == true
+                  //     ? "ok"
+                  //     : "Số điện thoại không chính xác "
+                  // );
+                  setUsername(text);
                 }}
                 placeholder="Số điện thoại"
               ></TextInput>
@@ -137,10 +128,10 @@ export default function Login({ navigation }) {
                 style={styles.btn}
                 disabled={isValidationOK() == false}
                 onPress={() => {
-                  // console.log("email:" + email);
-                  // console.log("errorEmail:" + errorEmail);
-                  // console.log("password:" + password);
-                  navigation.replace("HomeTabs");
+                  console.log("username:" + username);
+
+                  console.log("password:" + password);
+                  handleLogin(username, password);
                   // handleSignIn;
                 }}
               >
@@ -168,9 +159,7 @@ export default function Login({ navigation }) {
                 navigation.navigate("Recover");
               }}
             >
-              <Text style={{ color: "#FFD658", fontSize: 20 }}>
-                Quên mật khẩu
-              </Text>
+              <Text>Quên mật khẩu</Text>
             </TouchableOpacity>
           </View>
         </View>
@@ -199,7 +188,6 @@ const styles = StyleSheet.create({
   },
   downView: {
     flex: 2,
-
     alignItems: "center",
   },
 
