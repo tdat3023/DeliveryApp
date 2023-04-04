@@ -1,10 +1,10 @@
 import { combineReducers } from "redux";
-import info from "./infoRed";
+import infoShipper from "./infoShipper";
 import updateS from "./oneOrder";
 import orders from "./orderData";
 import currentLocation from "./CurentLocation";
 const reducers = combineReducers({
-  // shipperInfor: info,
+  shipperInfor: infoShipper,
   updateStatus: updateS,
   orderInfor: orders,
   locationCurrent: currentLocation,

@@ -11,11 +11,16 @@ import { useState, useEffect, useRef } from "react";
 import React from "react";
 import { Entypo, Ionicons, Feather } from "@expo/vector-icons";
 import { isValidUsername, isValidPassword } from "../utilies/Validations";
-
 import axios from "axios";
+
+import { useDispatch, useSelector } from "react-redux";
+import * as Permissions from "expo-permissions";
+import * as Location from "expo-location";
+import { setLocation } from "../redux/reducers/CurentLocation";
 export default function Login({ navigation }) {
+  const dispatch = useDispatch();
   const [getPassWordVisible, setPassWordVisible] = useState(false);
-  const [username, setUsername] = useState("0123456789");
+  const [username, setUsername] = useState("");
   const [password, setPassword] = useState("123456789");
   const [errorUsername, setErrorUsername] = useState("");
   const [errorPassword, setErrorPassword] = useState("");
@@ -25,29 +30,51 @@ export default function Login({ navigation }) {
       isValidUsername(username) == true &&
       isValidPassword(password) == true;
   };
-  axios
-    .get("http://192.168.88.111:4940/shipper/all")
-    .then((response) => {
-      console.log(response.data);
-    })
-    .catch((error) => {
-      console.log(error);
-    });
 
-  const handleLogin = async () => {
+  const handleLogin = async (phoneNumber, password) => {
+    console.log(phoneNumber, password);
     try {
       const response = await axios.post(
         "http://192.168.88.111:4940/shipper/login",
-        { username, password }
+        { phoneNumber, password }
       );
-      const token = response.data.token;
+      const shipper = response.data.shipper;
+      console.log(shipper);
+
       // Lưu token vào storage hoặc redux store để sử dụng ở những trang khác
       // Nếu đăng nhập thành công thì chuyển hướng sang trang home
       navigation.replace("HomeTabs");
     } catch (error) {
-      console.log(error);
+      alert("Tài khoản hoặc mật khẩu không chính xác vui lòng thử lại");
     }
   };
+
+  // set curentLoaction
+  useEffect(() => {
+    let locationSubscription;
+    (async () => {
+      let { status } = await Location.requestForegroundPermissionsAsync();
+      if (status !== "granted") {
+        console.log("Permission to access location was denied");
+        return;
+      }
+      locationSubscription = await Location.watchPositionAsync(
+        {
+          timeInterval: 5 * 60 * 1000,
+          distanceInterval: 500,
+        },
+        (location) => {
+          dispatch(setLocation(location));
+        }
+      );
+    })();
+    return () => {
+      if (locationSubscription) {
+        locationSubscription.remove();
+      }
+    };
+  }, []);
+  const location = useSelector((state) => state.locationCurrent.location);
 
   return (
     <View style={styles.AndroidSafeArea}>
@@ -69,11 +96,11 @@ export default function Login({ navigation }) {
               <TextInput
                 style={{ paddingLeft: 10 }}
                 onChangeText={(text) => {
-                  // setErrorUsername(
-                  //   isValidUsername(text) == true
-                  //     ? "ok"
-                  //     : "Số điện thoại không chính xác "
-                  // );
+                  setErrorUsername(
+                    isValidUsername(text) == true
+                      ? "ok"
+                      : "Số điện thoại không chính xác "
+                  );
                   setUsername(text);
                 }}
                 placeholder="Số điện thoại"
@@ -128,11 +155,7 @@ export default function Login({ navigation }) {
                 style={styles.btn}
                 disabled={isValidationOK() == false}
                 onPress={() => {
-                  console.log("username:" + username);
-
-                  console.log("password:" + password);
                   handleLogin(username, password);
-                  // handleSignIn;
                 }}
               >
                 <Text>Đăng nhập</Text>

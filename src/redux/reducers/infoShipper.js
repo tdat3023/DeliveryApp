@@ -1,17 +1,16 @@
-// export const UPDATE_STATUS = "UPDATE_STATUS";
-export const SET_DATA = "SET_DATA";
+export const SET_SHIPPER = "SET_SHIPPER";
 const initialState = {
-  data: [],
+  shipper: null,
 };
 
 export const setData = (data) => ({
-  type: "SET_DATA",
+  type: "SET_SHIPPER",
   payload: data,
 });
 
-const dataReducer = (state = initialState, action) => {
+const infoReducer = (state = initialState, action) => {
   switch (action.type) {
-    case "SET_DATA":
+    case "SET_SHIPPER":
       return {
         ...state,
         data: action.payload,
@@ -20,4 +19,4 @@ const dataReducer = (state = initialState, action) => {
       return state;
   }
 };
-export default dataReducer;
+export default infoReducer;

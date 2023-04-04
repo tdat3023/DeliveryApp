@@ -14,7 +14,7 @@ import {
 } from "react-native";
 import React, { useState } from "react";
 import { FontAwesome, MaterialIcons, Ionicons } from "@expo/vector-icons";
-// import { useDispatch, useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 export default function About() {
   const [changePassword, setChangPassword] = useState(false);
   const [moreProfile, setMoreProfile] = useState(false);
@@ -26,23 +26,6 @@ export default function About() {
       phone: "0123456789",
     },
   ];
-
-  // const handleClik = () => {
-  //   Alert.alert("Xoa Tai khoan", `Bạn muốn xóa tai khoan?`, [
-  //     {
-  //       text: "Hủy",
-  //       onPress: () => console.log("navigation", navigation),
-  //       style: "cancel",
-  //     },
-  //     {
-  //       text: "Đồng ý",
-  //       onPress: () => {
-  //         console.log("xoa");
-  //       },
-  //       style: "cancel",
-  //     },
-  //   ]);
-  // };
 
   return (
     <View style={styles.AndroidSafeArea}>

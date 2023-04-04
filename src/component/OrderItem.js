@@ -5,38 +5,10 @@ import { setStatus } from "../redux/reducers/oneOrder";
 import * as Permissions from "expo-permissions";
 import * as Location from "expo-location";
 import { getDistance } from "geolib";
-import { setLocation } from "../redux/reducers/CurentLocation";
 
 function OrderItem({ navigation, item }) {
-  // lấy vị trí hiện tại
-  const dispatch = useDispatch();
-  useEffect(() => {
-    let locationSubscription;
-    (async () => {
-      let { status } = await Location.requestForegroundPermissionsAsync();
-      if (status !== "granted") {
-        console.log("Permission to access location was denied");
-        return;
-      }
-      locationSubscription = await Location.watchPositionAsync(
-        {
-          timeInterval: 5 * 60 * 1000,
-          distanceInterval: 500,
-        },
-        (location) => {
-          dispatch(setLocation(location));
-        }
-      );
-    })();
-    return () => {
-      if (locationSubscription) {
-        locationSubscription.remove();
-      }
-    };
-  }, []);
   const location = useSelector((state) => state.locationCurrent.location);
-  console.log(location);
-
+  // console.log("1" + location);
   // const lat1 = location?.coords?.latitude;
   // const lon1 = location?.coords?.longitude;
   // console.log("pick", lat1, lon1);
@@ -96,16 +68,9 @@ function OrderItem({ navigation, item }) {
       }}
     >
       <View style={styles.oneOrderView}>
-        <View style={styles.imageView}>
-          <Image
-            // source={require("../../assets/image.jpg")}
-            style={styles.image}
-          ></Image>
-        </View>
         <View style={styles.inforView}>
           <Text>Mã đơn hàng: {item.id}</Text>
           <Text>Tên đơn: {item.diachiNN}</Text>
-          <Text>Trạng thái: {item.status}</Text>
           <Text>
             Khoảng cách:
             {/* {calculateDistance()} */}
