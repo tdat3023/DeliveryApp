@@ -17,10 +17,11 @@ import { useDispatch, useSelector } from "react-redux";
 import * as Permissions from "expo-permissions";
 import * as Location from "expo-location";
 import { setLocation } from "../redux/reducers/CurentLocation";
+import { setShipper } from "../redux/reducers/inforShipper";
 export default function Login({ navigation }) {
   const dispatch = useDispatch();
   const [getPassWordVisible, setPassWordVisible] = useState(false);
-  const [username, setUsername] = useState("");
+  const [username, setUsername] = useState("0123456789");
   const [password, setPassword] = useState("123456789");
   const [errorUsername, setErrorUsername] = useState("");
   const [errorPassword, setErrorPassword] = useState("");
@@ -40,9 +41,7 @@ export default function Login({ navigation }) {
       );
       const shipper = response.data.shipper;
       console.log(shipper);
-
-      // Lưu token vào storage hoặc redux store để sử dụng ở những trang khác
-      // Nếu đăng nhập thành công thì chuyển hướng sang trang home
+      dispatch(setShipper(shipper));
       navigation.replace("HomeTabs");
     } catch (error) {
       alert("Tài khoản hoặc mật khẩu không chính xác vui lòng thử lại");

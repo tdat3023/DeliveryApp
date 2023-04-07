@@ -15,18 +15,21 @@ import {
 import React, { useState } from "react";
 import { FontAwesome, MaterialIcons, Ionicons } from "@expo/vector-icons";
 import { useDispatch, useSelector } from "react-redux";
-export default function About() {
+import { logoutShipper } from "./redux/reducers/inforShipper";
+
+export default function About({ navigation }) {
   const [changePassword, setChangPassword] = useState(false);
   const [moreProfile, setMoreProfile] = useState(false);
-  const hiddenInfo = [
-    {
-      name: "Nguyễn Tiến Đạt",
-      age: 25,
-      address: "Hà Nội",
-      phone: "0123456789",
-    },
-  ];
 
+  const shipper = useSelector((state) => state.shipperInfor.data);
+  console.log(shipper);
+  const dispatch = useDispatch();
+  const handleLogout = () => {
+    dispatch(logoutShipper());
+    // Chuyển hướng đến trang đăng nhập hoặc trang chính của ứng dụng
+    navigation.replace("Login");
+    console.log("Đăng xuất thành công");
+  };
   return (
     <View style={styles.AndroidSafeArea}>
       <View style={styles.container}>
@@ -52,12 +55,10 @@ export default function About() {
                       marginBottom: 5,
                     }}
                   >
-                    {/* {user?.firstName} {user?.lastName} */}
-                    Tiến Đạt
+                    {shipper.fullName}
                   </Text>
                   <Text style={{ fontSize: 17, color: "gray" }}>
-                    {/* {user?.phoneNumber} */}
-                    0123456789
+                    ...{shipper._id.slice(-15)}
                   </Text>
                 </View>
               </View>
@@ -101,20 +102,19 @@ export default function About() {
           </View>
           {moreProfile ? (
             <View style={styles.viewHidden}>
-              {hiddenInfo.map((info, index) => (
-                <View
-                  key={index}
-                  style={{
-                    width: "100%",
-                  }}
-                >
-                  <Text style={{ fontWeight: "bold" }}>Tên: {info.name}</Text>
-                  <Text>Tuổi: {info.age}</Text>
-                  <Text>Địa chỉ: {info.address}</Text>
-                  <Text>Số điện thoại: {info.phone}</Text>
-                  <Text>CMND: {info.phone}</Text>
-                </View>
-              ))}
+              <View
+                style={{
+                  width: "100%",
+                }}
+              >
+                <Text style={{ fontWeight: "bold" }}>
+                  Tên: {shipper.fullName}
+                </Text>
+                {/* <Text>Tuổi: {shipper.}</Text> */}
+                <Text>Địa chỉ: {shipper.address}</Text>
+                <Text>Số điện thoại: {shipper.phoneNumber}</Text>
+                {/* <Text>CMND: {info.phone}</Text> */}
+              </View>
             </View>
           ) : null}
         </View>
@@ -150,7 +150,7 @@ export default function About() {
               </View>
             </View>
           </TouchableOpacity>
-          <TouchableOpacity>
+          <TouchableOpacity onPress={handleLogout}>
             <View style={styles.viewItem}>
               <Ionicons name="log-out" size={23} color={"#694fad"} />
               <View style={styles.viewCustomItem}>

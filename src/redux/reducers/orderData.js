@@ -1,4 +1,3 @@
-// export const UPDATE_STATUS = "UPDATE_STATUS";
 export const SET_DATA = "SET_DATA";
 const initialState = {
   data: [],
