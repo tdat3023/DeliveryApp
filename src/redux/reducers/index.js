@@ -1,13 +1,13 @@
 import { combineReducers } from "redux";
-import info from "./infoRed";
+import inforShipper from "./inforShipper";
 import updateS from "./oneOrder";
 import orders from "./orderData";
 import currentLocation from "./CurentLocation";
 const reducers = combineReducers({
-  // shipperInfor: info,
   updateStatus: updateS,
   orderInfor: orders,
   locationCurrent: currentLocation,
+  shipperInfor: inforShipper,
 });
 
 export default (state, action) => reducers(state, action);
