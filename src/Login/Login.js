@@ -18,7 +18,10 @@ import { isValidEmail, isValidPassword } from "../utilies/Validations";
 
 // Khởi tạo Firebase
 // const firebaseApp = initializeApp(firebaseConfig);
-import axios from "axios";
+import Axios from "axios";
+const axios = Axios.create({
+  baseURL: "http://localhost:4940",
+});
 export default function Login({ navigation }) {
   const [getPassWordVisible, setPassWordVisible] = useState(false);
   const [email, setEmail] = useState("0123456789");
@@ -51,12 +54,25 @@ export default function Login({ navigation }) {
   //       // Xử lý lỗi đăng nhập
   //     });
   // };
-  axios({
-    method: "get",
-    url: `http://localhost:4940/shipper/all`,
-  }).then((response) => {
-    console.log(response.data);
-  });
+  // axios.get("http://localhost:4940/shipper/all").then((response) => {
+  //   console.log(response.data);
+  // });
+
+  const handleLogin = async () => {
+    try {
+      const { data } = await axios.get("/shipper/all");
+      console.log(data);
+    } catch (err) {
+      console.log(err.message);
+    }
+  };
+
+  const handleTestLi = () => {
+    fetch("http://192.168.1.169:4940/shipper/all")
+      .then((res) => res.json())
+      .then((res) => console.log(res))
+      .catch((err) => console.log(err));
+  };
 
   return (
     <View style={styles.AndroidSafeArea}>
@@ -168,7 +184,10 @@ export default function Login({ navigation }) {
                 navigation.navigate("Recover");
               }}
             >
-              <Text style={{ color: "#FFD658", fontSize: 20 }}>
+              <Text
+                onPress={() => handleTestLi()}
+                style={{ color: "#FFD658", fontSize: 20 }}
+              >
                 Quên mật khẩu
               </Text>
             </TouchableOpacity>
