@@ -8,20 +8,21 @@ import { getDistance } from "geolib";
 
 function OrderItem({ navigation, item }) {
   const location = useSelector((state) => state.locationCurrent.location);
-  // console.log("1" + location);
-  // const lat1 = location?.coords?.latitude;
-  // const lon1 = location?.coords?.longitude;
+  console.log(location);
+
+  const lat1 = location?.coords?.latitude;
+  const lon1 = location?.coords?.longitude;
   // console.log("pick", lat1, lon1);
-  // const lat2 = parseFloat(item.toado.latitude);
-  // const lon2 = parseFloat(item.toado.longitude);
+  const lat2 = parseFloat(item.toado.latitude);
+  const lon2 = parseFloat(item.toado.longitude);
   // console.log("drop", lat2, lon2);
-  // const calculateDistance = () => {
-  //   const dis = getDistance(
-  //     { latitude: lat1, longitude: lon1 },
-  //     { latitude: lat2, longitude: lon2 }
-  //   );
-  //   return `${dis / 1000} km`;
-  // };
+  const calculateDistance = () => {
+    const dis = getDistance(
+      { latitude: lat1, longitude: lon1 },
+      { latitude: lat2, longitude: lon2 }
+    );
+    return `${dis / 1000} km`;
+  };
   // console.log(calculateDistance());
 
   // API change status
@@ -71,10 +72,7 @@ function OrderItem({ navigation, item }) {
         <View style={styles.inforView}>
           <Text>Mã đơn hàng: {item.id}</Text>
           <Text>Tên đơn: {item.diachiNN}</Text>
-          <Text>
-            Khoảng cách:
-            {/* {calculateDistance()} */}
-          </Text>
+          <Text>Khoảng cách: {calculateDistance()}</Text>
         </View>
         {checkStatus(item.status)}
       </View>

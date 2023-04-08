@@ -21,8 +21,8 @@ export default function About({ navigation }) {
   const [changePassword, setChangPassword] = useState(false);
   const [moreProfile, setMoreProfile] = useState(false);
 
-  const shipper = useSelector((state) => state.shipperInfor.data);
-  console.log(shipper);
+  const shipper = useSelector((state) => state.shipperInfor.shipper);
+  // console.log(shipper);
   const dispatch = useDispatch();
   const handleLogout = () => {
     dispatch(logoutShipper());

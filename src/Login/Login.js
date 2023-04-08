@@ -40,7 +40,7 @@ export default function Login({ navigation }) {
         { phoneNumber, password }
       );
       const shipper = response.data.shipper;
-      console.log(shipper);
+      // console.log(shipper);
       dispatch(setShipper(shipper));
       navigation.replace("HomeTabs");
     } catch (error) {
@@ -48,25 +48,27 @@ export default function Login({ navigation }) {
     }
   };
 
+  async function getLocation() {
+    let { status } = await Location.requestForegroundPermissionsAsync();
+    if (status !== "granted") {
+      console.log("Permission to access location was denied");
+      return;
+    }
+    await Location.watchPositionAsync(
+      {
+        timeInterval: 5 * 60 * 1000,
+        distanceInterval: 500,
+      },
+      (location) => {
+        console.log(location);
+        dispatch(setLocation(location));
+      }
+    );
+  }
   // set curentLoaction
   useEffect(() => {
     let locationSubscription;
-    (async () => {
-      let { status } = await Location.requestForegroundPermissionsAsync();
-      if (status !== "granted") {
-        console.log("Permission to access location was denied");
-        return;
-      }
-      locationSubscription = await Location.watchPositionAsync(
-        {
-          timeInterval: 5 * 60 * 1000,
-          distanceInterval: 500,
-        },
-        (location) => {
-          dispatch(setLocation(location));
-        }
-      );
-    })();
+    getLocation();
     return () => {
       if (locationSubscription) {
         locationSubscription.remove();
@@ -74,7 +76,7 @@ export default function Login({ navigation }) {
     };
   }, []);
   const location = useSelector((state) => state.locationCurrent.location);
-
+  // console.log(location);
   return (
     <View style={styles.AndroidSafeArea}>
       <View style={styles.container}>
