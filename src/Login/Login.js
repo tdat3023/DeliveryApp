@@ -18,6 +18,10 @@ import * as Permissions from "expo-permissions";
 import * as Location from "expo-location";
 import { setLocation } from "../redux/reducers/CurentLocation";
 import { setShipper } from "../redux/reducers/inforShipper";
+
+import { socket } from "../socket";
+import { AsyncStorage } from "react-native";
+
 export default function Login({ navigation }) {
   const dispatch = useDispatch();
   const [getPassWordVisible, setPassWordVisible] = useState(false);
@@ -25,6 +29,7 @@ export default function Login({ navigation }) {
   const [password, setPassword] = useState("123456789");
   const [errorUsername, setErrorUsername] = useState("");
   const [errorPassword, setErrorPassword] = useState("");
+  const [coors, setCoors] = useState(null);
   const isValidationOK = () => {
     username.length > 0 &&
       password.length > 0 &&
@@ -33,46 +38,67 @@ export default function Login({ navigation }) {
   };
 
   const handleLogin = async (phoneNumber, password) => {
-    console.log(phoneNumber, password);
+    // console.log(phoneNumber, password);
     try {
-      const response = await axios.post(
-        "http://192.168.88.111:4940/shipper/login",
+      const { data: response } = await axios.post(
+        `http://${process.env.SERVER_HOST}:${process.env.PORT}/shipper/login`,
         { phoneNumber, password }
       );
-      const shipper = response.data.shipper;
-      console.log(shipper);
+
+      const shipper = response.shipper;
       dispatch(setShipper(shipper));
       navigation.replace("HomeTabs");
     } catch (error) {
-      alert("Tài khoản hoặc mật khẩu không chính xác vui lòng thử lại");
+      // alert("Tài khoản hoặc mật khẩu không chính xác vui lòng thử lại");
+      alert(error.message);
     }
   };
 
+  const handleConnect = () => {
+    console.log("A new connect has just been established!");
+  };
+
+  const shipperId = useSelector((state) => state.shipperInfor.shipper);
+
   // set curentLoaction
+  let locationSubscription;
   useEffect(() => {
-    let locationSubscription;
     (async () => {
       let { status } = await Location.requestForegroundPermissionsAsync();
       if (status !== "granted") {
         console.log("Permission to access location was denied");
         return;
       }
+
+      // socket.on("connect", handleConnect);
       locationSubscription = await Location.watchPositionAsync(
         {
-          timeInterval: 5 * 60 * 1000,
-          distanceInterval: 500,
+          accuracy: Location.Accuracy.High,
+          timeInterval: 100,
+          distanceInterval: 10,
         },
         (location) => {
-          dispatch(setLocation(location));
+          const { latitude, longitude } = location.coords;
+
+          // if (shipperId) {
+          //   socket.emit("track_location", {
+          //     _id: shipperId,
+          //     latitude,
+          //     longitude,
+          //   });
+          // }
+          // console.log({ _id: shipperId, latitude, longitude });
+
+          dispatch(setLocation({ latitude, longitude }));
         }
       );
     })();
     return () => {
-      if (locationSubscription) {
-        locationSubscription.remove();
-      }
+      // socket.off("connect", handleConnect);
+      // locationSubscription?.remove();
     };
   }, []);
+
   const location = useSelector((state) => state.locationCurrent.location);
 
   return (

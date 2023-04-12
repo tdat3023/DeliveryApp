@@ -5,8 +5,22 @@ import LineChartView from "./LineChart";
 import { Picker } from "@react-native-picker/picker";
 // import MyDatePicker from "./Calendar";
 
+import { useSelector } from "react-redux";
+import { useEffect } from "react";
+import { socket } from "../socket";
+
 export default function HomeScreen() {
+  const location = useSelector((state) => state.locationCurrent.location);
+
+  const shipper = useSelector((state) => state.shipperInfor.shipper);
+  useEffect(() => {
+    console.log(location);
+    console.log(shipper._id);
+    socket.emit("track_location", location);
+  }, []);
+  useEffect(() => {}, []);
   const [selectedValue, setSelectedValue] = useState("Don");
+
   return (
     <View style={styles.AndroidSafeArea}>
       <View style={styles.container}>
