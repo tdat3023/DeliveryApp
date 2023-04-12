@@ -137,11 +137,11 @@ const styles = StyleSheet.create({
   AndroidSafeArea: {
     flex: 1,
     paddingTop: Platform.OS === "android" ? StatusBar.currentHeight : 0,
-    backgroundColor: "brown",
+    backgroundColor: "#fbf4ef",
   },
   container: {
     flex: 1,
-    backgroundColor: "#F8F8F9",
+    backgroundColor: "#fbf4ef",
     alignItems: "center",
   },
 

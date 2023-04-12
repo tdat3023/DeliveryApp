@@ -8,6 +8,7 @@ import { getDistance } from "geolib";
 
 function OrderItem({ navigation, item }) {
   const location = useSelector((state) => state.locationCurrent.location);
+<<<<<<< HEAD
   console.log("1" + location);
   const lat1 = location?.coords?.latitude;
   const lon1 = location?.coords?.longitude;
@@ -15,6 +16,16 @@ function OrderItem({ navigation, item }) {
   const lat2 = parseFloat(item.toado.latitude);
   const lon2 = parseFloat(item.toado.longitude);
   console.log("drop", lat2, lon2);
+=======
+  // console.log(location);
+
+  const lat1 = location?.coords?.latitude;
+  const lon1 = location?.coords?.longitude;
+  // console.log("pick", lat1, lon1);
+  const lat2 = parseFloat(item.coords.lat);
+  const lon2 = parseFloat(item.coords.lng);
+  // console.log("drop", lat2, lon2);
+>>>>>>> ba067fd2b12fc6136574763b39057800d2a879ce
   const calculateDistance = () => {
     const dis = getDistance(
       { latitude: lat1, longitude: lon1 },
@@ -56,7 +67,17 @@ function OrderItem({ navigation, item }) {
         </View>
       );
     } else {
-      return null;
+      return (
+        <View style={styles.button}>
+          <TouchableOpacity
+            onPress={() => {
+              console.log(item);
+            }}
+          >
+            <Text>Giao lại</Text>
+          </TouchableOpacity>
+        </View>
+      );
     }
   }
   return (
@@ -69,12 +90,18 @@ function OrderItem({ navigation, item }) {
     >
       <View style={styles.oneOrderView}>
         <View style={styles.inforView}>
+<<<<<<< HEAD
           <Text>Mã đơn hàng: {item.id}</Text>
           <Text>Tên đơn: {item.diachiNN}</Text>
           <Text>
             Khoảng cách:
             {calculateDistance()}
           </Text>
+=======
+          <Text>Mã đơn hàng: ...{item._id.slice(-10)}</Text>
+          <Text>Địa chỉ: {item.deliveryAddress.substring(0, 20)}...</Text>
+          <Text>Khoảng cách: {calculateDistance()}</Text>
+>>>>>>> ba067fd2b12fc6136574763b39057800d2a879ce
         </View>
         {checkStatus(item.status)}
       </View>
@@ -89,6 +116,15 @@ const styles = StyleSheet.create({
     margin: 5,
     borderWidth: 1,
     borderRadius: 10,
+    backgroundColor: "#ffffff",
+    shadowColor: "#000000",
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    // elevation: 1,
   },
 
   imageView: {

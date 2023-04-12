@@ -13,19 +13,6 @@ export const logoutShipper = () => ({
   type: LOGOUT_SHIPPER,
 });
 
-// const infoReducer = (state = initialState, action) => {
-//   switch (action.type) {
-//     case "SET_SHIPPER":
-//       return {
-//         ...state,
-//         data: action.payload,
-//       };
-//     default:
-//       return state;
-//   }
-// };
-// export default infoReducer;
-
 export default infoReducer = (state = initialState, action) => {
   switch (action.type) {
     case SET_SHIPPER:

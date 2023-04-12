@@ -12,61 +12,81 @@ import SearchBar from "../component/Sreach";
 import OrderItem from "../component/OrderItem";
 import axios from "axios";
 import { setData } from "../redux/reducers/orderData";
+import { setOrderOfShipper } from "../redux/reducers/orderOfShipper";
 import { useDispatch, useSelector } from "react-redux";
 
 export default function Order({ navigation }) {
+  const shipper = useSelector((state) => state.shipperInfor.shipper);
+  // console.log(shipper.storage);
   const dispatch = useDispatch();
-  const fetchData = () => {
-    return async (dispatch) => {
+
+  // Api gọi các order theo kho và status
+  useEffect(() => {
+    dispatch(async (dispatch) => {
       try {
         const response = await axios.get(
-          "https://640de7ebb07afc3b0db98769.mockapi.io/api/v1/order"
+          // `http://192.168.88.111:4940/order/getListOrderByStorage/${shipper.storage}?status=chuanhan`
+          "http://192.168.88.111:4940/order/getListOrderByStorage/quan 3?status=chuanhan"
         );
         dispatch(setData(response.data));
+        console.log(response.data);
       } catch (error) {
         console.log(error);
       }
-    };
-  };
-  useEffect(() => {
-    dispatch(fetchData());
+    });
   }, [dispatch]);
 
-  const changeStatus = useSelector((state) => state.updateStatus);
+  // // api gọi các order của shipper
+  // axios
+  //   .get(
+  //     `http://192.168.88.111:4940/holeOrder/getHeldOrdersByShipperId/${shipper._id}`
+  //   )
+  //   .then((response) => {
+  //     // console.log(response.data.orders);
+  //     dispatch(setOrderOfShipper(response.data.orders));
+  //   })
+  //   .catch((error) => {
+  //     console.error(error);
+  //   });
+
+  // // const changeStatus = useSelector((state) => state.updateStatus);
+  // // const orderOfShipper = useSelector((state) => state.orderOfShipper);
+  // // console.log(orderOfShipper);
   const orders = useSelector((state) => state.orderInfor.data);
-  // console.log(orders);
+
   const [term, setTerm] = useState("");
   const [selectedTab, setSelectedTab] = useState("chuanhan");
   const handleTermSubmit = (term) => {
     setTerm(term);
     alert(term);
   };
-  // chua nhan
-  function getCNOrders() {
-    return orders.filter((orders) => orders.status === "chuanhan");
-  }
-  const cnOrders = getCNOrders();
 
-  // đã nhận
-  function getDNOrders() {
-    return orders.filter((orders) => orders.status === "danhan");
-  }
-  const dnOrders = getDNOrders();
+  // // chua nhan
+  // function getCNOrders() {
+  //   return orders.filter((orders) => orders.status === "chuanhan");
+  // }
+  // const cnOrders = getCNOrders();
 
-  // tạm giữ
-  function getTGOrders() {
-    return orders.filter((orders) => orders.status === "tamgiu");
-  }
-  const tGOrders = getTGOrders();
+  // // đã nhận
+  // function getDNOrders() {
+  //   return orders.filter((orders) => orders.status === "danhan");
+  // }
+  // const dnOrders = getDNOrders();
 
-  let dataToRender;
-  if (selectedTab === "chuanhan") {
-    dataToRender = cnOrders;
-  } else if (selectedTab === "tamgiu") {
-    dataToRender = tGOrders;
-  } else {
-    dataToRender = dnOrders;
-  }
+  // // tạm giữ
+  // function getTGOrders() {
+  //   return orders.filter((orders) => orders.status === "tamgiu");
+  // }
+  // const tGOrders = getTGOrders();
+
+  // let dataToRender;
+  // if (selectedTab === "chuanhan") {
+  //   dataToRender = cnOrders;
+  // } else if (selectedTab === "tamgiu") {
+  //   dataToRender = tGOrders;
+  // } else {
+  //   dataToRender = dnOrders;
+  // }
 
   return (
     <View style={styles.AndroidSafeArea}>
@@ -125,11 +145,11 @@ export default function Order({ navigation }) {
 
         <FlatList
           style={styles.list}
-          data={dataToRender}
+          data={orders}
           renderItem={({ item }) => (
             <OrderItem item={item} navigation={navigation} />
           )}
-          keyExtractor={(item) => item.id}
+          keyExtractor={(item) => item._id}
         />
       </View>
     </View>
@@ -140,18 +160,18 @@ const styles = StyleSheet.create({
   AndroidSafeArea: {
     flex: 1,
     paddingTop: Platform.OS === "android" ? StatusBar.currentHeight : 0,
-    backgroundColor: "brown",
+    backgroundColor: "#fbf4ef",
   },
   container: {
     flex: 1,
-    backgroundColor: "#F8F8F9",
+    backgroundColor: "#fbf4ef",
     alignItems: "center",
   },
 
   textHeader: {
     fontSize: 25,
     color: "#743f7e",
-    // fontFamily: "Arial",
+
     fontWeight: "bold",
     marginHorizontal: "5%",
     marginVertical: "1%",
@@ -159,7 +179,6 @@ const styles = StyleSheet.create({
   text: {
     fontSize: 15,
     color: "#743f7e",
-    // fontFamily: "Arial",
     marginHorizontal: "5%",
   },
 
@@ -167,7 +186,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     marginHorizontal: 10,
     paddingVertical: 10,
-    backgroundColor: "#fff",
+    backgroundColor: "#fbf4ef",
     borderBottomColor: "#ddd",
   },
 

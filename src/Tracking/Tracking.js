@@ -6,7 +6,7 @@ import {
   TouchableOpacity,
   Alert,
 } from "react-native";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { Feather } from "@expo/vector-icons";
 import {
   MaterialCommunityIcons,
@@ -20,6 +20,7 @@ import { useDispatch, useSelector } from "react-redux";
 
 export default function Tracking({ navigation, route }) {
   const data = route.params?.data;
+  const mapViewRef = useRef();
 
   if (!data) {
     Alert.alert(
@@ -36,8 +37,8 @@ export default function Tracking({ navigation, route }) {
     );
     return;
   }
-  const lat = parseFloat(data.toado.latitude);
-  const lon = parseFloat(data.toado.longitude);
+  const lat = parseFloat(data.coords.lat);
+  const lon = parseFloat(data.coords.lng);
   // lấy vị trí hiện tại
   const location = useSelector((state) => state.locationCurrent.location);
   const lat2 = location.coords.latitude;
@@ -49,6 +50,17 @@ export default function Tracking({ navigation, route }) {
     latitudeDelta: Math.abs(lat - lat2) * 2,
     longitudeDelta: Math.abs(lon - lon2) * 2,
   };
+
+  // useEffect(() => {
+  //   const region = {
+  //     latitude: 37.78825,
+  //     longitude: -122.4324,
+  //     latitudeDelta: 0.0922,
+  //     longitudeDelta: 0.0421,
+  //   };
+  //   mapViewRef.current.animateToRegion(region);
+  // }, []);
+
   const [index, setIndex] = useState(1);
   function getStatus(index) {
     if (index === 1) {
@@ -61,7 +73,7 @@ export default function Tracking({ navigation, route }) {
       return "Tiếp tục với đơn hàng khác";
     }
   }
-  const [moreProfile, setMoreProfile] = useState(false);
+  const [moreProfile, setMoreProfile] = useState(true);
 
   // console.log(location);
   // // điểm bắt đầu
@@ -99,7 +111,7 @@ export default function Tracking({ navigation, route }) {
       <View style={styles.container}>
         <View style={styles.map}>
           {
-            <MapView style={styles.map} region={region}>
+            <MapView style={styles.map} region={region} ref={mapViewRef}>
               <Marker
                 coordinate={{
                   latitude: lat,
@@ -117,7 +129,7 @@ export default function Tracking({ navigation, route }) {
                 <Ionicons name="play" size={30} color="red" />
               </Marker>
 
-              <MapViewDirections
+              {/* <MapViewDirections
                 origin={{
                   latitude: location?.coords?.latitude,
                   longitude: location?.coords?.longitude,
@@ -130,7 +142,7 @@ export default function Tracking({ navigation, route }) {
                 strokeColor="red"
                 optimizeWaypoints={true}
                 apikey="AIzaSyCz05MCIlmnpbQgr32Am783YW4muKdaiKQ"
-              />
+              /> */}
             </MapView>
           }
         </View>
@@ -163,7 +175,7 @@ export default function Tracking({ navigation, route }) {
                       color="black"
                     />
                     <Text style={{ marginLeft: 10 }}>
-                      Mã đơn hàng:
+                      Mã đơn hàng: ... {data._id.slice(-15)}
                       {/* {data.id} */}
                     </Text>
                   </View>
@@ -395,6 +407,15 @@ const styles = StyleSheet.create({
   viewMore: {
     backgroundColor: "#fbf4ef",
     alignItems: "center",
+    shadowColor: "#000000",
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+
+    elevation: 5,
   },
 
   viewMore1: {
