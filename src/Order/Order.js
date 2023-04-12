@@ -25,8 +25,7 @@ export default function Order({ navigation }) {
     dispatch(async (dispatch) => {
       try {
         const response = await axios.get(
-          // `http://192.168.88.111:4940/order/getListOrderByStorage/${shipper.storage}?status=chuanhan`
-          "http://192.168.88.111:4940/order/getListOrderByStorage/quan 3?status=chuanhan"
+          `http://${process.env.SERVER_HOST}:${process.env.PORT}/order/getListOrderByStorage/quan 3?status=chuanhan`
         );
         dispatch(setData(response.data));
         console.log(response.data);

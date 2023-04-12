@@ -15,7 +15,7 @@ import axios from "axios";
 
 import { useDispatch, useSelector } from "react-redux";
 import * as Permissions from "expo-permissions";
-import * as Location from "expo-location";
+
 import { setLocation } from "../redux/reducers/CurentLocation";
 import { setShipper } from "../redux/reducers/inforShipper";
 
@@ -29,7 +29,7 @@ export default function Login({ navigation }) {
   const [password, setPassword] = useState("123456789");
   const [errorUsername, setErrorUsername] = useState("");
   const [errorPassword, setErrorPassword] = useState("");
-  const [coors, setCoors] = useState(null);
+
   const isValidationOK = () => {
     username.length > 0 &&
       password.length > 0 &&
@@ -38,7 +38,6 @@ export default function Login({ navigation }) {
   };
 
   const handleLogin = async (phoneNumber, password) => {
-    // console.log(phoneNumber, password);
     try {
       const { data: response } = await axios.post(
         `http://${process.env.SERVER_HOST}:${process.env.PORT}/shipper/login`,
@@ -49,7 +48,6 @@ export default function Login({ navigation }) {
       dispatch(setShipper(shipper));
       navigation.replace("HomeTabs");
     } catch (error) {
-      // alert("Tài khoản hoặc mật khẩu không chính xác vui lòng thử lại");
       alert(error.message);
     }
   };
@@ -59,48 +57,8 @@ export default function Login({ navigation }) {
   };
 
   const shipperId = useSelector((state) => state.shipperInfor.shipper);
-
-  // set curentLoaction
-  let locationSubscription;
-  useEffect(() => {
-    (async () => {
-      let { status } = await Location.requestForegroundPermissionsAsync();
-      if (status !== "granted") {
-        console.log("Permission to access location was denied");
-        return;
-      }
-
-      // socket.on("connect", handleConnect);
-      locationSubscription = await Location.watchPositionAsync(
-        {
-          accuracy: Location.Accuracy.High,
-          timeInterval: 100,
-          distanceInterval: 10,
-        },
-        (location) => {
-          const { latitude, longitude } = location.coords;
-
-          // if (shipperId) {
-          //   socket.emit("track_location", {
-          //     _id: shipperId,
-          //     latitude,
-          //     longitude,
-          //   });
-          // }
-          // console.log({ _id: shipperId, latitude, longitude });
-
-          dispatch(setLocation({ latitude, longitude }));
-        }
-      );
-    })();
-    return () => {
-      // socket.off("connect", handleConnect);
-      // locationSubscription?.remove();
-    };
-  }, []);
-
   const location = useSelector((state) => state.locationCurrent.location);
-  // console.log(location);
+
   return (
     <View style={styles.AndroidSafeArea}>
       <View style={styles.container}>

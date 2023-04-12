@@ -5,20 +5,46 @@ import LineChartView from "./LineChart";
 import { Picker } from "@react-native-picker/picker";
 // import MyDatePicker from "./Calendar";
 
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import { useEffect } from "react";
 import { socket } from "../socket";
+import * as Location from "expo-location";
+import { setLocation } from "../redux/reducers/CurentLocation";
 
 export default function HomeScreen() {
+  const dispatch = useDispatch();
   const location = useSelector((state) => state.locationCurrent.location);
+  const shipperID = useSelector((state) => state.shipperInfor.shipper._id);
 
-  const shipper = useSelector((state) => state.shipperInfor.shipper);
+  // set curentLoaction
   useEffect(() => {
-    console.log(location);
-    console.log(shipper._id);
-    socket.emit("track_location", location);
+    let locationSubscription;
+    (async () => {
+      let { status } = await Location.requestForegroundPermissionsAsync();
+      if (status !== "granted") {
+        console.log("Permission to access location was denied");
+        return;
+      }
+
+      locationSubscription = await Location.watchPositionAsync(
+        {
+          accuracy: Location.Accuracy.High,
+          timeInterval: 100,
+          distanceInterval: 10,
+        },
+        (location) => {
+          const { latitude, longitude } = location.coords;
+          socket.emit("track_location", { shipperID, latitude, longitude });
+          console.log({ shipperID, latitude, longitude });
+          dispatch(setLocation({ latitude, longitude }));
+        }
+      );
+    })();
+    return () => {
+      locationSubscription?.remove();
+    };
   }, []);
-  useEffect(() => {}, []);
+
   const [selectedValue, setSelectedValue] = useState("Don");
 
   return (
