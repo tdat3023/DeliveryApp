@@ -15,15 +15,15 @@ import { useDispatch, useSelector } from "react-redux";
 function OrderDetail({ navigation, route }) {
   const data = route.params.data;
   // console.log(data.status);
-  // const status = data.status;
-  // let label = "";
-  // if (status === "chuanhan") {
-  //   label = "Nhận hàng";
-  // } else if (status === "danhan") {
-  //   label = "Bắt đầu";
-  // } else if (status === "tamgiu") {
-  //   label = "Giao lại";
-  // }
+  const status = data.status;
+  let label = "";
+  if (status === "chuanhan") {
+    label = "Nhận hàng";
+  } else if (status === "danhan") {
+    label = "Bắt đầu";
+  } else if (status === "tamgiu") {
+    label = "Giao lại";
+  }
 
   return (
     <View style={styles.AndroidSafeArea}>
@@ -82,7 +82,7 @@ function OrderDetail({ navigation, route }) {
               });
             }}
           >
-            <Text style={styles.buttonText}>Bắt đầu</Text>
+            <Text style={styles.buttonText}>{label}</Text>
           </TouchableOpacity>
         </View>
       </View>
@@ -98,7 +98,6 @@ const styles = StyleSheet.create({
   },
   container: {
     flex: 1,
-
     backgroundColor: "#F8F8F9",
   },
 
@@ -163,7 +162,7 @@ const styles = StyleSheet.create({
   },
   button: {
     width: "80%",
-    backgroundColor: "#007AFF",
+    backgroundColor: "#743f7e",
     padding: 10,
     borderRadius: 5,
   },

@@ -33,7 +33,6 @@ export default function Login({ navigation }) {
   };
 
   const handleLogin = async (phoneNumber, password) => {
-    console.log(phoneNumber, password);
     try {
       const response = await axios.post(
         "http://192.168.88.111:4940/shipper/login",
@@ -60,7 +59,6 @@ export default function Login({ navigation }) {
         distanceInterval: 500,
       },
       (location) => {
-        console.log(location);
         dispatch(setLocation(location));
       }
     );
@@ -90,7 +88,14 @@ export default function Login({ navigation }) {
           {/* input login*/}
           <View style={styles.input}>
             {/* email */}
-            <Text style={{ fontSize: 30, marginBottom: 10, font: "urbanist" }}>
+            <Text
+              style={{
+                fontSize: 30,
+                marginBottom: 10,
+                font: "urbanist",
+                color: "#ff8800",
+              }}
+            >
               Đăng Nhập
             </Text>
             <View style={styles.viewInput}>
@@ -159,32 +164,18 @@ export default function Login({ navigation }) {
                   handleLogin(username, password);
                 }}
               >
-                <Text>Đăng nhập</Text>
+                <Text style={{ color: "white" }}>Đăng nhập</Text>
               </TouchableOpacity>
             </View>
-          </View>
-
-          {/* more */}
-          <View style={styles.downMore}>
-            <Text style={{ marginBottom: 10 }}>
-              Đăng nhập bằng tài khoản khác
-            </Text>
-            <View style={styles.downMoreHelp}>
-              <TouchableOpacity>
-                <Entypo name="google--with-circle" size={30} color="black" />
-              </TouchableOpacity>
-
-              <TouchableOpacity>
-                <Entypo name="facebook-with-circle" size={30} color="black" />
+            <View style={{ alignItems: "flex-end", marginRight: 5 }}>
+              <TouchableOpacity
+                onPress={() => {
+                  navigation.navigate("Recover");
+                }}
+              >
+                <Text>Quên mật khẩu</Text>
               </TouchableOpacity>
             </View>
-            <TouchableOpacity
-              onPress={() => {
-                navigation.navigate("Recover");
-              }}
-            >
-              <Text>Quên mật khẩu</Text>
-            </TouchableOpacity>
           </View>
         </View>
       </View>
@@ -195,6 +186,7 @@ const styles = StyleSheet.create({
   AndroidSafeArea: {
     flex: 1,
     paddingTop: Platform.OS === "android" ? StatusBar.currentHeight : 0,
+    backgroundColor: "#fbf4ef",
   },
   container: {
     flex: 1,
@@ -240,25 +232,12 @@ const styles = StyleSheet.create({
   btn: {
     height: 50,
     marginBottom: 10,
-    backgroundColor: "#FFD658",
+    backgroundColor: "#743f7e",
     justifyContent: "center",
     borderRadius: 5,
     alignItems: "center",
   },
   recoverPassword: {
     flexDirection: "row",
-  },
-
-  downMore: {
-    flex: 1,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-
-  downMoreHelp: {
-    flexDirection: "row",
-    width: 70,
-    justifyContent: "space-around",
-    marginBottom: 10,
   },
 });

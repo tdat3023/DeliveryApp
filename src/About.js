@@ -22,11 +22,11 @@ export default function About({ navigation }) {
   const [moreProfile, setMoreProfile] = useState(false);
 
   const shipper = useSelector((state) => state.shipperInfor.shipper);
-  // console.log(shipper);
+
   const dispatch = useDispatch();
   const handleLogout = () => {
     dispatch(logoutShipper());
-    // Chuyển hướng đến trang đăng nhập hoặc trang chính của ứng dụng
+    // Chuyển hướng đến trang đăng nhập
     navigation.replace("Login");
     console.log("Đăng xuất thành công");
   };
@@ -34,36 +34,30 @@ export default function About({ navigation }) {
     <View style={styles.AndroidSafeArea}>
       <View style={styles.container}>
         <View style={styles.viewCustomization}>
-          <TouchableOpacity
-          // onPress={() => {
-          //   navigation.navigate("updateProfile");
-          // }}
-          >
-            <View style={styles.viewItem}>
-              <Image
-                style={{ width: 70, height: 70, borderRadius: 40 }}
-                source={{
-                  uri: "https://cloudflare-ipfs.com/ipfs/Qmd3W5DuhgHirLHGVixi6V76LhCkZUz6pnFt5AJBiyvHye/avatar/908.jpg",
-                }}
-              />
-              <View style={styles.viewCustomItem}>
-                <View style={{ flexDirection: "column", padding: 10 }}>
-                  <Text
-                    style={{
-                      fontSize: 17,
-                      fontWeight: "bold",
-                      marginBottom: 5,
-                    }}
-                  >
-                    {shipper.fullName}
-                  </Text>
-                  <Text style={{ fontSize: 17, color: "gray" }}>
-                    ...{shipper._id.slice(-15)}
-                  </Text>
-                </View>
+          <View style={styles.viewItem}>
+            <Image
+              style={{ width: 70, height: 70, borderRadius: 40 }}
+              source={{
+                uri: "https://cloudflare-ipfs.com/ipfs/Qmd3W5DuhgHirLHGVixi6V76LhCkZUz6pnFt5AJBiyvHye/avatar/908.jpg",
+              }}
+            />
+            <View style={styles.viewCustomItem}>
+              <View style={{ flexDirection: "column", padding: 10 }}>
+                <Text
+                  style={{
+                    fontSize: 17,
+                    fontWeight: "bold",
+                    marginBottom: 5,
+                  }}
+                >
+                  {shipper.fullName}
+                </Text>
+                <Text style={{ fontSize: 17, color: "gray" }}>
+                  ...{shipper._id.slice(-15)}
+                </Text>
               </View>
             </View>
-          </TouchableOpacity>
+          </View>
 
           <TouchableOpacity
           // onPress={() => navigation.navigate("changePass")}
@@ -110,10 +104,11 @@ export default function About({ navigation }) {
                 <Text style={{ fontWeight: "bold" }}>
                   Tên: {shipper.fullName}
                 </Text>
-                {/* <Text>Tuổi: {shipper.}</Text> */}
+                <Text>Tuổi: 20</Text>
                 <Text>Địa chỉ: {shipper.address}</Text>
                 <Text>Số điện thoại: {shipper.phoneNumber}</Text>
-                {/* <Text>CMND: {info.phone}</Text> */}
+                <Text>Biển số xe: {shipper.license}</Text>
+                <Text>Kho: {shipper.storage}</Text>
               </View>
             </View>
           ) : null}
@@ -169,7 +164,7 @@ const styles = StyleSheet.create({
   AndroidSafeArea: {
     flex: 1,
     paddingTop: Platform.OS === "android" ? StatusBar.currentHeight : 0,
-    backgroundColor: "brown",
+    backgroundColor: "#fbf4ef",
   },
   container: {
     flex: 1,
@@ -263,6 +258,7 @@ const styles = StyleSheet.create({
     backgroundColor: "white",
     borderRadius: 20,
     alignItems: "center",
+    marginTop: 10,
   },
   viewItem: {
     width: "90%",
