@@ -14,9 +14,10 @@ import { setLocation } from "../redux/reducers/CurentLocation";
 export default function HomeScreen() {
   const dispatch = useDispatch();
   const location = useSelector((state) => state.locationCurrent.location);
+
   const shipperID = useSelector((state) => state.shipperInfor.shipper._id);
 
-  // set curentLoaction
+  // lấy location
   useEffect(() => {
     let locationSubscription;
     (async () => {
@@ -32,10 +33,11 @@ export default function HomeScreen() {
           timeInterval: 100,
           distanceInterval: 10,
         },
+        // socket Tracking Location
         (location) => {
           const { latitude, longitude } = location.coords;
           socket.emit("track_location", { shipperID, latitude, longitude });
-          console.log({ shipperID, latitude, longitude });
+          // console.log({ shipperID, latitude, longitude });
           dispatch(setLocation({ latitude, longitude }));
         }
       );
@@ -43,7 +45,7 @@ export default function HomeScreen() {
     return () => {
       locationSubscription?.remove();
     };
-  }, []);
+  }, [location]);
 
   const [selectedValue, setSelectedValue] = useState("Don");
 

@@ -10,8 +10,8 @@ function OrderItem({ navigation, item }) {
   const location = useSelector((state) => state.locationCurrent.location);
   // console.log(location);
 
-  const lat1 = location?.coords?.latitude;
-  const lon1 = location?.coords?.longitude;
+  const lat1 = location?.latitude;
+  const lon1 = location?.longitude;
   // console.log("pick", lat1, lon1);
   const lat2 = parseFloat(item.coords.lat);
   const lon2 = parseFloat(item.coords.lng);

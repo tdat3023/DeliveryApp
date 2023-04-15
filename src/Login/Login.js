@@ -12,15 +12,9 @@ import React from "react";
 import { Entypo, Ionicons, Feather } from "@expo/vector-icons";
 import { isValidUsername, isValidPassword } from "../utilies/Validations";
 import axios from "axios";
+import { useDispatch } from "react-redux";
 
-import { useDispatch, useSelector } from "react-redux";
-import * as Permissions from "expo-permissions";
-
-import { setLocation } from "../redux/reducers/CurentLocation";
 import { setShipper } from "../redux/reducers/inforShipper";
-
-import { socket } from "../socket";
-import { AsyncStorage } from "react-native";
 
 export default function Login({ navigation }) {
   const dispatch = useDispatch();
@@ -40,7 +34,8 @@ export default function Login({ navigation }) {
   const handleLogin = async (phoneNumber, password) => {
     try {
       const { data: response } = await axios.post(
-        `http://${process.env.SERVER_HOST}:${process.env.PORT}/shipper/login`,
+        // `http://${process.env.SERVER_HOST}:${process.env.PORT}/shipper/login`,
+        "http://192.168.88.111:4940/shipper/login",
         { phoneNumber, password }
       );
 
@@ -55,9 +50,6 @@ export default function Login({ navigation }) {
   const handleConnect = () => {
     console.log("A new connect has just been established!");
   };
-
-  const shipperId = useSelector((state) => state.shipperInfor.shipper);
-  const location = useSelector((state) => state.locationCurrent.location);
 
   return (
     <View style={styles.AndroidSafeArea}>

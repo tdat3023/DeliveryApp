@@ -41,8 +41,8 @@ export default function Tracking({ navigation, route }) {
   const lon = parseFloat(data.coords.lng);
   // lấy vị trí hiện tại
   const location = useSelector((state) => state.locationCurrent.location);
-  const lat2 = location.coords.latitude;
-  const lon2 = location.coords.longitude;
+  const lat2 = location.latitude;
+  const lon2 = location.longitude;
 
   const region = {
     latitude: (lat + lat2) / 2,
@@ -122,8 +122,8 @@ export default function Tracking({ navigation, route }) {
 
               <Marker
                 coordinate={{
-                  latitude: location.coords.latitude,
-                  longitude: location.coords.longitude,
+                  latitude: location.latitude,
+                  longitude: location.longitude,
                 }}
               >
                 <Ionicons name="play" size={30} color="red" />
