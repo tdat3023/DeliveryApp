@@ -11,7 +11,6 @@ import React, { useState, useEffect } from "react";
 import SearchBar from "../component/Sreach";
 import OrderItem from "../component/OrderItem";
 import axios from "axios";
-
 import { useDispatch, useSelector } from "react-redux";
 
 export default function Order({ navigation }) {
@@ -20,42 +19,46 @@ export default function Order({ navigation }) {
   const [isLoading, setIsLoading] = useState(false);
   const [orders, setOrders] = useState([]);
   const [ordersOfShipper, setOrdersOfShipper] = useState([]);
-
   const dispatch = useDispatch();
+  const [reload, setReload] = useState(false);
+  setTimeout(() => {
+    setIsLoading(false);
+  }, 2000);
   // Api gọi các order theo kho và status
   useEffect(() => {
     const getOrders = async () => {
+      setIsLoading(true);
       try {
         const response = await axios.get(
           // `http://${process.env.SERVER_HOST}:${process.env.PORT}/order/getListOrderByStorage/quan 3?status=chuanhan`
-          "http://192.168.88.111:4940/order/getListOrderByStorage/quan 3?status=chuanhan"
+          `http://192.168.1.63:${process.env.PORT}/order/getListOrderByStorage/quan 3?status=chuanhan`
         );
         if (response.data) {
+          setIsLoading(false);
           setOrders(response.data);
         }
-        console.log("order of storage:", response.data);
+        // console.log("order of storage:", response.data);
       } catch (error) {
         console.log(error);
       }
     };
-
     getOrders();
     const getOrderOfShipper = async () => {
       try {
         const response = await axios.get(
-          `http://192.168.88.111:4940/holeOrder/getHeldOrdersByShipperId/${shipper._id}`
+          // `http://${process.env.SERVER_HOST}:${process.env.PORT}/holeOrder/getHeldOrdersByShipperId/${shipper._id}`
+          `http://192.168.1.63:${process.env.PORT}/holeOrder/getHeldOrdersByShipperId/${shipper._id}`
         );
         if (response.data) {
           setOrdersOfShipper(response.data.orders);
         }
-        console.log("order of shipper:", response.data.orders);
+        // console.log("order of shipper:", response.data.orders);
       } catch (error) {
         console.log(error);
       }
     };
-
     getOrderOfShipper();
-  }, []);
+  }, [reload]);
 
   // api gọi các order của shipper
 
@@ -147,18 +150,25 @@ export default function Order({ navigation }) {
         </View>
 
         {/* Danh sách */}
-        {location === null ? (
-          <ActivityIndicator size="large" color="#0000ff" />
-        ) : (
-          <FlatList
-            style={styles.list}
-            data={dataToRender}
-            renderItem={({ item }) => (
-              <OrderItem item={item} navigation={navigation} />
-            )}
-            keyExtractor={(item) => item._id}
-          />
-        )}
+
+        {isLoading ? (
+          <View style={styles.overlay}>
+            <ActivityIndicator size="large" color="#0000ff" />
+          </View>
+        ) : null}
+        <FlatList
+          style={styles.list}
+          data={dataToRender}
+          renderItem={({ item }) => (
+            <OrderItem
+              item={item}
+              navigation={navigation}
+              reload={reload}
+              setReload={setReload}
+            />
+          )}
+          keyExtractor={(item) => item._id}
+        />
       </View>
     </View>
   );
@@ -220,5 +230,12 @@ const styles = StyleSheet.create({
 
   list: {
     width: "100%",
+  },
+  overlay: {
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: "rgba(0,0,0,0.5)",
+    alignItems: "center",
+    justifyContent: "center",
+    zIndex: 1,
   },
 });

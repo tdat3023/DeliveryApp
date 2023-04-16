@@ -9,12 +9,9 @@ import {
 } from "react-native";
 import { AntDesign } from "@expo/vector-icons";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
-import { useRoute } from "@react-navigation/native";
-import { useDispatch, useSelector } from "react-redux";
 
 function OrderDetail({ navigation, route }) {
   const data = route.params.data;
-  // console.log(data.status);
   const status = data.status;
   let label = "";
   if (status === "chuanhan") {

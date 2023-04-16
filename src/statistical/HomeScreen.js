@@ -14,7 +14,6 @@ import { setLocation } from "../redux/reducers/CurentLocation";
 export default function HomeScreen() {
   const dispatch = useDispatch();
   const location = useSelector((state) => state.locationCurrent.location);
-
   const shipperID = useSelector((state) => state.shipperInfor.shipper._id);
 
   // lấy location
@@ -30,8 +29,8 @@ export default function HomeScreen() {
       locationSubscription = await Location.watchPositionAsync(
         {
           accuracy: Location.Accuracy.High,
-          timeInterval: 100,
-          distanceInterval: 10,
+          timeInterval: 1000 * 60 * 5,
+          distanceInterval: 100,
         },
         // socket Tracking Location
         (location) => {
@@ -86,7 +85,7 @@ const styles = StyleSheet.create({
   AndroidSafeArea: {
     flex: 1,
     paddingTop: Platform.OS === "android" ? StatusBar.currentHeight : 0,
-    backgroundColor: "brown",
+    backgroundColor: "#fbf4ef",
   },
   container: {
     flex: 1,
@@ -102,7 +101,6 @@ const styles = StyleSheet.create({
     marginVertical: "1%",
   },
   pickerView: {
-    // justifyContent: "flex-end",
     justifyContent: "center",
     alignItems: "center",
   },
@@ -114,8 +112,6 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: "#ccc",
     borderRadius: 4,
-
-    // alignSelf: "flex-end",
   },
   selectedItem: {
     color: "red",

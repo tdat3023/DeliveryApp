@@ -7,7 +7,6 @@ import {
   Alert,
 } from "react-native";
 import React, { useState, useEffect, useRef } from "react";
-import { Feather } from "@expo/vector-icons";
 import {
   MaterialCommunityIcons,
   MaterialIcons,
@@ -51,16 +50,6 @@ export default function Tracking({ navigation, route }) {
     longitudeDelta: Math.abs(lon - lon2) * 2,
   };
 
-  // useEffect(() => {
-  //   const region = {
-  //     latitude: 37.78825,
-  //     longitude: -122.4324,
-  //     latitudeDelta: 0.0922,
-  //     longitudeDelta: 0.0421,
-  //   };
-  //   mapViewRef.current.animateToRegion(region);
-  // }, []);
-
   const [index, setIndex] = useState(1);
   function getStatus(index) {
     if (index === 1) {
@@ -74,37 +63,6 @@ export default function Tracking({ navigation, route }) {
     }
   }
   const [moreProfile, setMoreProfile] = useState(true);
-
-  // console.log(location);
-  // // điểm bắt đầu
-  // const [pickupCords, setPickupCords] = useState({
-  //   latitude: 10.822024,
-  //   // location.latitude,
-  //   longitude: 106.687569,
-  //   //  location.longitude,
-  //   latitudeDelta: 0.01,
-  //   longitudeDelta: 0.01,
-  // });
-
-  // diểm giao hàng
-  // const [droplocationCords, setDropLocation] = useState({
-  //   latitude: 10.825225,
-  //   // location.latitude,
-  //   longitude: 106.687581,
-  //   //  location.longitude,
-  //   latitudeDelta: 0.01,
-  //   longitudeDelta: 0.01,
-  // });
-
-  // const batDau = () => {
-  //   const { latitudeDelta, longitudeDelta } = pickupCords;
-  //   setPickupCords({
-  //     latitude: location?.coords?.latitude,
-  //     longitude: location?.coords?.longitude,
-  //     latitudeDelta,
-  //     longitudeDelta,
-  //   });
-  // };
 
   return (
     <View style={styles.AndroidSafeArea}>
@@ -332,8 +290,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
 
-  div: {},
-
   item: {
     height: 50,
     width: 2,
@@ -359,13 +315,6 @@ const styles = StyleSheet.create({
     borderRadius: 10,
   },
 
-  chartContainer: {
-    marginTop: 20,
-    backgroundColor: "#fff",
-    padding: 20,
-    borderRadius: 16,
-    elevation: 5,
-  },
   textContainer: {
     marginTop: 20,
     alignItems: "center",

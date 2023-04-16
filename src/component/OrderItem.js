@@ -1,21 +1,16 @@
 import React, { useState, useEffect } from "react";
 import { View, Text, StyleSheet, Image, TouchableOpacity } from "react-native";
-import { useDispatch, useSelector } from "react-redux";
-import { setStatus } from "../redux/reducers/oneOrder";
-import * as Permissions from "expo-permissions";
-import * as Location from "expo-location";
+import { useSelector } from "react-redux";
 import { getDistance } from "geolib";
-
-function OrderItem({ navigation, item }) {
+import axios from "axios";
+function OrderItem({ navigation, item, reload, setReload }) {
+  const shipperID = useSelector((state) => state.shipperInfor.shipper._id);
   const location = useSelector((state) => state.locationCurrent.location);
   // console.log(location);
-
   const lat1 = location?.latitude;
   const lon1 = location?.longitude;
-  // console.log("pick", lat1, lon1);
   const lat2 = parseFloat(item.coords.lat);
   const lon2 = parseFloat(item.coords.lng);
-  // console.log("drop", lat2, lon2);
   const calculateDistance = () => {
     const dis = getDistance(
       { latitude: lat1, longitude: lon1 },
@@ -23,13 +18,19 @@ function OrderItem({ navigation, item }) {
     );
     return `${dis / 1000} km`;
   };
-  // console.log(calculateDistance());
-
-  // API change status
-  // const dispatch = useDispatch();
-  // const buttonUpdate = (newStatus) => {
-  //   dispatch(setStatus(newStatus));
-  // };
+  const handleReceive = async () => {
+    const response = await axios.patch(
+      `http://192.168.1.63:${process.env.PORT}/order/idChange/${item._id}`,
+      { status: "danhan" }
+    );
+    if (response.data) {
+      axios.put(
+        `http://${process.env.SERVER_HOST}:${process.env.PORT}/holeOrder/addHeldOrder/${shipperID}`,
+        { orderId: item._id }
+      );
+      setReload(!reload);
+    }
+  };
 
   function checkStatus(status) {
     if (status === "chuanhan") {
@@ -37,7 +38,7 @@ function OrderItem({ navigation, item }) {
         <View style={styles.button}>
           <TouchableOpacity
             onPress={() => {
-              console.log(item);
+              handleReceive();
             }}
           >
             <Text>Nhận</Text>

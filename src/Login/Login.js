@@ -6,6 +6,8 @@ import {
   Image,
   TextInput,
   TouchableOpacity,
+  Alert,
+  ActivityIndicator,
 } from "react-native";
 import { useState, useEffect, useRef } from "react";
 import React from "react";
@@ -23,7 +25,11 @@ export default function Login({ navigation }) {
   const [password, setPassword] = useState("123456789");
   const [errorUsername, setErrorUsername] = useState("");
   const [errorPassword, setErrorPassword] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
 
+  setTimeout(() => {
+    setIsLoading(false);
+  }, 3000);
   const isValidationOK = () => {
     username.length > 0 &&
       password.length > 0 &&
@@ -32,18 +38,22 @@ export default function Login({ navigation }) {
   };
 
   const handleLogin = async (phoneNumber, password) => {
+    setIsLoading(true);
     try {
       const { data: response } = await axios.post(
         // `http://${process.env.SERVER_HOST}:${process.env.PORT}/shipper/login`,
-        "http://192.168.88.111:4940/shipper/login",
+        `http://192.168.1.63:${process.env.PORT}/shipper/login`,
         { phoneNumber, password }
       );
-
       const shipper = response.shipper;
+      setIsLoading(false);
       dispatch(setShipper(shipper));
       navigation.replace("HomeTabs");
     } catch (error) {
-      alert(error.message);
+      // alert("Mật khẩu hoặc tài khoản không chính xác");
+      Alert.alert("Thông báo", "Mật khẩu hoặc tài khoản không chính xác", [
+        { text: "OK" },
+      ]);
     }
   };
 
@@ -54,6 +64,11 @@ export default function Login({ navigation }) {
   return (
     <View style={styles.AndroidSafeArea}>
       <View style={styles.container}>
+        {isLoading && (
+          <View style={styles.overlay}>
+            <ActivityIndicator size="large" color="#ffffff" />
+          </View>
+        )}
         {/* top */}
         <View style={styles.topView}>
           <Image resizeMode="center" style={styles.image}></Image>
@@ -215,5 +230,12 @@ const styles = StyleSheet.create({
   },
   recoverPassword: {
     flexDirection: "row",
+  },
+  overlay: {
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: "rgba(0,0,0,0.5)",
+    alignItems: "center",
+    justifyContent: "center",
+    zIndex: 1,
   },
 });
