@@ -6,47 +6,51 @@ import {
   TouchableOpacity,
   FlatList,
 } from "react-native";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import moment from "moment";
 import SearchBar from "../component/Sreach";
 import OrderHisItem from "./OrderHisItem";
 import OrderItem from "../component/OrderItem";
 export default function History({ navigation }) {
   const [selectedTab, setSelectedTab] = useState("All");
-
-  const orders = [
-    { id: 1, product: "item1", status: "delivered" },
-    { id: 2, product: "item2", status: "pending" },
-    { id: 3, product: "item3", status: "delivered" },
-    { id: 4, product: "item4", status: "cancelled" },
-    { id: 5, product: "item5", status: "delivered" },
-    { id: 6, product: "item1", status: "delivered" },
-    { id: 7, product: "item2", status: "pending" },
-    { id: 8, product: "item3", status: "delivered" },
-    { id: 9, product: "item4", status: "cancelled" },
-    { id: 10, product: "item5", status: "delivered" },
-    { id: 11, product: "item1", status: "delivered" },
-    { id: 12, product: "item2", status: "pending" },
-    { id: 13, product: "item3", status: "delivered" },
-    { id: 14, product: "item4", status: "cancelled" },
-    { id: 15, product: "item5", status: "delivered" },
-  ];
+  const [isLoading, setIsLoading] = useState(false);
+  const [orderHistoryOfShipper, setOrderHistoryOfShipper] = useState([]);
+  useEffect(() => {
+    const getOrderOfShipper = async () => {
+      try {
+        const response = await axios.get(
+          `http://${process.env.SERVER_HOST}:${process.env.PORT}/historyOrder/getHistoryOrderByShipperId/${shipper._id}`
+        );
+        if (response.data) {
+          setOrderHistoryOfShipper(response.data.orders);
+        }
+        // console.log("order of shipper:", response.data.orders);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    getOrderOfShipper();
+  }, []);
 
   // Filter function to get only delivered orders
   function getDeliveredOrders() {
-    return orders.filter((order) => order.status === "delivered");
+    return orderHistoryOfShipper.filter(
+      (orderHistoryOfShipper) => orderHistoryOfShipper.status === "thanhcong"
+    );
   }
   const deliveredOrders = getDeliveredOrders();
 
   // Filter function to get only cancelled orders
   function getCancelledOrders() {
-    return orders.filter((order) => order.status === "cancelled");
+    return orderHistoryOfShipper.filter(
+      (orderHistoryOfShipper) => orderHistoryOfShipper.status === "thatbai"
+    );
   }
   const cancelledOrders = getCancelledOrders();
 
   let dataToRender;
   if (selectedTab === "All") {
-    dataToRender = orders;
+    dataToRender = orderHistoryOfShipper;
   } else if (selectedTab === "Cancelled") {
     dataToRender = cancelledOrders;
   } else {
@@ -60,7 +64,7 @@ export default function History({ navigation }) {
   };
 
   // Tìm
-  const searchResult = orders.filter((item) => item.id === term);
+  const searchResult = orderHistoryOfShipper.filter((item) => item.id === term);
 
   // ngày
   const currentDate = moment().format("DD/MM/YYYY");
@@ -114,12 +118,17 @@ export default function History({ navigation }) {
         </View>
 
         {/* Tìm kiếm */}
-        <View style={{ width: "100%" }}>
+        <View style={{ width: "100%" , }}>
           <SearchBar onTermSubmit={handleTermSubmit} />
           {/* <Text>{term}</Text> */}
         </View>
 
         {/* Danh sách */}
+        {isLoading ? (
+          <View style={styles.overlay}>
+            <ActivityIndicator size="large" color="#0000ff" />
+          </View>
+        ) : null}
         <FlatList
           style={styles.list}
           data={dataToRender}

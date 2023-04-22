@@ -19,51 +19,63 @@ export default function Order({ navigation }) {
   const [isLoading, setIsLoading] = useState(false);
   const [orders, setOrders] = useState([]);
   const [ordersOfShipper, setOrdersOfShipper] = useState([]);
-  const dispatch = useDispatch();
   const [reload, setReload] = useState(false);
-  setTimeout(() => {
-    setIsLoading(false);
-  }, 2000);
-  // Api gọi các order theo kho và status
-  useEffect(() => {
-    const getOrders = async () => {
-      setIsLoading(true);
-      try {
-        const response = await axios.get(
-          // `http://${process.env.SERVER_HOST}:${process.env.PORT}/order/getListOrderByStorage/quan 3?status=chuanhan`
-          `http://192.168.1.63:${process.env.PORT}/order/getListOrderByStorage/quan 3?status=chuanhan`
-        );
-        if (response.data) {
-          setIsLoading(false);
-          setOrders(response.data);
-        }
-        // console.log("order of storage:", response.data);
-      } catch (error) {
-        console.log(error);
-      }
-    };
-    getOrders();
-    const getOrderOfShipper = async () => {
-      try {
-        const response = await axios.get(
-          // `http://${process.env.SERVER_HOST}:${process.env.PORT}/holeOrder/getHeldOrdersByShipperId/${shipper._id}`
-          `http://192.168.1.63:${process.env.PORT}/holeOrder/getHeldOrdersByShipperId/${shipper._id}`
-        );
-        if (response.data) {
-          setOrdersOfShipper(response.data.orders);
-        }
-        // console.log("order of shipper:", response.data.orders);
-      } catch (error) {
-        console.log(error);
-      }
-    };
-    getOrderOfShipper();
-  }, [reload]);
-
-  // api gọi các order của shipper
-
   const [term, setTerm] = useState("");
   const [selectedTab, setSelectedTab] = useState("chuanhan");
+
+  // api gọi các order của shipper
+  const getOrderOfShipper = async () => {
+    try {
+      const response = await axios.get(
+        `http://${process.env.SERVER_HOST}:${process.env.PORT}/holeOrder/getHeldOrdersByShipperId/${shipper._id}`
+        // `http://192.168.1.63:${process.env.PORT}/holeOrder/getHeldOrdersByShipperId/${shipper._id}`
+      );
+      if (response.data) {
+        setOrdersOfShipper(response.data.orders);
+      }
+      // console.log("order of shipper:", response.data.orders);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const getOrders = async () => {
+    setIsLoading(true);
+    try {
+      const response = await axios.get(
+        `http://${process.env.SERVER_HOST}:${process.env.PORT}/order/getListOrderByStorage/GoVap?status=chuanhan`
+        // `http://192.168.1.63:${process.env.PORT}/order/getListOrderByStorage/quan 3?status=chuanhan`
+      );
+      if (response.data) {
+        setTimeout(() => {
+          setIsLoading(false);
+        }, 100);
+
+        setOrders(response.data);
+      }
+      // console.log("order of storage:", response.data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  // Api gọi các order theo kho và status
+  useEffect(() => {
+    getOrders();
+    getOrderOfShipper();
+  }, [reload, selectedTab]);
+
+  useEffect(() => {
+    const unsubscribe = navigation.addListener("focus", () => {
+      // The screen is focused
+      // Call any action
+      getOrders();
+      getOrderOfShipper();
+    });
+
+    // Return the function to unsubscribe from the event so it gets removed on unmount
+    return unsubscribe;
+  }, [navigation]);
+
   const handleTermSubmit = (term) => {
     setTerm(term);
     alert(term);

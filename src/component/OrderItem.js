@@ -3,6 +3,7 @@ import { View, Text, StyleSheet, Image, TouchableOpacity } from "react-native";
 import { useSelector } from "react-redux";
 import { getDistance } from "geolib";
 import axios from "axios";
+import { setLocation } from "../redux/reducers/CurentLocation";
 function OrderItem({ navigation, item, reload, setReload }) {
   const shipperID = useSelector((state) => state.shipperInfor.shipper._id);
   const location = useSelector((state) => state.locationCurrent.location);
@@ -12,6 +13,20 @@ function OrderItem({ navigation, item, reload, setReload }) {
   const lat2 = parseFloat(item.coords.lat);
   const lon2 = parseFloat(item.coords.lng);
   const calculateDistance = () => {
+    // if (location == null) {
+    //   (async () => {
+    //     let { status } = await Location.requestForegroundPermissionsAsync();
+    //     if (status !== "granted") {
+    //       console.log("Permission to access location was denied");
+    //       return;
+    //     }
+    //     await Location.watchPositionAsync({
+    //       accuracy: Location.Accuracy.High,
+    //       timeInterval: 1000 * 60 * 5,
+    //       distanceInterval: 100,
+    //     });
+    //   })();
+    // }
     const dis = getDistance(
       { latitude: lat1, longitude: lon1 },
       { latitude: lat2, longitude: lon2 }
@@ -20,11 +35,11 @@ function OrderItem({ navigation, item, reload, setReload }) {
   };
   const handleReceive = async () => {
     const response = await axios.patch(
-      `http://192.168.1.63:${process.env.PORT}/order/idChange/${item._id}`,
+      `http://${process.env.SERVER_HOST}:${process.env.PORT}/order/idChange/${item._id}`,
       { status: "danhan" }
     );
     if (response.data) {
-      axios.put(
+      axios.post(
         `http://${process.env.SERVER_HOST}:${process.env.PORT}/holeOrder/addHeldOrder/${shipperID}`,
         { orderId: item._id }
       );

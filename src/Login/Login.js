@@ -41,8 +41,8 @@ export default function Login({ navigation }) {
     setIsLoading(true);
     try {
       const { data: response } = await axios.post(
-        // `http://${process.env.SERVER_HOST}:${process.env.PORT}/shipper/login`,
-        `http://192.168.1.63:${process.env.PORT}/shipper/login`,
+        `http://${process.env.SERVER_HOST}:${process.env.PORT}/shipper/login`,
+        // `http://192.168.1.63:${process.env.PORT}/shipper/login`,
         { phoneNumber, password }
       );
       const shipper = response.shipper;

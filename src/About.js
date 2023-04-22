@@ -7,8 +7,6 @@ import {
   Button,
   StatusBar,
   Image,
-  SafeAreaView,
-  ScrollView,
   TouchableOpacity,
   Alert,
 } from "react-native";
@@ -16,13 +14,12 @@ import React, { useState } from "react";
 import { FontAwesome, MaterialIcons, Ionicons } from "@expo/vector-icons";
 import { useDispatch, useSelector } from "react-redux";
 import { logoutShipper } from "./redux/reducers/inforShipper";
-
+import axios from "axios";
 export default function About({ navigation }) {
   const [changePassword, setChangPassword] = useState(false);
   const [moreProfile, setMoreProfile] = useState(false);
 
   const shipper = useSelector((state) => state.shipperInfor.shipper);
-
   const dispatch = useDispatch();
   const handleLogout = () => {
     dispatch(logoutShipper());
@@ -30,6 +27,19 @@ export default function About({ navigation }) {
     navigation.replace("Login");
     console.log("Đăng xuất thành công");
   };
+
+  const handleClik = async () => {
+    const response = await axios.patch(
+      `http://${process.env.SERVER_HOST}:${process.env.PORT}/holeOrder/updateAll`,
+      { shipperId: shipper._id, status: "chuanhan" }
+    );
+    if (response.data) {
+      Alert.alert("Thông báo", "Trả đơn hàng thành công", [{ text: "OK" }]);
+    } else {
+      Alert.alert("Thông báo", "Trả đơn hàng thất bại", [{ text: "OK" }]);
+    }
+  };
+
   return (
     <View style={styles.AndroidSafeArea}>
       <View style={styles.container}>
@@ -59,9 +69,7 @@ export default function About({ navigation }) {
             </View>
           </View>
 
-          <TouchableOpacity
-          // onPress={() => navigation.navigate("changePass")}
-          >
+          <TouchableOpacity onPress={() => console.log(shipper._id)}>
             <View style={styles.viewItem}>
               <Ionicons name="sync" size={23} color={"orange"} />
               <View style={styles.viewCustomItem}>
@@ -135,6 +143,14 @@ export default function About({ navigation }) {
         </View>
 
         <View style={styles.viewCustomization}>
+          <TouchableOpacity onPress={handleClik}>
+            <View style={styles.viewItem}>
+              <Ionicons name="remove-circle" size={23} color={"#8F4607"} />
+              <View style={styles.viewCustomItem}>
+                <Text style={{ fontSize: 15 }}>Trả đơn hàng</Text>
+              </View>
+            </View>
+          </TouchableOpacity>
           <TouchableOpacity
           // onPress={handleClik}
           >
