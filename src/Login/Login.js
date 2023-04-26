@@ -11,12 +11,11 @@ import {
 } from "react-native";
 import { useState, useEffect, useRef } from "react";
 import React from "react";
-import { Entypo, Ionicons, Feather } from "@expo/vector-icons";
+import { Ionicons } from "@expo/vector-icons";
 import { isValidUsername, isValidPassword } from "../utilies/Validations";
-import axios from "axios";
 import { useDispatch } from "react-redux";
-
 import { setShipper } from "../redux/reducers/inforShipper";
+import orderApi from "../api/orderApi";
 
 export default function Login({ navigation }) {
   const dispatch = useDispatch();
@@ -40,25 +39,24 @@ export default function Login({ navigation }) {
   const handleLogin = async (phoneNumber, password) => {
     setIsLoading(true);
     try {
-      const { data: response } = await axios.post(
-        `http://${process.env.SERVER_HOST}:${process.env.PORT}/shipper/login`,
-        // `http://192.168.1.63:${process.env.PORT}/shipper/login`,
-        { phoneNumber, password }
-      );
-      const shipper = response.shipper;
-      setIsLoading(false);
-      dispatch(setShipper(shipper));
-      navigation.replace("HomeTabs");
+      const res = await orderApi.login(phoneNumber, password);
+
+      const shipper = res.shipper;
+      if (!shipper) {
+        Alert.alert("Thông báo", "Mật khẩu hoặc tài khoản không chính xác", [
+          { text: "OK" },
+        ]);
+      } else {
+        setIsLoading(false);
+        dispatch(setShipper(shipper));
+        navigation.replace("HomeTabs");
+      }
     } catch (error) {
       // alert("Mật khẩu hoặc tài khoản không chính xác");
       Alert.alert("Thông báo", "Mật khẩu hoặc tài khoản không chính xác", [
         { text: "OK" },
       ]);
     }
-  };
-
-  const handleConnect = () => {
-    console.log("A new connect has just been established!");
   };
 
   return (
@@ -92,6 +90,7 @@ export default function Login({ navigation }) {
             <View style={styles.viewInput}>
               <TextInput
                 style={{ paddingLeft: 10 }}
+                value={username}
                 onChangeText={(text) => {
                   setErrorUsername(
                     isValidUsername(text) == true

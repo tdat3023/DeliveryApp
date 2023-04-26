@@ -1,49 +1,79 @@
 import React, { useState, useEffect } from "react";
-import { View, Text, StyleSheet, Image, TouchableOpacity } from "react-native";
-import { useSelector } from "react-redux";
+import {
+  View,
+  Text,
+  StyleSheet,
+  Image,
+  TouchableOpacity,
+  Alert,
+} from "react-native";
+import { useDispatch, useSelector } from "react-redux";
 import { getDistance } from "geolib";
 import axios from "axios";
 import { setLocation } from "../redux/reducers/CurentLocation";
+import orderApi from "../api/orderApi";
+import LoadingModal from "./LoadingModal";
 function OrderItem({ navigation, item, reload, setReload }) {
   const shipperID = useSelector((state) => state.shipperInfor.shipper._id);
+  const dispatch = useDispatch();
   const location = useSelector((state) => state.locationCurrent.location);
-  // console.log(location);
+  const [isLoading, setIsLoading] = useState(false);
   const lat1 = location?.latitude;
   const lon1 = location?.longitude;
   const lat2 = parseFloat(item.coords.lat);
   const lon2 = parseFloat(item.coords.lng);
   const calculateDistance = () => {
-    // if (location == null) {
-    //   (async () => {
-    //     let { status } = await Location.requestForegroundPermissionsAsync();
-    //     if (status !== "granted") {
-    //       console.log("Permission to access location was denied");
-    //       return;
-    //     }
-    //     await Location.watchPositionAsync({
-    //       accuracy: Location.Accuracy.High,
-    //       timeInterval: 1000 * 60 * 5,
-    //       distanceInterval: 100,
-    //     });
-    //   })();
-    // }
-    const dis = getDistance(
-      { latitude: lat1, longitude: lon1 },
-      { latitude: lat2, longitude: lon2 }
-    );
-    return `${dis / 1000} km`;
-  };
-  const handleReceive = async () => {
-    const response = await axios.patch(
-      `http://${process.env.SERVER_HOST}:${process.env.PORT}/order/idChange/${item._id}`,
-      { status: "danhan" }
-    );
-    if (response.data) {
-      axios.post(
-        `http://${process.env.SERVER_HOST}:${process.env.PORT}/holeOrder/addHeldOrder/${shipperID}`,
-        { orderId: item._id }
+    if (lat1 && lon1) {
+      const dis = getDistance(
+        { latitude: lat1, longitude: lon1 },
+        { latitude: lat2, longitude: lon2 }
       );
-      setReload(!reload);
+      return `${dis / 1000} km`;
+    }
+  };
+
+  async function getLocation() {
+    let { status } = await Location.requestForegroundPermissionsAsync();
+    if (status !== "granted") {
+      console.log("Permission to access location was denied");
+      return;
+    }
+    await Location.watchPositionAsync(
+      {
+        accuracy: Location.Accuracy.High,
+        timeInterval: 1000 * 60 * 5,
+        distanceInterval: 100,
+      },
+      // socket Tracking Location
+      (location) => {
+        const { latitude, longitude } = location.coords;
+        socket.emit("track_location", { shipperID, latitude, longitude });
+        dispatch(setLocation({ latitude, longitude }));
+      }
+    );
+  }
+
+  useEffect(() => {
+    if (!location) {
+      setIsLoading(true);
+      getLocation();
+    } else {
+      setIsLoading(false);
+    }
+    return () => {};
+  }, [location]);
+
+  const handleReceive = async () => {
+    const response = await orderApi.updateStatus(item._id, "danhan");
+    if (response) {
+      let res = await orderApi.addHeldOrder(shipperID, item._id);
+      if (res.message) {
+        Alert.alert("Thông báo", res.message);
+        await orderApi.updateStatus(item._id, "chuanhan");
+      } else {
+        // add oke
+        setReload(!reload);
+      }
     }
   };
 
@@ -102,6 +132,10 @@ function OrderItem({ navigation, item, reload, setReload }) {
         </View>
         {checkStatus(item.status)}
       </View>
+      <LoadingModal
+        visible={isLoading}
+        text={"Đang lấy vị trí. . ."}
+      ></LoadingModal>
     </TouchableOpacity>
   );
 }

@@ -1,4 +1,11 @@
-import { View, Text, StyleSheet, StatusBar, Dimensions } from "react-native";
+import {
+  View,
+  Text,
+  StyleSheet,
+  StatusBar,
+  Dimensions,
+  Alert,
+} from "react-native";
 import React, { useState } from "react";
 import PieChartView from "./PieChart";
 import LineChartView from "./LineChart";
@@ -10,42 +17,54 @@ import { useEffect } from "react";
 import { socket } from "../socket";
 import * as Location from "expo-location";
 import { setLocation } from "../redux/reducers/CurentLocation";
+import LoadingModal from "../component/LoadingModal";
 
 export default function HomeScreen() {
+  const [isLoading, setIsLoading] = useState(true);
   const dispatch = useDispatch();
   const location = useSelector((state) => state.locationCurrent.location);
   const shipperID = useSelector((state) => state.shipperInfor.shipper._id);
 
   // lấy location
   useEffect(() => {
-    let locationSubscription;
-    (async () => {
-      let { status } = await Location.requestForegroundPermissionsAsync();
-      if (status !== "granted") {
-        console.log("Permission to access location was denied");
-        return;
-      }
-
-      locationSubscription = await Location.watchPositionAsync(
-        {
-          accuracy: Location.Accuracy.High,
-          timeInterval: 1000 * 60 * 5,
-          distanceInterval: 100,
-        },
-        // socket Tracking Location
-        (location) => {
-          const { latitude, longitude } = location.coords;
-          socket.emit("track_location", { shipperID, latitude, longitude });
-          // console.log({ shipperID, latitude, longitude });
-          dispatch(setLocation({ latitude, longitude }));
-        }
-      );
-    })();
+    let id = setTimeout(() => {
+      getLocation();
+    }, 1000);
     return () => {
-      locationSubscription?.remove();
+      clearTimeout(id);
     };
   }, [location]);
 
+  useEffect(() => {
+    if (!location) {
+      setIsLoading(true);
+    } else setIsLoading(false);
+
+    return () => {};
+  }, [location]);
+
+  async function getLocation() {
+    let { status } = await Location.requestForegroundPermissionsAsync();
+
+    while (true) {
+      try {
+        await Location.watchPositionAsync(
+          {
+            accuracy: Location.Accuracy.High,
+            timeInterval: 1000 * 60 * 5,
+            distanceInterval: 100,
+          },
+          // socket Tracking Location
+          (location) => {
+            const { latitude, longitude } = location.coords;
+            socket.emit("track_location", { shipperID, latitude, longitude });
+            dispatch(setLocation({ latitude, longitude }));
+          }
+        );
+        break;
+      } catch (err) {}
+    }
+  }
   const [selectedValue, setSelectedValue] = useState("Don");
 
   return (
@@ -77,6 +96,11 @@ export default function HomeScreen() {
           ) : null}
         </View>
       </View>
+
+      <LoadingModal
+        visible={isLoading}
+        text={"Đang lấy vị trí ..."}
+      ></LoadingModal>
     </View>
   );
 }

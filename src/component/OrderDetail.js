@@ -6,20 +6,48 @@ import {
   StatusBar,
   TouchableOpacity,
   Dimensions,
+  Alert,
 } from "react-native";
 import { AntDesign } from "@expo/vector-icons";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
+import orderApi from "../api/orderApi";
+import { useSelector } from "react-redux";
+import { useState } from "react";
 
 function OrderDetail({ navigation, route }) {
+  const shipperID = useSelector((state) => state.shipperInfor.shipper._id);
   const data = route.params.data;
   const status = data.status;
-  let label = "";
-  if (status === "chuanhan") {
-    label = "Nhận hàng";
-  } else if (status === "danhan") {
-    label = "Bắt đầu";
-  } else if (status === "tamgiu") {
-    label = "Giao lại";
+  const [label, setLabel] = useState("");
+
+  useEffect(() => {
+    if (status == "chuanhan") {
+      setLabel("Nhận hàng");
+    } else if (status == "danhan") {
+      setLabel("Bắt đầu");
+    } else if (status == "tamgiu") {
+      setLabel("Giao lại");
+    }
+
+    return () => {};
+  }, [status]);
+
+  async function receiveOrder() {
+    if (label == "Nhận hàng") {
+      let res = await orderApi.updateStatus(data._id, "danhan");
+      if (res) {
+        res = await orderApi.addHeldOrder(shipperID, data._id);
+        if (res.message) {
+          Alert.alert("Thông báo", res.message);
+          await orderApi.updateStatus(data._id, "chuanhan");
+        } else {
+          // add oke
+          setLabel("Bắt đầu");
+        }
+      }
+    } else if (label == "Bắt đầu") {
+      navigation.navigate("Tracking", { data });
+    }
   }
 
   return (
@@ -71,14 +99,7 @@ function OrderDetail({ navigation, route }) {
         </View>
 
         <View style={styles.endContainer}>
-          <TouchableOpacity
-            style={styles.button}
-            onPress={() => {
-              navigation.navigate("Tracking", {
-                data: data,
-              });
-            }}
-          >
+          <TouchableOpacity style={styles.button} onPress={receiveOrder}>
             <Text style={styles.buttonText}>{label}</Text>
           </TouchableOpacity>
         </View>

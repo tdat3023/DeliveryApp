@@ -35,21 +35,34 @@ export default function Tracking({ navigation, route }) {
     }
   };
 
+  useEffect(() => {
+    const unsubscribe = navigation.addListener("focus", () => {
+      // The screen is focused
+      // Call any action
+      if (!order) {
+        Alert.alert(
+          "Thông báo",
+          "Vui lòng nhận đơn hoặc chọn đơn hàng để sử dụng.",
+          [
+            {
+              text: "OK",
+              onPress: () => {
+                navigation.navigate("Order");
+              },
+            },
+          ]
+        );
+        return;
+      }
+    });
+    // Return the function to unsubscribe from the event so it gets removed on unmount
+    return unsubscribe;
+  }, []);
+
   if (!order) {
-    Alert.alert(
-      "Thông báo",
-      "Vui lòng nhận đơn hoặc chọn đơn hàng để sử dụng.",
-      [
-        {
-          text: "OK",
-          onPress: () => {
-            navigation.navigate("Order");
-          },
-        },
-      ]
-    );
-    return;
+    return <></>;
   }
+
   const lat = parseFloat(order.coords.lat);
   const lon = parseFloat(order.coords.lng);
   // lấy vị trí hiện tại

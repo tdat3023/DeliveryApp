@@ -14,7 +14,7 @@ import React, { useState } from "react";
 import { FontAwesome, MaterialIcons, Ionicons } from "@expo/vector-icons";
 import { useDispatch, useSelector } from "react-redux";
 import { logoutShipper } from "./redux/reducers/inforShipper";
-import axios from "axios";
+import orderApi from "./api/orderApi";
 export default function About({ navigation }) {
   const [changePassword, setChangPassword] = useState(false);
   const [moreProfile, setMoreProfile] = useState(false);
@@ -29,15 +29,25 @@ export default function About({ navigation }) {
   };
 
   const handleClik = async () => {
-    const response = await axios.patch(
-      `http://${process.env.SERVER_HOST}:${process.env.PORT}/holeOrder/updateAll`,
-      { shipperId: shipper._id, status: "chuanhan" }
-    );
-    if (response.data) {
-      Alert.alert("Thông báo", "Trả đơn hàng thành công", [{ text: "OK" }]);
-    } else {
-      Alert.alert("Thông báo", "Trả đơn hàng thất bại", [{ text: "OK" }]);
-    }
+    Alert.alert("Thông báo", "Bạn có chắc chắn trả hết đơn hàng không?", [
+      {
+        text: "OK",
+        onPress: async () => {
+          const response = await orderApi.updateAll(shipper._id, "chuanhan");
+          if (response) {
+            // socket.emit("tra_het_don_hang", { shipperID: shipper._id });
+            Alert.alert("Thông báo", "Trả đơn hàng thành công", [
+              { text: "OK" },
+            ]);
+          } else {
+            Alert.alert("Thông báo", "Trả đơn hàng thất bại", [{ text: "OK" }]);
+          }
+        },
+      },
+      {
+        text: "Cancel",
+      },
+    ]);
   };
 
   return (

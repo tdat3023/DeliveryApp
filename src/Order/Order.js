@@ -12,6 +12,8 @@ import SearchBar from "../component/Sreach";
 import OrderItem from "../component/OrderItem";
 import axios from "axios";
 import { useDispatch, useSelector } from "react-redux";
+import orderApi from "../api/orderApi";
+import LoadingModal from "../component/LoadingModal";
 
 export default function Order({ navigation }) {
   const shipper = useSelector((state) => state.shipperInfor.shipper);
@@ -26,14 +28,11 @@ export default function Order({ navigation }) {
   // api gọi các order của shipper
   const getOrderOfShipper = async () => {
     try {
-      const response = await axios.get(
-        `http://${process.env.SERVER_HOST}:${process.env.PORT}/holeOrder/getHeldOrdersByShipperId/${shipper._id}`
-        // `http://192.168.1.63:${process.env.PORT}/holeOrder/getHeldOrdersByShipperId/${shipper._id}`
-      );
-      if (response.data) {
-        setOrdersOfShipper(response.data.orders);
+      const response = await orderApi.getOrderOfShipper(shipper._id);
+      // console.log(response);
+      if (response && response.orders) {
+        setOrdersOfShipper(response.orders);
       }
-      // console.log("order of shipper:", response.data.orders);
     } catch (error) {
       console.log(error);
     }
@@ -42,28 +41,19 @@ export default function Order({ navigation }) {
   const getOrders = async () => {
     setIsLoading(true);
     try {
-      const response = await axios.get(
-        `http://${process.env.SERVER_HOST}:${process.env.PORT}/order/getListOrderByStorage/GoVap?status=chuanhan`
-        // `http://192.168.1.63:${process.env.PORT}/order/getListOrderByStorage/quan 3?status=chuanhan`
-      );
-      if (response.data) {
+      const response = await orderApi.getOrder(shipper.storage, "chuanhan");
+      if (response) {
         setTimeout(() => {
           setIsLoading(false);
-        }, 100);
-
-        setOrders(response.data);
+        }, 500);
+        setOrders(response);
       }
-      // console.log("order of storage:", response.data);
     } catch (error) {
       console.log(error);
     }
   };
-  // Api gọi các order theo kho và status
-  useEffect(() => {
-    getOrders();
-    getOrderOfShipper();
-  }, [reload, selectedTab]);
 
+  // Api gọi các order theo kho và status
   useEffect(() => {
     const unsubscribe = navigation.addListener("focus", () => {
       // The screen is focused
@@ -71,10 +61,16 @@ export default function Order({ navigation }) {
       getOrders();
       getOrderOfShipper();
     });
-
     // Return the function to unsubscribe from the event so it gets removed on unmount
     return unsubscribe;
   }, [navigation]);
+
+  useEffect(() => {
+    getOrders();
+    getOrderOfShipper();
+
+    return () => {};
+  }, [reload, selectedTab]);
 
   const handleTermSubmit = (term) => {
     setTerm(term);
@@ -163,11 +159,6 @@ export default function Order({ navigation }) {
 
         {/* Danh sách */}
 
-        {isLoading ? (
-          <View style={styles.overlay}>
-            <ActivityIndicator size="large" color="#0000ff" />
-          </View>
-        ) : null}
         <FlatList
           style={styles.list}
           data={dataToRender}
@@ -182,6 +173,7 @@ export default function Order({ navigation }) {
           keyExtractor={(item) => item._id}
         />
       </View>
+      <LoadingModal visible={isLoading} />
     </View>
   );
 }
