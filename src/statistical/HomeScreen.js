@@ -5,6 +5,7 @@ import {
   StatusBar,
   Dimensions,
   AppState,
+  Alert,
 } from "react-native";
 import React, { useState, useRef } from "react";
 import PieChartView from "./PieChart";
@@ -17,44 +18,23 @@ import { useEffect } from "react";
 import { socket } from "../socket";
 import * as Location from "expo-location";
 import { setLocation } from "../redux/reducers/CurentLocation";
+import LoadingModal from "../component/LoadingModal";
 
 export default function HomeScreen() {
+  const [isLoading, setIsLoading] = useState(true);
   const dispatch = useDispatch();
   const location = useSelector((state) => state.locationCurrent.location);
   const shipperID = useSelector((state) => state.shipperInfor.shipper._id);
 
-  const [currrentLocation, setCurrentLocation] = useState({});
-
-  // set curentLoaction
+  // lấy location
   useEffect(() => {
-    let locationSubscription;
-    (async () => {
-      let { status } = await Location.requestForegroundPermissionsAsync();
-      if (status !== "granted") {
-        console.log("Permission to access location was denied");
-        return;
-      }
-
-      locationSubscription = await Location.watchPositionAsync(
-        {
-          accuracy: Location.Accuracy.High,
-          timeInterval: 100,
-          distanceInterval: 10,
-        },
-        (location) => {
-          const { latitude, longitude } = location.coords;
-          // setCurrentLocation({ longitude, latitude });
-          socket.emit("track_location", { shipperID, latitude, longitude });
-          dispatch(setLocation({ latitude, longitude }));
-        }
-      );
-    })();
-
-    console.log(shipperID);
+    let id = setTimeout(() => {
+      getLocation();
+    }, 1000);
     return () => {
-      locationSubscription?.remove();
+      clearTimeout(id);
     };
-  }, []);
+  }, [location]);
 
   const appState = useRef(AppState.currentState);
   const [appStateVisible, setAppStateVisible] = useState(appState.current);
@@ -83,6 +63,36 @@ export default function HomeScreen() {
     };
   }, []);
 
+  useEffect(() => {
+    if (!location) {
+      setIsLoading(true);
+    } else setIsLoading(false);
+
+    return () => {};
+  }, [location]);
+
+  async function getLocation() {
+    let { status } = await Location.requestForegroundPermissionsAsync();
+
+    while (true) {
+      try {
+        await Location.watchPositionAsync(
+          {
+            accuracy: Location.Accuracy.High,
+            timeInterval: 1000 * 60 * 5,
+            distanceInterval: 100,
+          },
+          // socket Tracking Location
+          (location) => {
+            const { latitude, longitude } = location.coords;
+            socket.emit("track_location", { shipperID, latitude, longitude });
+            dispatch(setLocation({ latitude, longitude }));
+          }
+        );
+        break;
+      } catch (err) {}
+    }
+  }
   const [selectedValue, setSelectedValue] = useState("Don");
 
   return (
@@ -114,6 +124,11 @@ export default function HomeScreen() {
           ) : null}
         </View>
       </View>
+
+      <LoadingModal
+        visible={isLoading}
+        text={"Đang lấy vị trí ..."}
+      ></LoadingModal>
     </View>
   );
 }
@@ -122,7 +137,7 @@ const styles = StyleSheet.create({
   AndroidSafeArea: {
     flex: 1,
     paddingTop: Platform.OS === "android" ? StatusBar.currentHeight : 0,
-    backgroundColor: "brown",
+    backgroundColor: "#fbf4ef",
   },
   container: {
     flex: 1,
@@ -138,7 +153,6 @@ const styles = StyleSheet.create({
     marginVertical: "1%",
   },
   pickerView: {
-    // justifyContent: "flex-end",
     justifyContent: "center",
     alignItems: "center",
   },
@@ -150,8 +164,6 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: "#ccc",
     borderRadius: 4,
-
-    // alignSelf: "flex-end",
   },
   selectedItem: {
     color: "red",

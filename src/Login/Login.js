@@ -6,21 +6,16 @@ import {
   Image,
   TextInput,
   TouchableOpacity,
+  Alert,
+  ActivityIndicator,
 } from "react-native";
 import { useState, useEffect, useRef } from "react";
 import React from "react";
-import { Entypo, Ionicons, Feather } from "@expo/vector-icons";
+import { Ionicons } from "@expo/vector-icons";
 import { isValidUsername, isValidPassword } from "../utilies/Validations";
-import axios from "axios";
-
-import { useDispatch, useSelector } from "react-redux";
-import * as Permissions from "expo-permissions";
-
-import { setLocation } from "../redux/reducers/CurentLocation";
+import { useDispatch } from "react-redux";
 import { setShipper } from "../redux/reducers/inforShipper";
-
-import { socket } from "../socket";
-import { AsyncStorage } from "react-native";
+import orderApi from "../api/orderApi";
 
 export default function Login({ navigation }) {
   const dispatch = useDispatch();
@@ -29,7 +24,11 @@ export default function Login({ navigation }) {
   const [password, setPassword] = useState("123456789");
   const [errorUsername, setErrorUsername] = useState("");
   const [errorPassword, setErrorPassword] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
 
+  setTimeout(() => {
+    setIsLoading(false);
+  }, 3000);
   const isValidationOK = () => {
     username.length > 0 &&
       password.length > 0 &&
@@ -38,30 +37,36 @@ export default function Login({ navigation }) {
   };
 
   const handleLogin = async (phoneNumber, password) => {
+    setIsLoading(true);
     try {
-      const { data: response } = await axios.post(
-        `http://192.168.1.163:${process.env.PORT}/shipper/login`,
-        { phoneNumber, password }
-      );
+      const res = await orderApi.login(phoneNumber, password);
 
-      const shipper = response.shipper;
-      dispatch(setShipper(shipper));
-      navigation.replace("HomeTabs");
+      const shipper = res.shipper;
+      if (!shipper) {
+        Alert.alert("Thông báo", "Mật khẩu hoặc tài khoản không chính xác", [
+          { text: "OK" },
+        ]);
+      } else {
+        setIsLoading(false);
+        dispatch(setShipper(shipper));
+        navigation.replace("HomeTabs");
+      }
     } catch (error) {
-      alert(error.message);
+      // alert("Mật khẩu hoặc tài khoản không chính xác");
+      Alert.alert("Thông báo", "Mật khẩu hoặc tài khoản không chính xác", [
+        { text: "OK" },
+      ]);
     }
   };
-
-  const handleConnect = () => {
-    console.log("A new connect has just been established!");
-  };
-
-  const shipper = useSelector((state) => state.shipperInfor);
-  const location = useSelector((state) => state.locationCurrent.location);
 
   return (
     <View style={styles.AndroidSafeArea}>
       <View style={styles.container}>
+        {isLoading && (
+          <View style={styles.overlay}>
+            <ActivityIndicator size="large" color="#ffffff" />
+          </View>
+        )}
         {/* top */}
         <View style={styles.topView}>
           <Image resizeMode="center" style={styles.image}></Image>
@@ -85,6 +90,7 @@ export default function Login({ navigation }) {
             <View style={styles.viewInput}>
               <TextInput
                 style={{ paddingLeft: 10 }}
+                value={username}
                 onChangeText={(text) => {
                   setErrorUsername(
                     isValidUsername(text) == true
@@ -223,5 +229,12 @@ const styles = StyleSheet.create({
   },
   recoverPassword: {
     flexDirection: "row",
+  },
+  overlay: {
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: "rgba(0,0,0,0.5)",
+    alignItems: "center",
+    justifyContent: "center",
+    zIndex: 1,
   },
 });

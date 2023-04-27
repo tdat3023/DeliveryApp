@@ -5,87 +5,102 @@ import {
   StatusBar,
   TouchableOpacity,
   FlatList,
-  ScrollView,
+  ActivityIndicator,
 } from "react-native";
 import React, { useState, useEffect } from "react";
 import SearchBar from "../component/Sreach";
 import OrderItem from "../component/OrderItem";
 import axios from "axios";
-import { setData } from "../redux/reducers/orderData";
-import { setOrderOfShipper } from "../redux/reducers/orderOfShipper";
 import { useDispatch, useSelector } from "react-redux";
+import orderApi from "../api/orderApi";
+import LoadingModal from "../component/LoadingModal";
 
 export default function Order({ navigation }) {
   const shipper = useSelector((state) => state.shipperInfor.shipper);
-  // console.log(shipper.storage);
-  const dispatch = useDispatch();
+  const location = useSelector((state) => state.locationCurrent.location);
+  const [isLoading, setIsLoading] = useState(false);
+  const [orders, setOrders] = useState([]);
+  const [ordersOfShipper, setOrdersOfShipper] = useState([]);
+  const [reload, setReload] = useState(false);
+  const [term, setTerm] = useState("");
+  const [selectedTab, setSelectedTab] = useState("chuanhan");
+
+  // api gọi các order của shipper
+  const getOrderOfShipper = async () => {
+    try {
+      const response = await orderApi.getOrderOfShipper(shipper._id);
+      // console.log(response);
+      if (response && response.orders) {
+        setOrdersOfShipper(response.orders);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const getOrders = async () => {
+    setIsLoading(true);
+    try {
+      const response = await orderApi.getOrder(shipper.storage, "chuanhan");
+      if (response) {
+        setTimeout(() => {
+          setIsLoading(false);
+        }, 500);
+        setOrders(response);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   // Api gọi các order theo kho và status
   useEffect(() => {
-    dispatch(async (dispatch) => {
-      try {
-        const response = await axios.get(
-          `http://${process.env.SERVER_HOST}:${process.env.PORT}/order/getListOrderByStorage/quan 3?status=chuanhan`
-        );
-        dispatch(setData(response.data));
-        console.log(response.data);
-      } catch (error) {
-        console.log(error);
-      }
+    const unsubscribe = navigation.addListener("focus", () => {
+      // The screen is focused
+      // Call any action
+      getOrders();
+      getOrderOfShipper();
     });
-  }, [dispatch]);
+    // Return the function to unsubscribe from the event so it gets removed on unmount
+    return unsubscribe;
+  }, [navigation]);
 
-  // // api gọi các order của shipper
-  // axios
-  //   .get(
-  //     `http://192.168.88.111:4940/holeOrder/getHeldOrdersByShipperId/${shipper._id}`
-  //   )
-  //   .then((response) => {
-  //     // console.log(response.data.orders);
-  //     dispatch(setOrderOfShipper(response.data.orders));
-  //   })
-  //   .catch((error) => {
-  //     console.error(error);
-  //   });
+  useEffect(() => {
+    getOrders();
+    getOrderOfShipper();
 
-  // // const changeStatus = useSelector((state) => state.updateStatus);
-  // // const orderOfShipper = useSelector((state) => state.orderOfShipper);
-  // // console.log(orderOfShipper);
-  const orders = useSelector((state) => state.orderInfor.data);
+    return () => {};
+  }, [reload, selectedTab]);
 
-  const [term, setTerm] = useState("");
-  const [selectedTab, setSelectedTab] = useState("chuanhan");
   const handleTermSubmit = (term) => {
     setTerm(term);
     alert(term);
   };
 
-  // // chua nhan
-  // function getCNOrders() {
-  //   return orders.filter((orders) => orders.status === "chuanhan");
-  // }
-  // const cnOrders = getCNOrders();
-
   // // đã nhận
-  // function getDNOrders() {
-  //   return orders.filter((orders) => orders.status === "danhan");
-  // }
-  // const dnOrders = getDNOrders();
+  function getDNOrders() {
+    return ordersOfShipper.filter(
+      (ordersOfShipper) => ordersOfShipper.status === "danhan"
+    );
+  }
+  const dnOrders = getDNOrders();
 
-  // // tạm giữ
-  // function getTGOrders() {
-  //   return orders.filter((orders) => orders.status === "tamgiu");
-  // }
-  // const tGOrders = getTGOrders();
+  // tạm giữ
+  function getTGOrders() {
+    return ordersOfShipper.filter(
+      (ordersOfShipper) => ordersOfShipper.status === "tamgiu"
+    );
+  }
+  const tGOrders = getTGOrders();
 
-  // let dataToRender;
-  // if (selectedTab === "chuanhan") {
-  //   dataToRender = cnOrders;
-  // } else if (selectedTab === "tamgiu") {
-  //   dataToRender = tGOrders;
-  // } else {
-  //   dataToRender = dnOrders;
-  // }
+  let dataToRender;
+  if (selectedTab === "chuanhan") {
+    dataToRender = orders;
+  } else if (selectedTab === "tamgiu") {
+    dataToRender = tGOrders;
+  } else {
+    dataToRender = dnOrders;
+  }
 
   return (
     <View style={styles.AndroidSafeArea}>
@@ -98,7 +113,9 @@ export default function Order({ navigation }) {
         <View style={styles.orderStatus}>
           <TouchableOpacity
             style={styles.tab}
-            onPress={() => setSelectedTab("chuanhan")}
+            onPress={() => {
+              setSelectedTab("chuanhan");
+            }}
           >
             <Text
               style={
@@ -144,13 +161,19 @@ export default function Order({ navigation }) {
 
         <FlatList
           style={styles.list}
-          data={orders}
+          data={dataToRender}
           renderItem={({ item }) => (
-            <OrderItem item={item} navigation={navigation} />
+            <OrderItem
+              item={item}
+              navigation={navigation}
+              reload={reload}
+              setReload={setReload}
+            />
           )}
           keyExtractor={(item) => item._id}
         />
       </View>
+      <LoadingModal visible={isLoading} />
     </View>
   );
 }
@@ -211,5 +234,12 @@ const styles = StyleSheet.create({
 
   list: {
     width: "100%",
+  },
+  overlay: {
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: "rgba(0,0,0,0.5)",
+    alignItems: "center",
+    justifyContent: "center",
+    zIndex: 1,
   },
 });

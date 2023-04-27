@@ -7,7 +7,6 @@ import {
   Alert,
 } from "react-native";
 import React, { useState, useEffect, useRef } from "react";
-import { Feather } from "@expo/vector-icons";
 import {
   MaterialCommunityIcons,
   MaterialIcons,
@@ -19,30 +18,57 @@ import MapViewDirections from "react-native-maps-directions";
 import { useDispatch, useSelector } from "react-redux";
 
 export default function Tracking({ navigation, route }) {
-  const data = route.params?.data;
+  const shipperID = useSelector((state) => state.shipperInfor.shipper._id);
+  const order = route.params?.data;
   const mapViewRef = useRef();
 
-  if (!data) {
-    Alert.alert(
-      "Thông báo",
-      "Vui lòng nhận đơn hoặc chọn đơn hàng để sử dụng.",
-      [
-        {
-          text: "OK",
-          onPress: () => {
-            navigation.navigate("Order");
-          },
-        },
-      ]
+  const handleTap = async (status) => {
+    await axios.patch(
+      `http://${process.env.SERVER_HOST}:${process.env.PORT}/order/idChange/${order._id}`,
+      { status: status }
     );
-    return;
+    if (status == "thanhcong" || status == "thatbai") {
+      axios.post(
+        `http://${process.env.SERVER_HOST}:${process.env.PORT}/historyOrder/addToHistoryOrder/${shipperID}`,
+        { orderId: order._id }
+      );
+    }
+  };
+
+  useEffect(() => {
+    const unsubscribe = navigation.addListener("focus", () => {
+      // The screen is focused
+      // Call any action
+      if (!order) {
+        Alert.alert(
+          "Thông báo",
+          "Vui lòng nhận đơn hoặc chọn đơn hàng để sử dụng.",
+          [
+            {
+              text: "OK",
+              onPress: () => {
+                navigation.navigate("Order");
+              },
+            },
+          ]
+        );
+        return;
+      }
+    });
+    // Return the function to unsubscribe from the event so it gets removed on unmount
+    return unsubscribe;
+  }, []);
+
+  if (!order) {
+    return <></>;
   }
-  const lat = parseFloat(data.coords.lat);
-  const lon = parseFloat(data.coords.lng);
+
+  const lat = parseFloat(order.coords.lat);
+  const lon = parseFloat(order.coords.lng);
   // lấy vị trí hiện tại
   const location = useSelector((state) => state.locationCurrent.location);
-  const lat2 = location.coords.latitude;
-  const lon2 = location.coords.longitude;
+  const lat2 = location.latitude;
+  const lon2 = location.longitude;
 
   const region = {
     latitude: (lat + lat2) / 2,
@@ -51,60 +77,47 @@ export default function Tracking({ navigation, route }) {
     longitudeDelta: Math.abs(lon - lon2) * 2,
   };
 
-  // useEffect(() => {
-  //   const region = {
-  //     latitude: 37.78825,
-  //     longitude: -122.4324,
-  //     latitudeDelta: 0.0922,
-  //     longitudeDelta: 0.0421,
-  //   };
-  //   mapViewRef.current.animateToRegion(region);
-  // }, []);
-
   const [index, setIndex] = useState(1);
   function getStatus(index) {
-    if (index === 1) {
-      return "Bắt đầu";
-    } else if (index === 2) {
-      return "Hoàn thành";
-    } else if (index === 3) {
-      return "Khách trả hàng";
-    } else if (index === 4) {
-      return "Tiếp tục với đơn hàng khác";
-    }
+    return index === 1 ? (
+      <TouchableOpacity style={styles.btn} onPress={() => setIndex(index + 1)}>
+        <Text style={{ color: "white", fontSize: 15 }}>Bắt Đầu</Text>
+      </TouchableOpacity>
+    ) : index === 2 ? (
+      <TouchableOpacity style={styles.btn} onPress={() => setIndex(index + 1)}>
+        <Text style={{ color: "white", fontSize: 15 }}>Hoàn Thành</Text>
+      </TouchableOpacity>
+    ) : index === 3 ? (
+      <View style={{ flexDirection: "row", justifyContent: "space-evenly" }}>
+        <TouchableOpacity
+          style={[styles.btn01, { backgroundColor: "green" }]}
+          onPress={() => setIndex(index + 1)}
+        >
+          <Text style={{ color: "white", fontSize: 15 }}>Thành công</Text>
+        </TouchableOpacity>
+        <View style={{ width: 20 }}></View>
+        <TouchableOpacity
+          style={[styles.btn01, { backgroundColor: "red" }]}
+          onPress={() => setIndex(index + 1)}
+        >
+          <Text style={{ color: "white", fontSize: 15 }}>Thất bại</Text>
+        </TouchableOpacity>
+      </View>
+    ) : index === 4 ? (
+      <TouchableOpacity
+        style={styles.btn}
+        onPress={() => {
+          // Xử lý khi lựa chọn đơn hàng khác
+        }}
+      >
+        <Text style={{ color: "white", fontSize: 15 }}>
+          Lựa chọn đơn hàng khác
+        </Text>
+      </TouchableOpacity>
+    ) : null;
   }
+
   const [moreProfile, setMoreProfile] = useState(true);
-
-  // console.log(location);
-  // // điểm bắt đầu
-  // const [pickupCords, setPickupCords] = useState({
-  //   latitude: 10.822024,
-  //   // location.latitude,
-  //   longitude: 106.687569,
-  //   //  location.longitude,
-  //   latitudeDelta: 0.01,
-  //   longitudeDelta: 0.01,
-  // });
-
-  // diểm giao hàng
-  // const [droplocationCords, setDropLocation] = useState({
-  //   latitude: 10.825225,
-  //   // location.latitude,
-  //   longitude: 106.687581,
-  //   //  location.longitude,
-  //   latitudeDelta: 0.01,
-  //   longitudeDelta: 0.01,
-  // });
-
-  // const batDau = () => {
-  //   const { latitudeDelta, longitudeDelta } = pickupCords;
-  //   setPickupCords({
-  //     latitude: location?.coords?.latitude,
-  //     longitude: location?.coords?.longitude,
-  //     latitudeDelta,
-  //     longitudeDelta,
-  //   });
-  // };
 
   return (
     <View style={styles.AndroidSafeArea}>
@@ -122,8 +135,8 @@ export default function Tracking({ navigation, route }) {
 
               <Marker
                 coordinate={{
-                  latitude: location.coords.latitude,
-                  longitude: location.coords.longitude,
+                  latitude: location.latitude,
+                  longitude: location.longitude,
                 }}
               >
                 <Ionicons name="play" size={30} color="red" />
@@ -150,6 +163,16 @@ export default function Tracking({ navigation, route }) {
         {/* nút */}
         <View style={styles.viewMore}>
           <View style={styles.viewMore1}>
+            <TouchableOpacity
+              style={styles.btnDefault}
+              onPress={() => {
+                {
+                  setIndex(1);
+                }
+              }}
+            >
+              <Text style={{ color: "white", fontSize: 15 }}>Hủy</Text>
+            </TouchableOpacity>
             <Text style={{ color: "#743f7e" }}>Tracking Number</Text>
             <TouchableOpacity
               style={styles.touchMore}
@@ -175,7 +198,7 @@ export default function Tracking({ navigation, route }) {
                       color="black"
                     />
                     <Text style={{ marginLeft: 10 }}>
-                      Mã đơn hàng: ... {data._id.slice(-15)}
+                      Mã đơn hàng: ... {order._id.slice(-15)}
                       {/* {data.id} */}
                     </Text>
                   </View>
@@ -254,7 +277,7 @@ export default function Tracking({ navigation, route }) {
 
                       <View style={styles.statusText}>
                         <Text style={[index >= 3 && styles.textColor]}>
-                          Hoàn thành
+                          Đến nơi
                         </Text>
                         <Text style={styles.timeText}>Thời gian</Text>
                       </View>
@@ -293,19 +316,7 @@ export default function Tracking({ navigation, route }) {
                     justifyContent: "center",
                   }}
                 >
-                  <TouchableOpacity
-                    style={styles.btn}
-                    onPress={() => {
-                      {
-                        if (index < 4) setIndex(index + 1);
-                        // batDau();
-                      }
-                    }}
-                  >
-                    <Text style={{ color: "white", fontSize: 15 }}>
-                      {getStatus(index)}
-                    </Text>
-                  </TouchableOpacity>
+                  {getStatus(index)}
                 </View>
               </View>
             </View>
@@ -332,8 +343,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
 
-  div: {},
-
   item: {
     height: 50,
     width: 2,
@@ -349,6 +358,7 @@ const styles = StyleSheet.create({
   activeColor: {
     backgroundColor: "#743f7e",
   },
+
   btn: {
     backgroundColor: "#743f7e",
     width: "90%",
@@ -359,13 +369,26 @@ const styles = StyleSheet.create({
     borderRadius: 10,
   },
 
-  chartContainer: {
-    marginTop: 20,
-    backgroundColor: "#fff",
-    padding: 20,
-    borderRadius: 16,
-    elevation: 5,
+  btn01: {
+    backgroundColor: "#743f7e",
+    width: 130,
+    height: 50,
+    padding: 10,
+    justifyContent: "center",
+    alignItems: "center",
+    borderRadius: 10,
   },
+
+  btnDefault: {
+    backgroundColor: "#743f7e",
+    width: 60,
+    height: 30,
+    // padding: 10,
+    justifyContent: "center",
+    alignItems: "center",
+    borderRadius: 10,
+  },
+
   textContainer: {
     marginTop: 20,
     alignItems: "center",
@@ -414,7 +437,6 @@ const styles = StyleSheet.create({
     },
     shadowOpacity: 0.25,
     shadowRadius: 3.84,
-
     elevation: 5,
   },
 
