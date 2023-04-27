@@ -40,7 +40,7 @@ export default function Login({ navigation }) {
   const handleLogin = async (phoneNumber, password) => {
     try {
       const { data: response } = await axios.post(
-        `http://${process.env.SERVER_HOST}:${process.env.PORT}/shipper/login`,
+        `http://192.168.1.163:${process.env.PORT}/shipper/login`,
         { phoneNumber, password }
       );
 
@@ -56,7 +56,7 @@ export default function Login({ navigation }) {
     console.log("A new connect has just been established!");
   };
 
-  const shipperId = useSelector((state) => state.shipperInfor.shipper);
+  const shipper = useSelector((state) => state.shipperInfor);
   const location = useSelector((state) => state.locationCurrent.location);
 
   return (

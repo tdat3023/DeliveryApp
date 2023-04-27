@@ -1,5 +1,12 @@
-import { View, Text, StyleSheet, StatusBar, Dimensions } from "react-native";
-import React, { useState } from "react";
+import {
+  View,
+  Text,
+  StyleSheet,
+  StatusBar,
+  Dimensions,
+  AppState,
+} from "react-native";
+import React, { useState, useRef } from "react";
 import PieChartView from "./PieChart";
 import LineChartView from "./LineChart";
 import { Picker } from "@react-native-picker/picker";
@@ -15,6 +22,8 @@ export default function HomeScreen() {
   const dispatch = useDispatch();
   const location = useSelector((state) => state.locationCurrent.location);
   const shipperID = useSelector((state) => state.shipperInfor.shipper._id);
+
+  const [currrentLocation, setCurrentLocation] = useState({});
 
   // set curentLoaction
   useEffect(() => {
@@ -34,14 +43,43 @@ export default function HomeScreen() {
         },
         (location) => {
           const { latitude, longitude } = location.coords;
+          // setCurrentLocation({ longitude, latitude });
           socket.emit("track_location", { shipperID, latitude, longitude });
-          console.log({ shipperID, latitude, longitude });
           dispatch(setLocation({ latitude, longitude }));
         }
       );
     })();
+
+    console.log(shipperID);
     return () => {
       locationSubscription?.remove();
+    };
+  }, []);
+
+  const appState = useRef(AppState.currentState);
+  const [appStateVisible, setAppStateVisible] = useState(appState.current);
+  useEffect(() => {
+    const subscription = AppState.addEventListener("change", (nextAppState) => {
+      if (
+        appState.current.match(/inactive|background/) &&
+        nextAppState === "active"
+      ) {
+        console.log("App has come to the foreground!");
+      }
+
+      // appState.current = nextAppState;
+      appState.current = nextAppState;
+      setAppStateVisible(appState.current);
+
+      console.log("AppState", appState.current, shipperID);
+
+      if (appState.current === "background") {
+        socket.emit("foregroundMode", shipperID);
+      }
+    });
+
+    return () => {
+      subscription.remove();
     };
   }, []);
 

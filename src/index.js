@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
@@ -17,6 +17,7 @@ import { MaterialIcons } from "@expo/vector-icons";
 import { Feather } from "@expo/vector-icons";
 import { Octicons } from "@expo/vector-icons";
 const Stack = createNativeStackNavigator();
+import { socket } from "./socket";
 
 const Tab = createBottomTabNavigator();
 
@@ -89,6 +90,14 @@ function MyTabs({ route }) {
 }
 
 export default RootComponent = function () {
+  useEffect(() => {
+    socket.on("connect", () => {
+      console.log("New connection!");
+    });
+    return () => {
+      console.log("Exit app!");
+    };
+  }, []);
   return (
     <Provider store={store}>
       <NavigationContainer>
