@@ -1,15 +1,7 @@
 import React, { useState, useEffect } from "react";
-import {
-  View,
-  Text,
-  StyleSheet,
-  Image,
-  TouchableOpacity,
-  Alert,
-} from "react-native";
+import { View, Text, StyleSheet, TouchableOpacity, Alert } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
 import { getDistance } from "geolib";
-import axios from "axios";
 import { setLocation } from "../redux/reducers/CurentLocation";
 import orderApi from "../api/orderApi";
 import LoadingModal from "./LoadingModal";
@@ -86,7 +78,7 @@ function OrderItem({ navigation, item, reload, setReload }) {
               handleReceive();
             }}
           >
-            <Text>Nhận</Text>
+            <Text style={styles.text}>Nhận</Text>
           </TouchableOpacity>
         </View>
       );
@@ -98,11 +90,11 @@ function OrderItem({ navigation, item, reload, setReload }) {
               console.log(item);
             }}
           >
-            <Text>Bắt đầu</Text>
+            <Text style={styles.text}>Bắt đầu</Text>
           </TouchableOpacity>
         </View>
       );
-    } else {
+    } else if (status === "tamgiu") {
       return (
         <View style={styles.button}>
           <TouchableOpacity
@@ -110,10 +102,12 @@ function OrderItem({ navigation, item, reload, setReload }) {
               console.log(item);
             }}
           >
-            <Text>Giao lại</Text>
+            <Text style={styles.text}>Giao lại</Text>
           </TouchableOpacity>
         </View>
       );
+    } else {
+      return null;
     }
   }
   return (
@@ -145,31 +139,18 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     margin: 5,
-    borderWidth: 1,
+    marginHorizontal: 15,
     borderRadius: 10,
     backgroundColor: "#ffffff",
-    shadowColor: "#000000",
+    elevation: 20,
+    shadowColor: "#52006A",
     shadowOffset: {
       width: 0,
-      height: 2,
+      height: 12,
     },
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
-    // elevation: 1,
+    shadowOpacity: 0.58,
+    shadowRadius: 16.0,
   },
-
-  imageView: {
-    margin: 10,
-    width: 70,
-    height: 70,
-    borderWidth: 0.5,
-    borderRadius: 10,
-    backgroundColor: "blue",
-    alignItems: "center",
-    justifyContent: "center",
-  },
-
-  image: {},
 
   inforView: {
     paddingVertical: 5,
@@ -182,10 +163,17 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     width: 70,
-    backgroundColor: "yellow",
+    backgroundColor: "#743f7e",
     padding: 5,
     borderRadius: 10,
-    borderWidth: 1,
+  },
+
+  text: {
+    color: "white",
+    fontSize: 16,
+    lineHeight: 21,
+    fontWeight: "bold",
+    letterSpacing: 0.25,
   },
 });
 export default OrderItem;

@@ -82,7 +82,7 @@ export default function HomeScreen() {
             timeInterval: 1000 * 60 * 5,
             distanceInterval: 100,
           },
-          // socket Tracking Location
+
           (location) => {
             const { latitude, longitude } = location.coords;
             socket.emit("track_location", { shipperID, latitude, longitude });

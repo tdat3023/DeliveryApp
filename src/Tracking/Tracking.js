@@ -15,7 +15,8 @@ import {
 } from "@expo/vector-icons";
 import MapView, { Marker } from "react-native-maps";
 import MapViewDirections from "react-native-maps-directions";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
+import orderApi from "../api/orderApi";
 
 export default function Tracking({ navigation, route }) {
   const shipperID = useSelector((state) => state.shipperInfor.shipper._id);
@@ -23,16 +24,18 @@ export default function Tracking({ navigation, route }) {
   const mapViewRef = useRef();
 
   const handleTap = async (status) => {
-    await axios.patch(
-      `http://${process.env.SERVER_HOST}:${process.env.PORT}/order/idChange/${order._id}`,
-      { status: status }
-    );
-    if (status == "thanhcong" || status == "thatbai") {
-      axios.post(
-        `http://${process.env.SERVER_HOST}:${process.env.PORT}/historyOrder/addToHistoryOrder/${shipperID}`,
-        { orderId: order._id }
-      );
+    try {
+      const res = await orderApi.updateStatus(order._id, status);
+      if (res && (status === "thanhcong" || status === "thatbai")) {
+        await orderApi.addHistoryOrder(shipperID, order._id);
+      }
+    } catch (error) {
+      console.error(error);
     }
+  };
+
+  const handT = async (status) => {
+    res = await orderApi.updateStatus(order._id, "tamgiu");
   };
 
   useEffect(() => {
@@ -91,14 +94,20 @@ export default function Tracking({ navigation, route }) {
       <View style={{ flexDirection: "row", justifyContent: "space-evenly" }}>
         <TouchableOpacity
           style={[styles.btn01, { backgroundColor: "green" }]}
-          onPress={() => setIndex(index + 1)}
+          onPress={() => {
+            setIndex(index + 1);
+            handleTap("thanhcong");
+          }}
         >
           <Text style={{ color: "white", fontSize: 15 }}>Thành công</Text>
         </TouchableOpacity>
         <View style={{ width: 20 }}></View>
         <TouchableOpacity
           style={[styles.btn01, { backgroundColor: "red" }]}
-          onPress={() => setIndex(index + 1)}
+          onPress={() => {
+            setIndex(index + 1);
+            handleTap("thatbai");
+          }}
         >
           <Text style={{ color: "white", fontSize: 15 }}>Thất bại</Text>
         </TouchableOpacity>
@@ -168,6 +177,7 @@ export default function Tracking({ navigation, route }) {
               onPress={() => {
                 {
                   setIndex(1);
+                  handT("tamgiu");
                 }
               }}
             >

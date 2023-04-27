@@ -1,6 +1,7 @@
 import axios from "axios";
 
 let baseURL = `http://${process.env.SERVER_HOST}:${process.env.PORT}/`;
+// let baseURL = `http://192.168.88.111:4090/`;
 
 const axiosClient = axios.create({
   baseURL: baseURL,
@@ -14,7 +15,6 @@ axiosClient.interceptors.request.use(async (config) => {
   //   config.headers.token = "Bearer " + token;
   // config.headers.token =
   // "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYzNGFjYjllOTI3YTBhOTA1NDVjNmU5YyIsInBob25lTnVtYmVyIjoiMDk5OTk5OTk5OSIsIm5hbWUiOiJDb25nIFZhbiBIb2FuZyIsImlhdCI6MTY2NTg0NjY1NywiZXhwIjoxNjY4NDM4NjU3fQ.uHTFL3YsjiW-eIE-X_qgF2_eATqqSOvw3Mm-kNbBF1A";
-
   // handle token here
   return config;
 });
