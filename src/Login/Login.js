@@ -9,7 +9,7 @@ import {
   Alert,
   ActivityIndicator,
 } from "react-native";
-import { useState, useEffect, useRef } from "react";
+import { useState } from "react";
 import React from "react";
 import { Ionicons } from "@expo/vector-icons";
 import { isValidUsername, isValidPassword } from "../utilies/Validations";
@@ -40,7 +40,7 @@ export default function Login({ navigation }) {
     setIsLoading(true);
     try {
       const res = await orderApi.login(phoneNumber, password);
-
+      // console.log(shipper);
       const shipper = res.shipper;
       if (!shipper) {
         Alert.alert("Thông báo", "Mật khẩu hoặc tài khoản không chính xác", [
@@ -52,10 +52,8 @@ export default function Login({ navigation }) {
         navigation.replace("HomeTabs");
       }
     } catch (error) {
-      // alert("Mật khẩu hoặc tài khoản không chính xác");
-      Alert.alert("Thông báo", "Mật khẩu hoặc tài khoản không chính xác", [
-        { text: "OK" },
-      ]);
+      Alert.alert("Thông báo", "Lỗi sever", [{ text: "OK" }]);
+      console.log(error);
     }
   };
 

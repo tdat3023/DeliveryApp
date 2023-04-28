@@ -25,6 +25,16 @@ class OrderApi {
     let url = `holeOrder/updateAll`;
     return axiosClient.patch(url, { shipperId, status });
   }
+
+  getHistoryOrderByShipperId(shipperId) {
+    let url = `historyOrder/getHistoryOrderByShipperId/${shipperId}`;
+    return axiosClient.get(url, { shipperId });
+  }
+
+  addHistoryOrder(shipperId, orderId) {
+    let url = `historyOrder/addToHistoryOrder/${shipperId}`;
+    return axiosClient.post(url, { orderId });
+  }
 }
 
 const orderApi = new OrderApi();

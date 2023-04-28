@@ -28,13 +28,6 @@ const styles = StyleSheet.create({
     paddingTop: 12,
     color: "white",
   },
-  //   overlay: {
-  //     ...StyleSheet.absoluteFillObject,
-  //     backgroundColor: "rgba(0,0,0,0.5)",
-  //     alignItems: "center",
-  //     justifyContent: "center",
-  //     zIndex: 1,
-  //   },
 });
 
 export default LoadingModal;

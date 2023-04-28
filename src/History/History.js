@@ -11,26 +11,36 @@ import moment from "moment";
 import SearchBar from "../component/Sreach";
 import OrderHisItem from "./OrderHisItem";
 import OrderItem from "../component/OrderItem";
+import { useSelector } from "react-redux";
+import orderApi from "../api/orderApi";
 export default function History({ navigation }) {
+  const shipperID = useSelector((state) => state.shipperInfor.shipper._id);
   const [selectedTab, setSelectedTab] = useState("All");
   const [isLoading, setIsLoading] = useState(false);
   const [orderHistoryOfShipper, setOrderHistoryOfShipper] = useState([]);
-  useEffect(() => {
-    const getOrderOfShipper = async () => {
-      try {
-        const response = await axios.get(
-          `http://${process.env.SERVER_HOST}:${process.env.PORT}/historyOrder/getHistoryOrderByShipperId/${shipper._id}`
-        );
-        if (response.data) {
-          setOrderHistoryOfShipper(response.data.orders);
-        }
-        // console.log("order of shipper:", response.data.orders);
-      } catch (error) {
-        console.log(error);
+
+  const getOrderOfShipper = async () => {
+    try {
+      const response = await orderApi.getHistoryOrderByShipperId(shipperID);
+      if (response) {
+        setOrderHistoryOfShipper(response.orders);
       }
-    };
-    getOrderOfShipper();
-  }, []);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  // Api gọi các order đã giao
+  useEffect(() => {
+    const unsubscribe = navigation.addListener("focus", () => {
+      // The screen is focused
+      // Call any action
+
+      getOrderOfShipper();
+    });
+    // Return the function to unsubscribe from the event so it gets removed on unmount
+    return unsubscribe;
+  }, [navigation]);
 
   // Filter function to get only delivered orders
   function getDeliveredOrders() {
@@ -118,9 +128,8 @@ export default function History({ navigation }) {
         </View>
 
         {/* Tìm kiếm */}
-        <View style={{ width: "100%" , }}>
+        <View style={{ width: "100%" }}>
           <SearchBar onTermSubmit={handleTermSubmit} />
-          {/* <Text>{term}</Text> */}
         </View>
 
         {/* Danh sách */}
@@ -133,7 +142,7 @@ export default function History({ navigation }) {
           style={styles.list}
           data={dataToRender}
           renderItem={({ item }) => (
-            <OrderHisItem item={item} navigation={navigation} />
+            <OrderItem item={item} navigation={navigation} />
           )}
           keyExtractor={(item) => item.id}
         />

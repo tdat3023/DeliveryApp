@@ -29,7 +29,6 @@ export default function Order({ navigation }) {
   const getOrderOfShipper = async () => {
     try {
       const response = await orderApi.getOrderOfShipper(shipper._id);
-      // console.log(response);
       if (response && response.orders) {
         setOrdersOfShipper(response.orders);
       }
@@ -193,7 +192,6 @@ const styles = StyleSheet.create({
   textHeader: {
     fontSize: 25,
     color: "#743f7e",
-
     fontWeight: "bold",
     marginHorizontal: "5%",
     marginVertical: "1%",
