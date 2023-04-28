@@ -1,6 +1,7 @@
 import axios from "axios";
 
-let baseURL = `http://${process.env.SERVER_HOST}:${process.env.PORT}/`;
+// let baseURL = `http://${process.env.SERVER_HOST}:${process.env.PORT}/`;
+let baseURL = `http://192.168.43.237:4940/`;
 
 const axiosClient = axios.create({
   baseURL: baseURL,
