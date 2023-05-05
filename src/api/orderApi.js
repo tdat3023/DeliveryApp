@@ -35,6 +35,11 @@ class OrderApi {
     let url = `historyOrder/addToHistoryOrder/${shipperId}`;
     return axiosClient.post(url, { orderId });
   }
+
+  removeFromHeldOrder(shipperId, orderId) {
+    let url = `historyOrder/removeHeldOrder/${shipperId}`;
+    return axiosClient.post(url, { orderId });
+  }
 }
 
 const orderApi = new OrderApi();

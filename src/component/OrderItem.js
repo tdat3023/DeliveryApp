@@ -5,8 +5,11 @@ import { getDistance } from "geolib";
 import { setLocation } from "../redux/reducers/CurentLocation";
 import orderApi from "../api/orderApi";
 import LoadingModal from "./LoadingModal";
+import { setOrder } from "../redux/reducers/oneOrder";
 function OrderItem({ navigation, item, reload, setReload }) {
   const shipperID = useSelector((state) => state.shipperInfor.shipper._id);
+  const { oneOrder } = useSelector((state) => state.order);
+
   const dispatch = useDispatch();
   const location = useSelector((state) => state.locationCurrent.location);
   const [isLoading, setIsLoading] = useState(false);
@@ -63,53 +66,39 @@ function OrderItem({ navigation, item, reload, setReload }) {
         Alert.alert("Thông báo", res.message);
         await orderApi.updateStatus(item._id, "chuanhan");
       } else {
-        // add oke
         setReload(!reload);
       }
     }
   };
 
   function checkStatus(status) {
-    if (status === "chuanhan") {
-      return (
-        <View style={styles.button}>
-          <TouchableOpacity
-            onPress={() => {
-              handleReceive();
-            }}
-          >
-            <Text style={styles.text}>Nhận</Text>
-          </TouchableOpacity>
-        </View>
-      );
-    } else if (status === "danhan") {
-      return (
-        <View style={styles.button}>
-          <TouchableOpacity
-            onPress={() => {
-              console.log(item);
-            }}
-          >
-            <Text style={styles.text}>Bắt đầu</Text>
-          </TouchableOpacity>
-        </View>
-      );
-    } else if (status === "tamgiu") {
-      return (
-        <View style={styles.button}>
-          <TouchableOpacity
-            onPress={() => {
-              console.log(item);
-            }}
-          >
-            <Text style={styles.text}>Giao lại</Text>
-          </TouchableOpacity>
-        </View>
-      );
-    } else {
-      return null;
-    }
+    const buttons = {
+      chuanhan: { text: "Nhận", onPress: handleReceive },
+      danhan: {
+        text: "Bắt đầu",
+        onPress: () => {
+          navigation.navigate("Tracking");
+          dispatch(setOrder(item));
+        },
+      },
+      tamgiu: {
+        text: "Giao lại",
+        onPress: () => {
+          navigation.navigate("Tracking");
+          dispatch(setOrder(item));
+        },
+      },
+    };
+    const buttonConfig = buttons[status];
+    return buttonConfig ? (
+      <View style={styles.button}>
+        <TouchableOpacity onPress={buttonConfig.onPress}>
+          <Text style={styles.text}>{buttonConfig.text}</Text>
+        </TouchableOpacity>
+      </View>
+    ) : null;
   }
+
   return (
     <TouchableOpacity
       onPress={() => {

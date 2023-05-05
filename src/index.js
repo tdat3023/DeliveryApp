@@ -10,12 +10,13 @@ import History from "./History/History";
 import Tracking from "./Tracking/Tracking";
 import Order from "./Order/Order";
 import OrderDetail from "./component/OrderDetail";
-import { Provider } from "react-redux";
-import { store, Store } from "./redux/store";
+import { useSelector } from "react-redux";
+
 import { Ionicons } from "@expo/vector-icons";
 import { MaterialIcons } from "@expo/vector-icons";
 import { Feather } from "@expo/vector-icons";
 import { Octicons } from "@expo/vector-icons";
+import CongratulationScreen from "./component/CongratulationScreen";
 const Stack = createNativeStackNavigator();
 // import { socket } from "./socket";
 
@@ -90,31 +91,34 @@ function MyTabs({ route }) {
 }
 
 export default RootComponent = function () {
-  // useEffect(() => {
-  //   socket.on("connect", () => {
-  //     console.log("New connection!");
-  //   });
-  //   return () => {
-  //     console.log("Exit app!");
-  //   };
-  // }, []);
+  const shipper = useSelector((state) => state.shipperInfor.shipper);
+
   return (
-    <Provider store={store}>
-      <NavigationContainer>
-        <Stack.Navigator
-          initialRouteName="Login"
-          screenOptions={{ headerShown: false }}
-        >
-          <Stack.Screen name="Login" component={Login} />
-          <Stack.Screen name="Recover" component={Recover} />
-          <Stack.Screen
-            name="HomeTabs"
-            component={MyTabs}
-            screenOptions={{ headerShown: false }}
-          />
-          <Stack.Screen name="OrderDetail" component={OrderDetail} />
-        </Stack.Navigator>
-      </NavigationContainer>
-    </Provider>
+    <NavigationContainer>
+      <Stack.Navigator
+        initialRouteName="Login"
+        screenOptions={{ headerShown: false }}
+      >
+        {shipper ? (
+          <>
+            <Stack.Screen
+              name="HomeTabs"
+              component={MyTabs}
+              screenOptions={{ headerShown: false }}
+            />
+            <Stack.Screen name="OrderDetail" component={OrderDetail} />
+            <Stack.Screen
+              name="CongratulationScreen"
+              component={CongratulationScreen}
+            />
+          </>
+        ) : (
+          <>
+            <Stack.Screen name="Login" component={Login} />
+            <Stack.Screen name="Recover" component={Recover} />
+          </>
+        )}
+      </Stack.Navigator>
+    </NavigationContainer>
   );
 };

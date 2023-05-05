@@ -1,19 +1,29 @@
-export const UPDATE_STATUS = "UPDATE_STATUS";
+export const SET_ORDER = "SET_ORDER";
+export const REMOVE_ONEORDER = "REMOVE_ONEORDER";
 const initialState = {
-  updateStatus: null,
+  oneOrder: null,
 };
 
-export const setStatus = (data) => ({
-  type: "UPDATE_STATUS",
+export const setOrder = (data) => ({
+  type: "SET_ORDER",
   payload: data,
 });
 
-export default function inforReducer(state = initialState, payload) {
-  switch (payload.type) {
-    case "UPDATE_STATUS":
+export const removeOneOrder = () => ({
+  type: REMOVE_ONEORDER,
+});
+
+export default function inforOrder(state = initialState, action) {
+  switch (action.type) {
+    case "SET_ORDER":
       return {
         ...state,
-        updateStatus: payload.updateStatus,
+        oneOrder: action.payload,
+      };
+    case "REMOVE_ONEORDER":
+      return {
+        ...state,
+        oneOrder: null,
       };
     default:
       return state;

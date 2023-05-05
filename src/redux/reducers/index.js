@@ -1,11 +1,11 @@
 import { combineReducers } from "redux";
 import inforShipper from "./inforShipper";
-// import updateS from "./oneOrder";
+import inforOrder from "./oneOrder";
 
 import currentLocation from "./CurentLocation";
 
 const reducers = combineReducers({
-  // order: updateS,
+  order: inforOrder,
   locationCurrent: currentLocation,
   shipperInfor: inforShipper,
 });
