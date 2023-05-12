@@ -1,6 +1,6 @@
 export const SET_LOCATION = "SET_LOCATION";
 const initialState = {
-  location: null,
+  location: { latitude: 106.665633, longitude: 10.813301 },
 };
 
 export const setLocation = (location) => ({

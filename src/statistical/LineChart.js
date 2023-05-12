@@ -6,12 +6,7 @@ import orderApi from "../api/orderApi";
 
 function LineChartView() {
   const shipperID = useSelector((state) => state.shipperInfor.shipper._id);
-  const getSalarry = async () => {
-    const response = await orderApi.getSalarry(shipperID, "5");
-    if (response) {
-      console.log(response.salarry);
-    }
-  };
+
   // getSalarry();
   // useEffect(() => {
   //   const unsubscribe = navigation.addListener("focus", () => {

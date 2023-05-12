@@ -19,20 +19,23 @@ import * as Location from "expo-location";
 import { setLocation } from "../redux/reducers/CurentLocation";
 import LoadingModal from "../component/LoadingModal";
 import orderApi from "../api/orderApi";
+import { useGlobalContext } from "../redux/GlobalContext";
 
 export default function HomeScreen() {
+  const { handleIo, socketIo } = useGlobalContext();
   const [isLoading, setIsLoading] = useState(true);
   const [statistical, setStatistical] = useState();
   const dispatch = useDispatch();
   const location = useSelector((state) => state.locationCurrent.location);
-  const shipperID = useSelector((state) => state.shipperInfor.shipper._id);
+  const shipper = useSelector((state) => state.shipperInfor.shipper);
+  const shipperID = shipper._id;
   const [selectedValue, setSelectedValue] = useState("Don");
   const appState = useRef(AppState.currentState);
   const [appStateVisible, setAppStateVisible] = useState(appState.current);
   // lấy location
   useEffect(() => {
     let id = setTimeout(() => {
-      getLocation();
+      // getLocation();
     }, 1000);
     return () => {
       clearTimeout(id);
@@ -97,16 +100,24 @@ export default function HomeScreen() {
   }
 
   // hàm lấy lương
-
+  async function getSalarry() {
+    const response = await orderApi.getSalarry(shipperID, "5");
+    if (response) {
+      setStatistical(response);
+    }
+  }
   useEffect(() => {
-    async () => {
-      const response = await orderApi.getSalarry(shipperID, "5");
-      if (response) {
-        setStatistical(response);
-      }
-    };
+    getSalarry();
     return () => {};
   }, []);
+
+  useEffect(() => {
+    if (socketIo) {
+      socketIo.emit("join_room", shipper);
+    }
+
+    return () => {};
+  }, [socketIo]);
 
   return (
     <View style={styles.AndroidSafeArea}>
@@ -119,7 +130,7 @@ export default function HomeScreen() {
           <View style={styles.viewItem}>
             <View style={styles.viewCustomItem}>
               <Text style={{ fontSize: 15 }}>
-                Đơn hàng nhỏ hơn 5kg: {statistical.minWeight}{" "}
+                Đơn hàng nhỏ hơn 5kg: {statistical?.minWeight}
               </Text>
             </View>
           </View>
@@ -127,7 +138,7 @@ export default function HomeScreen() {
           <View style={styles.viewItem}>
             <View style={styles.viewCustomItem}>
               <Text style={{ fontSize: 15 }}>
-                Đơn hàng lớn từ 5kg đến 10kg: {statistical.mediumWeight}
+                Đơn hàng lớn từ 5kg đến 10kg: {statistical?.mediumWeight}
               </Text>
             </View>
           </View>
@@ -135,7 +146,7 @@ export default function HomeScreen() {
           <View style={styles.viewItem}>
             <View style={styles.viewCustomItem}>
               <Text style={{ fontSize: 15 }}>
-                Đơn hàng lớn hơn 10kg: {statistical.maxWeight}
+                Đơn hàng lớn hơn 10kg: {statistical?.maxWeight}
               </Text>
             </View>
           </View>
@@ -156,12 +167,34 @@ export default function HomeScreen() {
             mode="dropdown"
             itemStyle={{ color: "blue" }} // thay đổi màu chữ của các item
           >
-            <Picker.Item label="Thống kê theo đơn hàng" value="Don" />
-            <Picker.Item label="Thống kê theo doanh thu" value="Tien" />
+            <Picker.Item
+              // style={{ borderRadius: 4 }}
+              label="Thống kê theo đơn hàng"
+              value="Don"
+            />
+            <Picker.Item
+              // style={{ borderRadius: 4 }}
+              label="Thống kê theo doanh thu"
+              value="Tien"
+            />
           </Picker>
 
           {selectedValue === "Don" ? (
-            <PieChartView />
+            <>
+              {statistical && statistical.message == null ? (
+                <PieChartView statistical={statistical} />
+              ) : (
+                <PieChartView
+                  statistical={{
+                    salarry: 0,
+                    maxWeight: 0,
+                    minWeight: 0,
+                    mediumWeight: 0,
+                    numOfFailure: 0,
+                  }}
+                />
+              )}
+            </>
           ) : selectedValue === "Tien" ? (
             <LineChartView />
           ) : null}
@@ -196,14 +229,16 @@ const styles = StyleSheet.create({
     marginVertical: "1%",
   },
   pickerView: {
+    width: "100%",
     marginTop: 10,
+    marginHorizontal: 4,
     justifyContent: "center",
     alignItems: "center",
   },
 
   picker: {
     height: 50,
-    width: 300,
+    width: "95%",
     backgroundColor: "#fff",
     borderWidth: 1,
     borderColor: "#ccc",

@@ -13,8 +13,10 @@ import OrderItem from "../component/OrderItem";
 import { useDispatch, useSelector } from "react-redux";
 import orderApi from "../api/orderApi";
 import LoadingModal from "../component/LoadingModal";
+import { useGlobalContext } from "../redux/GlobalContext";
 
 export default function Order({ navigation }) {
+  const { socketIo } = useGlobalContext();
   const shipper = useSelector((state) => state.shipperInfor.shipper);
   const location = useSelector((state) => state.locationCurrent.location);
   const [isLoading, setIsLoading] = useState(false);
@@ -100,6 +102,16 @@ export default function Order({ navigation }) {
     dataToRender = dnOrders;
   }
 
+  useEffect(() => {
+    if (socketIo) {
+      socketIo.on("update_order_list", () => {
+        setReload(!reload);
+      });
+    }
+
+    return () => {};
+  }, [socketIo]);
+
   return (
     <View style={styles.AndroidSafeArea}>
       <View style={styles.container}>
@@ -110,7 +122,7 @@ export default function Order({ navigation }) {
         {/* Phân loại */}
         <View style={styles.orderStatus}>
           <TouchableOpacity
-            style={styles.tab}
+            style={selectedTab === "chuanhan" ? styles.selected : styles.tab}
             onPress={() => {
               setSelectedTab("chuanhan");
             }}
@@ -125,7 +137,7 @@ export default function Order({ navigation }) {
           </TouchableOpacity>
 
           <TouchableOpacity
-            style={styles.tab}
+            style={selectedTab === "danhan" ? styles.selected : styles.tab}
             onPress={() => setSelectedTab("danhan")}
           >
             <Text
@@ -137,7 +149,7 @@ export default function Order({ navigation }) {
             </Text>
           </TouchableOpacity>
           <TouchableOpacity
-            style={styles.tab}
+            style={selectedTab === "tamgiu" ? styles.selected : styles.tab}
             onPress={() => setSelectedTab("tamgiu")}
           >
             <Text
@@ -218,15 +230,32 @@ const styles = StyleSheet.create({
     alignItems: "center",
     borderRadius: 10,
     marginHorizontal: 5,
+    // shadowColor: "#000000",
+    // shadowOffset: {
+    //   width: 0,
+    //   height: 18,
+    // },
+    // shadowOpacity:  0.25,
+    // shadowRadius: 20.00,
+    // elevation: 24
   },
   textStatus: {
     fontSize: 16,
     color: "#333",
   },
   selectedText: {
-    fontSize: 16,
-    color: "#000",
+    color: "#fff",
     fontWeight: "bold",
+  },
+
+  selected: {
+    backgroundColor: "#743f7e",
+    paddingVertical: 5,
+    width: 100,
+    borderWidth: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    borderRadius: 10,
   },
 
   list: {

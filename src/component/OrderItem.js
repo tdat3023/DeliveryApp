@@ -5,10 +5,15 @@ import { getDistance } from "geolib";
 import { setLocation } from "../redux/reducers/CurentLocation";
 import orderApi from "../api/orderApi";
 import { setOrder } from "../redux/reducers/oneOrder";
+import { useGlobalContext } from "../redux/GlobalContext";
 function OrderItem({ navigation, item, reload, setReload }) {
-  const [hour, setHour] = useState(new Date().getHours());
-  // const [hour, setHour] = useState(7);
-  const shipperID = useSelector((state) => state.shipperInfor.shipper._id);
+  const { socketIo } = useGlobalContext();
+  // const [hour, setHour] = useState(new Date().getHours());
+  const [hour, setHour] = useState(7);
+  const shipper = useSelector((state) => state.shipperInfor.shipper);
+  const shipperID = shipper._id;
+  const storage = shipper.storage;
+
   const dispatch = useDispatch();
   const location = useSelector((state) => state.locationCurrent.location);
   const [isLoading, setIsLoading] = useState(false);
@@ -74,11 +79,28 @@ function OrderItem({ navigation, item, reload, setReload }) {
     const response = await orderApi.updateStatus(item._id, "danhan");
     if (response) {
       let res = await orderApi.addHeldOrder(shipperID, item._id);
+
       if (res.message) {
         Alert.alert("Thông báo", res.message);
         await orderApi.updateStatus(item._id, "chuanhan");
       } else {
         setReload(!reload);
+        socketIo.emit("change_order_list", storage);
+      }
+    }
+  };
+
+  const handleCancel = async () => {
+    const response = await orderApi.updateStatus(item._id, "chuanhan");
+    if (response) {
+      let res = await orderApi.removeFromHeldOrder(shipperID, item._id);
+
+      if (res.message) {
+        Alert.alert("Thông báo", res.message);
+        await orderApi.updateStatus(item._id, "danhan");
+      } else {
+        setReload(!reload);
+        socketIo.emit("change_order_list", storage);
       }
     }
   };
@@ -135,7 +157,7 @@ function OrderItem({ navigation, item, reload, setReload }) {
           <View
             style={[styles.button, { backgroundColor: "red", marginTop: 10 }]}
           >
-            <TouchableOpacity>
+            <TouchableOpacity onPress={handleCancel}>
               <Text style={styles.text}>Hủy</Text>
             </TouchableOpacity>
           </View>
@@ -166,9 +188,7 @@ function OrderItem({ navigation, item, reload, setReload }) {
         <View style={styles.inforView}>
           <Text>Mã đơn hàng: ...{item._id.slice(-10)}</Text>
           <Text>Tên đơn hàng: {item.orderName}</Text>
-          <Text>Người nhận: {item.deliveryAddress}</Text>
           <Text>Địa chỉ: {item.deliveryAddress}</Text>
-          <Text>Số điện thoại : {item.phoneReceive}</Text>
           {checkHistory(item.status) == null ? (
             <Text>Khoảng cách: {calculateDistance()}</Text>
           ) : (
@@ -189,13 +209,13 @@ const styles = StyleSheet.create({
     marginHorizontal: 15,
     borderRadius: 10,
     backgroundColor: "#ffffff",
-    elevation: 20,
+    elevation: 4,
     shadowColor: "#52006A",
     shadowOffset: {
       width: 0,
       height: 12,
     },
-    shadowOpacity: 0.58,
+    shadowOpacity: 10,
     shadowRadius: 16.0,
   },
 
