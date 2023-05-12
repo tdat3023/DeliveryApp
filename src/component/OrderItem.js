@@ -78,10 +78,10 @@ function OrderItem({ navigation, item, reload, setReload }) {
   const handleReceive = async () => {
     const response = await orderApi.updateStatus(item._id, "danhan");
     if (response) {
-      let res = await orderApi.addHeldOrder(shipperID, item._id);
-
-      if (res.message) {
-        Alert.alert("Thông báo", res.message);
+      const res = await orderApi.addHeldOrder(shipperID, item._id);
+      if (res.data.message) {
+        Alert.alert("Thông báo", "Bạn đã nhận 10 đơn trong ca này!");
+        console.log(res);
         await orderApi.updateStatus(item._id, "chuanhan");
       } else {
         setReload(!reload);
@@ -93,7 +93,7 @@ function OrderItem({ navigation, item, reload, setReload }) {
   const handleCancel = async () => {
     const response = await orderApi.updateStatus(item._id, "chuanhan");
     const res = await orderApi.removeFromHeldOrder(shipperID, item._id);
-    console.log(res);
+
     setReload(!reload);
     socketIo.emit("change_order_list", storage);
   };

@@ -10,16 +10,14 @@ function GlobalContextProvider({ children }) {
 
   function handelIo(shipper) {
     const socket = io(`http://${process.env.SERVER_HOST}:${process.env.PORT}`);
-    // console.log(socket.id); // undefined
     socket.on("connect", () => {
-      console.log(socket.id); // "G5p5..."
-      //   socket.emit("Test");
+      console.log(socket.id);
     });
     setSocketIo(socket);
   }
+
   useEffect(() => {
     handelIo();
-
     return () => {};
   }, []);
 

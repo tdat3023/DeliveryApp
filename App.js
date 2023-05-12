@@ -1,6 +1,5 @@
 import { useEffect } from "react";
 import RootComponent from "./src/index";
-
 import { socket } from "./src/socket";
 import { Provider } from "react-redux";
 import { store } from "./src/redux/store";

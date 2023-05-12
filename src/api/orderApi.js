@@ -4,7 +4,6 @@ class OrderApi {
     let url = `shipper/login`;
     return axiosClient.post(url, { phoneNumber, password });
   }
-
   getOrder(storage, status) {
     let url = `order/getListOrderByStorage/${storage}?status=${status}`;
     return axiosClient.get(url);
