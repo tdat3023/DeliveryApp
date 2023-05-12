@@ -54,6 +54,7 @@ export default function Tracking({ navigation }) {
     const unsubscribe = navigation.addListener("focus", () => {
       setIsFocus(true);
     });
+    setIndex(1);
     // Return the function to unsubscribe from the event so it gets removed on unmount
     return unsubscribe;
   }, []);

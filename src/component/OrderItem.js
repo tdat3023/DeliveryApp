@@ -4,12 +4,11 @@ import { useDispatch, useSelector } from "react-redux";
 import { getDistance } from "geolib";
 import { setLocation } from "../redux/reducers/CurentLocation";
 import orderApi from "../api/orderApi";
-import LoadingModal from "./LoadingModal";
 import { setOrder } from "../redux/reducers/oneOrder";
 function OrderItem({ navigation, item, reload, setReload }) {
+  const [hour, setHour] = useState(new Date().getHours());
+  // const [hour, setHour] = useState(7);
   const shipperID = useSelector((state) => state.shipperInfor.shipper._id);
-  const { oneOrder } = useSelector((state) => state.order);
-
   const dispatch = useDispatch();
   const location = useSelector((state) => state.locationCurrent.location);
   const [isLoading, setIsLoading] = useState(false);
@@ -26,6 +25,19 @@ function OrderItem({ navigation, item, reload, setReload }) {
       return `${dis / 1000} km`;
     }
   };
+
+  useEffect(() => {
+    let id = setInterval(() => {
+      const now = new Date();
+      const currentHour = now.getHours();
+      if (currentHour != hour) {
+        // setHour(currentHour);
+      }
+    }, 1000);
+    return () => {
+      clearInterval(id);
+    };
+  }, []);
 
   async function getLocation() {
     let { status } = await Location.requestForegroundPermissionsAsync();
@@ -72,6 +84,12 @@ function OrderItem({ navigation, item, reload, setReload }) {
   };
 
   function checkStatus(status) {
+    const isBetween6to8 = hour >= 6 && hour < 8;
+    const isBetween12to2 = hour >= 12 && hour < 14;
+    const showCancelButton =
+      status == "danhan" && (isBetween6to8 || isBetween12to2);
+    const showButton =
+      status == "chuanhan" && (isBetween6to8 || isBetween12to2);
     const buttons = {
       chuanhan: { text: "Nhận", onPress: handleReceive },
       danhan: {
@@ -90,15 +108,52 @@ function OrderItem({ navigation, item, reload, setReload }) {
       },
     };
     const buttonConfig = buttons[status];
+
     return buttonConfig ? (
-      <View style={styles.button}>
-        <TouchableOpacity onPress={buttonConfig.onPress}>
-          <Text style={styles.text}>{buttonConfig.text}</Text>
-        </TouchableOpacity>
+      <View>
+        {showButton ? (
+          <View style={styles.button}>
+            <TouchableOpacity onPress={buttonConfig.onPress}>
+              <Text style={styles.text}>{buttonConfig.text}</Text>
+            </TouchableOpacity>
+          </View>
+        ) : (
+          <></>
+        )}
+
+        {status == "danhan" || status == "tamgiu" ? (
+          <View style={styles.button}>
+            <TouchableOpacity onPress={buttonConfig.onPress}>
+              <Text style={styles.text}>{buttonConfig.text}</Text>
+            </TouchableOpacity>
+          </View>
+        ) : (
+          <></>
+        )}
+
+        {showCancelButton ? (
+          <View
+            style={[styles.button, { backgroundColor: "red", marginTop: 10 }]}
+          >
+            <TouchableOpacity>
+              <Text style={styles.text}>Hủy</Text>
+            </TouchableOpacity>
+          </View>
+        ) : (
+          <></>
+        )}
       </View>
     ) : null;
   }
 
+  function checkHistory(status) {
+    const text = {
+      thanhcong: { text: "Thành công" },
+      thatbai: { text: "Thất bại" },
+    };
+    const textConfig = text[status];
+    return textConfig ? <Text>{textConfig.text}</Text> : null;
+  }
   return (
     <TouchableOpacity
       onPress={() => {
@@ -110,15 +165,18 @@ function OrderItem({ navigation, item, reload, setReload }) {
       <View style={styles.oneOrderView}>
         <View style={styles.inforView}>
           <Text>Mã đơn hàng: ...{item._id.slice(-10)}</Text>
-          <Text>Địa chỉ: {item.deliveryAddress.substring(0, 20)}...</Text>
-          <Text>Khoảng cách: {calculateDistance()}</Text>
+          <Text>Tên đơn hàng: {item.orderName}</Text>
+          <Text>Người nhận: {item.deliveryAddress}</Text>
+          <Text>Địa chỉ: {item.deliveryAddress}</Text>
+          <Text>Số điện thoại : {item.phoneReceive}</Text>
+          {checkHistory(item.status) == null ? (
+            <Text>Khoảng cách: {calculateDistance()}</Text>
+          ) : (
+            checkHistory(item.status)
+          )}
         </View>
         {checkStatus(item.status)}
       </View>
-      <LoadingModal
-        visible={isLoading}
-        text={"Đang lấy vị trí. . ."}
-      ></LoadingModal>
     </TouchableOpacity>
   );
 }
@@ -159,7 +217,7 @@ const styles = StyleSheet.create({
 
   text: {
     color: "white",
-    fontSize: 16,
+    fontSize: 14,
     lineHeight: 21,
     fontWeight: "bold",
     letterSpacing: 0.25,

@@ -1,4 +1,4 @@
-import { View, Text, StyleSheet, StatusBar, Dimensions } from "react-native";
+import { View, StyleSheet, Dimensions } from "react-native";
 import React from "react";
 import { PieChart } from "react-native-chart-kit";
 
@@ -12,16 +12,23 @@ function PieChartView() {
       legendFontSize: 15,
     },
     {
-      name: "Đã giao",
+      name: "Thành công",
       population: 28,
       color: "#2196F3",
       legendFontColor: "#7F7F7F",
       legendFontSize: 15,
     },
     {
-      name: "Đã hủy",
+      name: "Lớn hơn 10Kg",
       population: 52,
       color: "#4CAF50",
+      legendFontColor: "#7F7F7F",
+      legendFontSize: 15,
+    },
+    {
+      name: "Thất bại",
+      population: 52,
+      color: "red",
       legendFontColor: "#7F7F7F",
       legendFontSize: 15,
     },

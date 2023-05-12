@@ -9,7 +9,6 @@ import {
 import React, { useState, useEffect } from "react";
 import moment from "moment";
 import SearchBar from "../component/Sreach";
-import OrderHisItem from "./OrderHisItem";
 import OrderItem from "../component/OrderItem";
 import { useSelector } from "react-redux";
 import orderApi from "../api/orderApi";
@@ -110,7 +109,7 @@ export default function History({ navigation }) {
                 selectedTab === "Delivered" ? styles.selectedText : styles.text
               }
             >
-              Đã Giao
+              Thành Công
             </Text>
           </TouchableOpacity>
           <TouchableOpacity
@@ -122,7 +121,7 @@ export default function History({ navigation }) {
                 selectedTab === "Cancelled" ? styles.selectedText : styles.text
               }
             >
-              Đã Hủy
+              Thất Bại
             </Text>
           </TouchableOpacity>
         </View>
@@ -172,7 +171,7 @@ const styles = StyleSheet.create({
     marginVertical: "1%",
   },
   text: {
-    fontSize: 15,
+    fontSize: 14,
     color: "#743f7e",
     // fontFamily: "Arial",
     marginHorizontal: "5%",
@@ -189,7 +188,7 @@ const styles = StyleSheet.create({
     borderBottomColor: "#ddd",
   },
   tab: {
-    padding: 5,
+    paddingVertical: 5,
     width: 100,
     borderWidth: 1,
     justifyContent: "center",

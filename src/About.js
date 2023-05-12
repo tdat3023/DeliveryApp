@@ -1,10 +1,7 @@
 import {
-  ImageBackground,
   StyleSheet,
   Text,
-  TextInput,
   View,
-  Button,
   StatusBar,
   Image,
   TouchableOpacity,
@@ -95,7 +92,6 @@ export default function About({ navigation }) {
           </TouchableOpacity>
         </View>
 
-        {/*  */}
         {/* profile setting */}
         <View style={styles.viewMore}>
           <View style={styles.viewMore1}>

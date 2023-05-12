@@ -5,49 +5,83 @@ import {
   StyleSheet,
   StatusBar,
   TouchableOpacity,
-  Dimensions,
   Alert,
 } from "react-native";
 import { AntDesign } from "@expo/vector-icons";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import orderApi from "../api/orderApi";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import { useState } from "react";
+import { removeOneOrder, setOrder } from "../redux/reducers/oneOrder";
 
 function OrderDetail({ navigation, route }) {
   const shipperID = useSelector((state) => state.shipperInfor.shipper._id);
   const data = route.params.data;
   const status = data.status;
-  const [label, setLabel] = useState("");
+  const dispatch = useDispatch();
 
-  useEffect(() => {
-    if (status == "chuanhan") {
-      setLabel("Nhận hàng");
-    } else if (status == "danhan") {
-      setLabel("Bắt đầu");
-    } else if (status == "tamgiu") {
-      setLabel("Giao lại");
-    }
-
-    return () => {};
-  }, [status]);
-
-  async function receiveOrder() {
-    if (label == "Nhận hàng") {
-      let res = await orderApi.updateStatus(data._id, "danhan");
-      if (res) {
-        res = await orderApi.addHeldOrder(shipperID, data._id);
-        if (res.message) {
-          Alert.alert("Thông báo", res.message);
-          await orderApi.updateStatus(data._id, "chuanhan");
-        } else {
-          // add oke
-          setLabel("Bắt đầu");
-        }
+  const handleReceive = async () => {
+    const response = await orderApi.updateStatus(data._id, "danhan");
+    if (response) {
+      let res = await orderApi.addHeldOrder(shipperID, data._id);
+      if (res.message) {
+        Alert.alert("Thông báo", res.message);
+        await orderApi.updateStatus(data._id, "chuanhan");
+        await orderApi.removeFromHeldOrder(shipperID, data._id);
+      } else {
+        setReload(!reload);
       }
-    } else if (label == "Bắt đầu") {
-      navigation.navigate("Tracking", { data });
     }
+  };
+
+  function checkStatus(status) {
+    const now = new Date();
+    const currentHour = now.getHours;
+    const isBetween6to8 = currentHour >= 6 && currentHour <= 8;
+    const isBetween12to2 = currentHour >= 12 && currentHour <= 14;
+    const showButton =
+      status == "chuanhan" && (isBetween6to8 || isBetween12to2);
+    const buttons = {
+      chuanhan: { text: "Nhận", onPress: handleReceive },
+      danhan: {
+        text: "Bắt đầu",
+        onPress: () => {
+          navigation.navigate("Tracking");
+          dispatch(setOrder(data));
+        },
+      },
+      tamgiu: {
+        text: "Giao lại",
+        onPress: () => {
+          navigation.navigate("Tracking");
+          dispatch(setOrder(data));
+        },
+      },
+    };
+    const buttonConfig = buttons[status];
+
+    return buttonConfig ? (
+      <View style={styles.endContainer}>
+        {showButton ? (
+          <View style={styles.button}>
+            <TouchableOpacity onPress={buttonConfig.onPress}>
+              <Text style={styles.buttonText}>{buttonConfig.text}</Text>
+            </TouchableOpacity>
+          </View>
+        ) : (
+          <></>
+        )}
+        {status == "danhan" || status == "tamgiu" ? (
+          <View style={styles.button}>
+            <TouchableOpacity onPress={buttonConfig.onPress}>
+              <Text style={styles.buttonText}>{buttonConfig.text}</Text>
+            </TouchableOpacity>
+          </View>
+        ) : (
+          <></>
+        )}
+      </View>
+    ) : null;
   }
 
   return (
@@ -58,6 +92,7 @@ function OrderDetail({ navigation, route }) {
           <TouchableOpacity
             onPress={() => {
               navigation.goBack();
+              dispatch(removeOneOrder());
             }}
           >
             <AntDesign
@@ -97,12 +132,12 @@ function OrderDetail({ navigation, route }) {
           <Text style={styles.orderText}>Số lượng: 1</Text>
           <Text style={styles.orderText}>Giá: 35,000,000 đ</Text>
         </View>
-
-        <View style={styles.endContainer}>
+        {checkStatus(data.status)}
+        {/* <View style={styles.endContainer}>
           <TouchableOpacity style={styles.button} onPress={receiveOrder}>
             <Text style={styles.buttonText}>{label}</Text>
           </TouchableOpacity>
-        </View>
+        </View> */}
       </View>
     </View>
   );

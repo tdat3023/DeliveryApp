@@ -10,7 +10,6 @@ import {
 import React, { useState, useEffect } from "react";
 import SearchBar from "../component/Sreach";
 import OrderItem from "../component/OrderItem";
-import axios from "axios";
 import { useDispatch, useSelector } from "react-redux";
 import orderApi from "../api/orderApi";
 import LoadingModal from "../component/LoadingModal";
