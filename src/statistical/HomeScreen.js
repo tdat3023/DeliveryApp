@@ -3,7 +3,6 @@ import {
   Text,
   StyleSheet,
   StatusBar,
-  Dimensions,
   AppState,
   Alert,
 } from "react-native";
@@ -12,20 +11,27 @@ import PieChartView from "./PieChart";
 import LineChartView from "./LineChart";
 import { Picker } from "@react-native-picker/picker";
 // import MyDatePicker from "./Calendar";
-
+import { Ionicons } from "@expo/vector-icons";
 import { useSelector, useDispatch } from "react-redux";
 import { useEffect } from "react";
 import { socket } from "../socket";
 import * as Location from "expo-location";
 import { setLocation } from "../redux/reducers/CurentLocation";
 import LoadingModal from "../component/LoadingModal";
+import orderApi from "../api/orderApi";
+import { useGlobalContext } from "../redux/GlobalContext";
 
 export default function HomeScreen() {
+  const { handleIo, socketIo } = useGlobalContext();
   const [isLoading, setIsLoading] = useState(true);
+  const [statistical, setStatistical] = useState();
   const dispatch = useDispatch();
   const location = useSelector((state) => state.locationCurrent.location);
-  const shipperID = useSelector((state) => state.shipperInfor.shipper._id);
-
+  const shipper = useSelector((state) => state.shipperInfor.shipper);
+  const shipperID = shipper._id;
+  const [selectedValue, setSelectedValue] = useState("Don");
+  const appState = useRef(AppState.currentState);
+  const [appStateVisible, setAppStateVisible] = useState(appState.current);
   // lấy location
   useEffect(() => {
     let id = setTimeout(() => {
@@ -36,8 +42,7 @@ export default function HomeScreen() {
     };
   }, [location]);
 
-  const appState = useRef(AppState.currentState);
-  const [appStateVisible, setAppStateVisible] = useState(appState.current);
+  // Có đang hoạt động
   useEffect(() => {
     const subscription = AppState.addEventListener("change", (nextAppState) => {
       if (
@@ -57,7 +62,6 @@ export default function HomeScreen() {
         socket.emit("foregroundMode", shipperID);
       }
     });
-
     return () => {
       subscription.remove();
     };
@@ -71,6 +75,7 @@ export default function HomeScreen() {
     return () => {};
   }, [location]);
 
+  // lấy vị trí
   async function getLocation() {
     let { status } = await Location.requestForegroundPermissionsAsync();
 
@@ -93,7 +98,26 @@ export default function HomeScreen() {
       } catch (err) {}
     }
   }
-  const [selectedValue, setSelectedValue] = useState("Don");
+
+  // hàm lấy lương
+  async function getSalarry() {
+    const response = await orderApi.getSalarry(shipperID, "5");
+    if (response) {
+      setStatistical(response);
+    }
+  }
+  useEffect(() => {
+    getSalarry();
+    return () => {};
+  }, []);
+
+  useEffect(() => {
+    if (socketIo) {
+      socketIo.emit("join_room", shipper);
+    }
+
+    return () => {};
+  }, [socketIo]);
 
   return (
     <View style={styles.AndroidSafeArea}>
@@ -102,23 +126,75 @@ export default function HomeScreen() {
           <Text style={styles.textHeader}>Thống Kê</Text>
         </View>
 
+        <View style={styles.viewCustomization}>
+          <View style={styles.viewItem}>
+            <View style={styles.viewCustomItem}>
+              <Text style={{ fontSize: 15 }}>
+                Đơn hàng nhỏ hơn 5kg: {statistical?.minWeight}
+              </Text>
+            </View>
+          </View>
+
+          <View style={styles.viewItem}>
+            <View style={styles.viewCustomItem}>
+              <Text style={{ fontSize: 15 }}>
+                Đơn hàng lớn từ 5kg đến 10kg: {statistical?.mediumWeight}
+              </Text>
+            </View>
+          </View>
+
+          <View style={styles.viewItem}>
+            <View style={styles.viewCustomItem}>
+              <Text style={{ fontSize: 15 }}>
+                Đơn hàng lớn hơn 10kg: {statistical?.maxWeight}
+              </Text>
+            </View>
+          </View>
+
+          <View style={styles.viewItem}>
+            <View style={styles.viewCustomItem}>
+              <Text style={{ fontSize: 15 }}>Tiền thưởng theo đơn: </Text>
+            </View>
+          </View>
+        </View>
+
         {/* biểu đồ  */}
         <View style={styles.pickerView}>
           <Picker
             style={styles.picker}
             selectedValue={selectedValue}
-            onValueChange={(itemValue, itemIndex) =>
-              setSelectedValue(itemValue)
-            }
+            onValueChange={(itemValue) => setSelectedValue(itemValue)}
             mode="dropdown"
             itemStyle={{ color: "blue" }} // thay đổi màu chữ của các item
           >
-            <Picker.Item label="Thống kê theo đơn hàng" value="Don" />
-            <Picker.Item label="Thống kê theo doanh thu" value="Tien" />
+            <Picker.Item
+              // style={{ borderRadius: 4 }}
+              label="Thống kê theo đơn hàng"
+              value="Don"
+            />
+            <Picker.Item
+              // style={{ borderRadius: 4 }}
+              label="Thống kê theo doanh thu"
+              value="Tien"
+            />
           </Picker>
 
           {selectedValue === "Don" ? (
-            <PieChartView />
+            <>
+              {statistical && statistical.message == null ? (
+                <PieChartView statistical={statistical} />
+              ) : (
+                <PieChartView
+                  statistical={{
+                    salarry: 0,
+                    maxWeight: 0,
+                    minWeight: 0,
+                    mediumWeight: 0,
+                    numOfFailure: 0,
+                  }}
+                />
+              )}
+            </>
           ) : selectedValue === "Tien" ? (
             <LineChartView />
           ) : null}
@@ -153,13 +229,16 @@ const styles = StyleSheet.create({
     marginVertical: "1%",
   },
   pickerView: {
+    width: "100%",
+    marginTop: 10,
+    marginHorizontal: 4,
     justifyContent: "center",
     alignItems: "center",
   },
 
   picker: {
     height: 50,
-    width: 300,
+    width: "95%",
     backgroundColor: "#fff",
     borderWidth: 1,
     borderColor: "#ccc",
@@ -167,5 +246,28 @@ const styles = StyleSheet.create({
   },
   selectedItem: {
     color: "red",
+  },
+
+  viewCustomization: {
+    flex: 1,
+    width: "90%",
+    backgroundColor: "white",
+    borderRadius: 20,
+    alignItems: "center",
+    marginTop: 10,
+  },
+  viewItem: {
+    width: "90%",
+    alignItems: "flex-start",
+    marginTop: 2,
+  },
+  viewCustomItem: {
+    width: "100%",
+    display: "flex",
+    flexDirection: "row",
+    borderBottomWidth: 0.5,
+    padding: 10,
+    borderBottomColor: "#E4E6EB",
+    alignItems: "center",
   },
 });

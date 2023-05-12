@@ -9,7 +9,6 @@ import {
 import React, { useState, useEffect } from "react";
 import moment from "moment";
 import SearchBar from "../component/Sreach";
-import OrderHisItem from "./OrderHisItem";
 import OrderItem from "../component/OrderItem";
 import { useSelector } from "react-redux";
 import orderApi from "../api/orderApi";
@@ -91,7 +90,7 @@ export default function History({ navigation }) {
         {/* Phân loại */}
         <View style={styles.orderStatus}>
           <TouchableOpacity
-            style={styles.tab}
+            style={selectedTab === "All" ? styles.selected : styles.tab}
             onPress={() => setSelectedTab("All")}
           >
             <Text
@@ -102,7 +101,7 @@ export default function History({ navigation }) {
           </TouchableOpacity>
 
           <TouchableOpacity
-            style={styles.tab}
+            style={selectedTab === "Delivered" ? styles.selected : styles.tab}
             onPress={() => setSelectedTab("Delivered")}
           >
             <Text
@@ -110,11 +109,11 @@ export default function History({ navigation }) {
                 selectedTab === "Delivered" ? styles.selectedText : styles.text
               }
             >
-              Đã Giao
+              Thành Công
             </Text>
           </TouchableOpacity>
           <TouchableOpacity
-            style={styles.tab}
+            style={selectedTab === "Cancelled" ? styles.selected : styles.tab}
             onPress={() => setSelectedTab("Cancelled")}
           >
             <Text
@@ -122,7 +121,7 @@ export default function History({ navigation }) {
                 selectedTab === "Cancelled" ? styles.selectedText : styles.text
               }
             >
-              Đã Hủy
+              Thất Bại
             </Text>
           </TouchableOpacity>
         </View>
@@ -144,7 +143,7 @@ export default function History({ navigation }) {
           renderItem={({ item }) => (
             <OrderItem item={item} navigation={navigation} />
           )}
-          keyExtractor={(item) => item.id}
+          keyExtractor={(item) => item._id}
         />
       </View>
     </View>
@@ -166,15 +165,13 @@ const styles = StyleSheet.create({
   textHeader: {
     fontSize: 25,
     color: "#743f7e",
-    // fontFamily: "Arial",
     fontWeight: "bold",
     marginHorizontal: "5%",
     marginVertical: "1%",
   },
   text: {
-    fontSize: 15,
+    fontSize: 14,
     color: "#743f7e",
-    // fontFamily: "Arial",
     marginHorizontal: "5%",
   },
 
@@ -189,7 +186,7 @@ const styles = StyleSheet.create({
     borderBottomColor: "#ddd",
   },
   tab: {
-    padding: 5,
+    paddingVertical: 5,
     width: 100,
     borderWidth: 1,
     justifyContent: "center",
@@ -201,9 +198,18 @@ const styles = StyleSheet.create({
     color: "#333",
   },
   selectedText: {
-    fontSize: 16,
-    color: "#000",
+    color: "#fff",
     fontWeight: "bold",
+  },
+
+  selected: {
+    backgroundColor: "#743f7e",
+    paddingVertical: 5,
+    width: 100,
+    borderWidth: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    borderRadius: 10,
   },
 
   list: {

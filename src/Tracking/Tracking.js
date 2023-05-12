@@ -15,52 +15,78 @@ import {
 } from "@expo/vector-icons";
 import MapView, { Marker } from "react-native-maps";
 import MapViewDirections from "react-native-maps-directions";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import orderApi from "../api/orderApi";
+import CongratulationScreen from "../component/CongratulationScreen";
+import { removeOneOrder } from "../redux/reducers/oneOrder";
 
-export default function Tracking({ navigation, route }) {
+export default function Tracking({ navigation }) {
   const shipperID = useSelector((state) => state.shipperInfor.shipper._id);
-  const order = route.params?.data;
+  const { oneOrder } = useSelector((state) => state.order);
+  const dispatch = useDispatch();
+  // console.log(oneOrder);
+  const location = useSelector((state) => state.locationCurrent.location);
+  const [index, setIndex] = useState(1);
+  const [moreProfile, setMoreProfile] = useState(true);
+
+  const order = oneOrder;
   const mapViewRef = useRef();
+  const [isFocus, setIsFocus] = useState(false);
 
   const handleTap = async (status) => {
     try {
-      const res = await orderApi.updateStatus(order._id, status);
-      if (res && (status === "thanhcong" || status === "thatbai")) {
-        await orderApi.addHistoryOrder(shipperID, order._id);
-      }
+      await orderApi.addHistoryOrder(shipperID, order._id);
+      await orderApi.updateStatus(order._id, status);
+      await orderApi.removeFromHeldOrder(shipperID, order._id);
+      dispatch(removeOneOrder());
+      setIndex(1);
     } catch (error) {
       console.error(error);
     }
   };
 
   const handT = async (status) => {
-    res = await orderApi.updateStatus(order._id, "tamgiu");
+    await orderApi.updateStatus(order._id, "tamgiu");
+    navigation.navigate("CongratulationScreen");
+    dispatch(removeOneOrder());
   };
 
   useEffect(() => {
     const unsubscribe = navigation.addListener("focus", () => {
-      // The screen is focused
-      // Call any action
-      if (!order) {
-        Alert.alert(
-          "Thông báo",
-          "Vui lòng nhận đơn hoặc chọn đơn hàng để sử dụng.",
-          [
-            {
-              text: "OK",
-              onPress: () => {
-                navigation.navigate("Order");
-              },
-            },
-          ]
-        );
-        return;
-      }
+      setIsFocus(true);
+    });
+    setIndex(1);
+    // Return the function to unsubscribe from the event so it gets removed on unmount
+    return unsubscribe;
+  }, []);
+
+  useEffect(() => {
+    const unsubscribe = navigation.addListener("blur", () => {
+      setIsFocus(false);
     });
     // Return the function to unsubscribe from the event so it gets removed on unmount
     return unsubscribe;
   }, []);
+
+  useEffect(() => {
+    if (!order && isFocus) {
+      Alert.alert(
+        "Thông báo",
+        "Vui lòng nhận đơn hoặc chọn đơn hàng để sử dụng.",
+        [
+          {
+            text: "OK",
+            onPress: () => {
+              navigation.navigate("Order");
+            },
+          },
+        ]
+      );
+      return;
+    }
+
+    return () => {};
+  }, [order, isFocus]);
 
   if (!order) {
     return <></>;
@@ -69,7 +95,7 @@ export default function Tracking({ navigation, route }) {
   const lat = parseFloat(order.coords.lat);
   const lon = parseFloat(order.coords.lng);
   // lấy vị trí hiện tại
-  const location = useSelector((state) => state.locationCurrent.location);
+
   const lat2 = location.latitude;
   const lon2 = location.longitude;
 
@@ -80,7 +106,6 @@ export default function Tracking({ navigation, route }) {
     longitudeDelta: Math.abs(lon - lon2) * 2,
   };
 
-  const [index, setIndex] = useState(1);
   function getStatus(index) {
     return index === 1 ? (
       <TouchableOpacity style={styles.btn} onPress={() => setIndex(index + 1)}>
@@ -126,32 +151,29 @@ export default function Tracking({ navigation, route }) {
     ) : null;
   }
 
-  const [moreProfile, setMoreProfile] = useState(true);
-
   return (
     <View style={styles.AndroidSafeArea}>
       <View style={styles.container}>
         <View style={styles.map}>
-          {
-            <MapView style={styles.map} region={region} ref={mapViewRef}>
-              <Marker
-                coordinate={{
-                  latitude: lat,
-                  longitude: lon,
-                }}
-                title="Nơi Giao"
-              />
+          <MapView style={styles.map} region={region} ref={mapViewRef}>
+            <Marker
+              coordinate={{
+                latitude: lat,
+                longitude: lon,
+              }}
+              title="Nơi Giao"
+            />
 
-              <Marker
-                coordinate={{
-                  latitude: location.latitude,
-                  longitude: location.longitude,
-                }}
-              >
-                <Ionicons name="play" size={30} color="red" />
-              </Marker>
+            <Marker
+              coordinate={{
+                latitude: location.latitude,
+                longitude: location.longitude,
+              }}
+            >
+              <Ionicons name="play" size={30} color="red" />
+            </Marker>
 
-              {/* <MapViewDirections
+            {/* <MapViewDirections
                 origin={{
                   latitude: location?.coords?.latitude,
                   longitude: location?.coords?.longitude,
@@ -165,8 +187,7 @@ export default function Tracking({ navigation, route }) {
                 optimizeWaypoints={true}
                 apikey="AIzaSyCz05MCIlmnpbQgr32Am783YW4muKdaiKQ"
               /> */}
-            </MapView>
-          }
+          </MapView>
         </View>
 
         {/* nút */}
@@ -175,10 +196,7 @@ export default function Tracking({ navigation, route }) {
             <TouchableOpacity
               style={styles.btnDefault}
               onPress={() => {
-                {
-                  setIndex(1);
-                  handT("tamgiu");
-                }
+                handT("tamgiu");
               }}
             >
               <Text style={{ color: "white", fontSize: 15 }}>Hủy</Text>
@@ -208,7 +226,7 @@ export default function Tracking({ navigation, route }) {
                       color="black"
                     />
                     <Text style={{ marginLeft: 10 }}>
-                      Mã đơn hàng: ... {order._id.slice(-15)}
+                      Mã đơn hàng: ... {order?._id.slice(-15)}
                       {/* {data.id} */}
                     </Text>
                   </View>

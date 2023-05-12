@@ -1,13 +1,29 @@
-import { View, Text, StyleSheet, StatusBar, Dimensions } from "react-native";
+import { View, Text, StyleSheet, Dimensions, useEffect } from "react-native";
 import React from "react";
 import { LineChart } from "react-native-chart-kit";
+import { useSelector } from "react-redux";
+import orderApi from "../api/orderApi";
 
 function LineChartView() {
+  const shipperID = useSelector((state) => state.shipperInfor.shipper._id);
+
+  // getSalarry();
+  // useEffect(() => {
+  //   const unsubscribe = navigation.addListener("focus", () => {
+  //     // The screen is focused
+  //     // Call any action
+
+  //     getSalarry();
+  //   });
+  //   // Return the function to unsubscribe from the event so it gets removed on unmount
+  //   return unsubscribe;
+  // }, [navigation]);
+
   const data = {
-    labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun"],
+    labels: ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12"],
     datasets: [
       {
-        data: [20, 45, 28, 80, 99, 43],
+        data: [20, 45, 28, 80, 99, 43, 20, 45, 28, 80, 99, 43],
         color: (opacity = 1) => `rgba(134, 65, 244, ${opacity})`, // Đặt màu cho đường biểu đồ
       },
     ],

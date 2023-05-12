@@ -2,7 +2,7 @@ import axios from "axios";
 
 let baseURL = `http://192.168.1.16:4940/`;
 // let baseURL = `http://${process.env.SERVER_HOST}:${process.env.PORT}/`;
-// let baseURL = `http://192.168.88.111:4090/`;
+// let baseURL = "http://192.168.1.131:4940/";
 
 const axiosClient = axios.create({
   baseURL: baseURL,
@@ -25,7 +25,7 @@ axiosClient.interceptors.response.use(
     return response.data;
   },
   (error) => {
-    return error.response.data;
+    return error.response;
   }
 );
 

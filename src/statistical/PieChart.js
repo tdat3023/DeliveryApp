@@ -1,29 +1,38 @@
-import { View, Text, StyleSheet, StatusBar, Dimensions } from "react-native";
+import { View, StyleSheet, Dimensions } from "react-native";
 import React from "react";
 import { PieChart } from "react-native-chart-kit";
 
-function PieChartView() {
+function PieChartView(props) {
+  const { statistical } = props;
+
   const data = [
     {
-      name: "Chưa giao",
-      population: 21,
+      name: "Nhỏ hơn 5kg",
+      population: statistical.minWeight,
       color: "#FFC107",
       legendFontColor: "#7F7F7F",
-      legendFontSize: 15,
+      legendFontSize: 13,
     },
     {
-      name: "Đã giao",
-      population: 28,
+      name: "Từ 5kg đến 10Kg",
+      population: statistical.mediumWeight,
       color: "#2196F3",
       legendFontColor: "#7F7F7F",
-      legendFontSize: 15,
+      legendFontSize: 13,
     },
     {
-      name: "Đã hủy",
-      population: 52,
+      name: "Lớn hơn 10kg",
+      population: statistical.maxWeight,
       color: "#4CAF50",
       legendFontColor: "#7F7F7F",
-      legendFontSize: 15,
+      legendFontSize: 13,
+    },
+    {
+      name: "Thất bại",
+      population: statistical.numOfFailure,
+      color: "red",
+      legendFontColor: "#7F7F7F",
+      legendFontSize: 13,
     },
   ];
 

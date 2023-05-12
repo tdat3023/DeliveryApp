@@ -16,9 +16,11 @@ import { isValidUsername, isValidPassword } from "../utilies/Validations";
 import { useDispatch } from "react-redux";
 import { setShipper } from "../redux/reducers/inforShipper";
 import orderApi from "../api/orderApi";
+import { useGlobalContext } from "../redux/GlobalContext";
 
 export default function Login({ navigation }) {
   const dispatch = useDispatch();
+  const { handleIo, socketIo } = useGlobalContext();
   const [getPassWordVisible, setPassWordVisible] = useState(false);
   const [username, setUsername] = useState("0123456789");
   const [password, setPassword] = useState("123456789");
