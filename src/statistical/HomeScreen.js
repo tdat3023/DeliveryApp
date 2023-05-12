@@ -35,7 +35,7 @@ export default function HomeScreen() {
   // lấy location
   useEffect(() => {
     let id = setTimeout(() => {
-      // getLocation();
+      getLocation();
     }, 1000);
     return () => {
       clearTimeout(id);

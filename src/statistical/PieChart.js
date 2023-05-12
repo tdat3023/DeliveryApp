@@ -29,7 +29,7 @@ function PieChartView(props) {
     },
     {
       name: "Thất bại",
-      population: statistical.minWeight,
+      population: statistical.numOfFailure,
       color: "red",
       legendFontColor: "#7F7F7F",
       legendFontSize: 13,

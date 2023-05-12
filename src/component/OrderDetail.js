@@ -8,15 +8,15 @@ import {
   Alert,
 } from "react-native";
 import { AntDesign } from "@expo/vector-icons";
-import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { MaterialCommunityIcons, Ionicons } from "@expo/vector-icons";
 import orderApi from "../api/orderApi";
 import { useSelector, useDispatch } from "react-redux";
-import { useState } from "react";
 import { removeOneOrder, setOrder } from "../redux/reducers/oneOrder";
 
 function OrderDetail({ navigation, route }) {
   const shipperID = useSelector((state) => state.shipperInfor.shipper._id);
   const data = route.params.data;
+  const kc = route.params.kc;
   const status = data.status;
   const dispatch = useDispatch();
 
@@ -37,8 +37,8 @@ function OrderDetail({ navigation, route }) {
   function checkStatus(status) {
     const now = new Date();
     const currentHour = now.getHours;
-    const isBetween6to8 = currentHour >= 6 && currentHour <= 8;
-    const isBetween12to2 = currentHour >= 12 && currentHour <= 14;
+    const isBetween6to8 = currentHour >= 6 && currentHour < 8;
+    const isBetween12to2 = currentHour >= 12 && currentHour < 14;
     const showButton =
       status == "chuanhan" && (isBetween6to8 || isBetween12to2);
     const buttons = {
@@ -61,27 +61,45 @@ function OrderDetail({ navigation, route }) {
     const buttonConfig = buttons[status];
 
     return buttonConfig ? (
-      <View style={styles.endContainer}>
+      <View>
         {showButton ? (
-          <View style={styles.button}>
-            <TouchableOpacity onPress={buttonConfig.onPress}>
-              <Text style={styles.buttonText}>{buttonConfig.text}</Text>
-            </TouchableOpacity>
+          <View style={styles.endContainer}>
+            <View style={styles.button}>
+              <TouchableOpacity onPress={buttonConfig.onPress}>
+                <Text style={styles.buttonText}>{buttonConfig.text}</Text>
+              </TouchableOpacity>
+            </View>
           </View>
         ) : (
           <></>
         )}
         {status == "danhan" || status == "tamgiu" ? (
-          <View style={styles.button}>
-            <TouchableOpacity onPress={buttonConfig.onPress}>
-              <Text style={styles.buttonText}>{buttonConfig.text}</Text>
-            </TouchableOpacity>
+          <View style={styles.endContainer}>
+            <View style={styles.button}>
+              <TouchableOpacity onPress={buttonConfig.onPress}>
+                <Text style={styles.buttonText}>{buttonConfig.text}</Text>
+              </TouchableOpacity>
+            </View>
           </View>
         ) : (
           <></>
         )}
       </View>
     ) : null;
+  }
+
+  function renderStatus(status) {
+    if (status == "chuanhan") {
+      return "Chưa nhận";
+    } else if (status == "danhan") {
+      return "Đã nhận";
+    } else if (status == "tamgiu") {
+      return "Tạm giữ";
+    } else if (status == "thanhcong") {
+      return "Đã giao thành công";
+    } else if (status == "thatbai") {
+      return "Đã giao thất bại";
+    }
   }
 
   return (
@@ -107,38 +125,53 @@ function OrderDetail({ navigation, route }) {
 
         {/* Trạng thái vận chuyển */}
         <View style={styles.statusView}>
-          <Text style={styles.statusText}>Trạng thái: {data.status}</Text>
-          <Text style={styles.statusText}>Khoảng các hiện tại: 10Km</Text>
+          <Text style={styles.statusText}>
+            Trạng thái: {renderStatus(data.status)}
+          </Text>
+          <Text style={styles.statusText}>Khoảng các hiện tại: {kc}</Text>
         </View>
 
-        {/* thông tin vận chuyển */}
-        <View style={styles.titleView}>
-          <MaterialCommunityIcons
-            name="truck-outline"
-            size={24}
-            color="black"
-          />
-          <Text style={styles.timeText}>Thông tin đơn hàng</Text>
+        {/* thông tin đơn hàng */}
+        <View style={styles.viewOne}>
+          <View style={styles.titleView}>
+            <MaterialCommunityIcons
+              name="truck-outline"
+              size={28}
+              color="black"
+            />
+            <Text style={styles.timeText}>Thông tin đơn hàng</Text>
+          </View>
+          <View style={styles.customerView}>
+            <Text style={styles.customerText}>Thời gian: {data.dateAdded}</Text>
+            <Text style={styles.customerText}>
+              Tên đơn hàng: {data.orderName}
+            </Text>
+            <Text style={styles.customerText}>
+              Địa chỉ: {data.deliveryAddress}
+            </Text>
+            <Text style={styles.customerText}>Kho: {data.storage}</Text>
+            <Text style={styles.customerText}>Trọng lượng: {data.weight}</Text>
+          </View>
         </View>
-        <View style={styles.customerView}>
-          <Text style={styles.timeText}>Thời gian: 15:30 ngày 25/02/2023</Text>
-          <Text style={styles.customerText}>Khách hàng: Nguyễn Văn A</Text>
-          <Text style={styles.customerText}>Địa chỉ: {data.diachiNN}</Text>
-          <Text style={styles.customerText}>Số điện thoại: {data.sdtNN}</Text>
-        </View>
+        {/* thông tin người nhận */}
 
-        <View style={styles.orderView}>
-          <Text style={styles.orderText}>Tên sản phẩm: Iphone 13 Pro Max</Text>
-          <Text style={styles.orderText}>Số lượng: 1</Text>
-          <Text style={styles.orderText}>Giá: 35,000,000 đ</Text>
+        {/* thông tin đơn hàng */}
+        <View style={styles.viewOne}>
+          <View style={styles.titleView}>
+            <Ionicons name="person-circle-outline" size={28} color="black" />
+            <Text style={styles.timeText}>Thông tin người nhận</Text>
+          </View>
+          <View style={styles.customerView}>
+            <Text style={styles.customerText}>
+              Tên người nhận: {data.dateAdded}
+            </Text>
+            <Text style={styles.customerText}>
+              Số điện thoại: {data.phoneReceive}
+            </Text>
+          </View>
         </View>
-        {checkStatus(data.status)}
-        {/* <View style={styles.endContainer}>
-          <TouchableOpacity style={styles.button} onPress={receiveOrder}>
-            <Text style={styles.buttonText}>{label}</Text>
-          </TouchableOpacity>
-        </View> */}
       </View>
+      {checkStatus(data.status)}
     </View>
   );
 }
@@ -147,7 +180,7 @@ const styles = StyleSheet.create({
   AndroidSafeArea: {
     flex: 1,
     paddingTop: Platform.OS === "android" ? StatusBar.currentHeight : 0,
-    backgroundColor: "brown",
+    backgroundColor: "white",
   },
   container: {
     flex: 1,
@@ -175,13 +208,23 @@ const styles = StyleSheet.create({
     color: "#fff",
   },
   titleView: {
+    // backgroundColor: "red",
     marginTop: 5,
-    marginLeft: 10,
+    marginHorizontal: 10,
     flexDirection: "row",
+  },
+
+  viewOne: {
+    marginVertical: 5,
+    // paddingHorizontal: 10,
+    paddingBottom: 10,
+
+    marginHorizontal: 10,
+    borderRadius: 10,
   },
   timeText: {
     fontWeight: "bold",
-    fontSize: 16,
+    fontSize: 18,
     marginLeft: 10,
   },
   customerView: {
@@ -189,11 +232,7 @@ const styles = StyleSheet.create({
   },
   customerText: {
     marginTop: 5,
-    fontSize: 16,
-  },
-  orderView: {
-    marginHorizontal: 10,
-    marginTop: 20,
+    fontSize: 17,
   },
 
   orderText: {
@@ -202,11 +241,7 @@ const styles = StyleSheet.create({
   },
 
   endContainer: {
-    backgroundColor: "#f4511e",
-    position: "absolute",
-    bottom: 0,
     width: "100%",
-    backgroundColor: "red",
     height: 80,
     padding: 10,
     flexDirection: "row",

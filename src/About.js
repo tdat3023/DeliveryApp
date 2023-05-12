@@ -55,7 +55,7 @@ export default function About({ navigation }) {
             <Image
               style={{ width: 70, height: 70, borderRadius: 40 }}
               source={{
-                uri: "https://cloudflare-ipfs.com/ipfs/Qmd3W5DuhgHirLHGVixi6V76LhCkZUz6pnFt5AJBiyvHye/avatar/908.jpg",
+                uri: shipper.avatarURL,
               }}
             />
             <View style={styles.viewCustomItem}>
@@ -151,7 +151,7 @@ export default function About({ navigation }) {
         <View style={styles.viewCustomization}>
           <TouchableOpacity onPress={handleClik}>
             <View style={styles.viewItem}>
-              <Ionicons name="remove-circle" size={23} color={"#8F4607"} />
+              <FontAwesome name="remove" size={24} color="black" />
               <View style={styles.viewCustomItem}>
                 <Text style={{ fontSize: 15 }}>Trả đơn hàng</Text>
               </View>

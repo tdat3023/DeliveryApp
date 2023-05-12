@@ -195,9 +195,7 @@ export default function Tracking({ navigation }) {
             <TouchableOpacity
               style={styles.btnDefault}
               onPress={() => {
-                {
-                  handT("tamgiu");
-                }
+                handT("tamgiu");
               }}
             >
               <Text style={{ color: "white", fontSize: 15 }}>Hủy</Text>

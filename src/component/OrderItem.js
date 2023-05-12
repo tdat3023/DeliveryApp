@@ -92,17 +92,10 @@ function OrderItem({ navigation, item, reload, setReload }) {
 
   const handleCancel = async () => {
     const response = await orderApi.updateStatus(item._id, "chuanhan");
-    if (response) {
-      let res = await orderApi.removeFromHeldOrder(shipperID, item._id);
-
-      if (res.message) {
-        Alert.alert("Thông báo", res.message);
-        await orderApi.updateStatus(item._id, "danhan");
-      } else {
-        setReload(!reload);
-        socketIo.emit("change_order_list", storage);
-      }
-    }
+    const res = await orderApi.removeFromHeldOrder(shipperID, item._id);
+    console.log(res);
+    setReload(!reload);
+    socketIo.emit("change_order_list", storage);
   };
 
   function checkStatus(status) {
@@ -179,8 +172,10 @@ function OrderItem({ navigation, item, reload, setReload }) {
   return (
     <TouchableOpacity
       onPress={() => {
+        let kc = calculateDistance();
         navigation.navigate("OrderDetail", {
           data: item,
+          kc,
         });
       }}
     >

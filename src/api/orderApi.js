@@ -37,8 +37,8 @@ class OrderApi {
   }
 
   removeFromHeldOrder(shipperId, orderId) {
-    let url = `historyOrder/removeHeldOrder/${shipperId}`;
-    return axiosClient.post(url, { orderId });
+    let url = `holeOrder/removeHeldOrder/${shipperId}/${orderId}`;
+    return axiosClient.delete(url);
   }
 
   getSalarry(shipperId, month) {
