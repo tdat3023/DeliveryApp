@@ -78,7 +78,7 @@ function OrderItem({ navigation, item, reload, setReload }) {
     const response = await orderApi.updateStatus(item._id, "danhan");
     if (response) {
       const res = await orderApi.addHeldOrder(shipperID, item._id);
-      if (res.data.message) {
+      if (res.shipperId == null) {
         Alert.alert("Thông báo", "Bạn đã nhận 10 đơn trong ca này!");
         console.log(res);
         await orderApi.updateStatus(item._id, "chuanhan");
