@@ -90,9 +90,8 @@ function OrderItem({ navigation, item, reload, setReload }) {
   };
 
   const handleCancel = async () => {
-    const response = await orderApi.updateStatus(item._id, "chuanhan");
-    const res = await orderApi.removeFromHeldOrder(shipperID, item._id);
-
+    await orderApi.updateStatus(item._id, "chuanhan");
+    await orderApi.removeFromHeldOrder(shipperID, item._id);
     setReload(!reload);
     socketIo.emit("change_order_list", storage);
   };
