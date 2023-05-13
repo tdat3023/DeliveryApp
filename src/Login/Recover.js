@@ -41,7 +41,7 @@ export default function Recover({ navigation }) {
             {/* btn login */}
             <View>
               <TouchableOpacity style={styles.btn}>
-                <Text>Lấy mã </Text>
+                <Text style={{ color: "white" }}>Lấy mã </Text>
               </TouchableOpacity>
             </View>
 
@@ -53,7 +53,7 @@ export default function Recover({ navigation }) {
                   navigation.navigate("Login");
                 }}
               >
-                <Text style={{ color: "#FFD658", marginLeft: 10 }}>
+                <Text style={{ color: "#743f7e", marginLeft: 10 }}>
                   Đăng nhập
                 </Text>
               </TouchableOpacity>
@@ -77,7 +77,7 @@ export default function Recover({ navigation }) {
                 navigation.navigate("Register");
               }}
             >
-              <Text style={{ color: "#FFD658" }}>Register?</Text>
+              <Text style={{ color: "#743f7e" }}>Register?</Text>
             </TouchableOpacity>
           </View>
         </View>
@@ -122,7 +122,7 @@ const styles = StyleSheet.create({
   btn: {
     height: 50,
     marginBottom: 10,
-    backgroundColor: "#FFD658",
+    backgroundColor: "#743f7e",
     justifyContent: "center",
     borderRadius: 5,
     alignItems: "center",

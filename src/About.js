@@ -78,7 +78,7 @@ export default function About({ navigation }) {
             </View>
           </View>
 
-          <TouchableOpacity onPress={() => console.log(shipper._id)}>
+          <TouchableOpacity onPress={() => navigation.navigate("Recover")}>
             <View style={styles.viewItem}>
               <Ionicons name="sync" size={23} color={"orange"} />
               <View style={styles.viewCustomItem}>

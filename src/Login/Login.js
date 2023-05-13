@@ -69,7 +69,13 @@ export default function Login({ navigation }) {
         )}
         {/* top */}
         <View style={styles.topView}>
-          <Image resizeMode="center" style={styles.image}></Image>
+          <Image
+            // resizeMode="center"
+            style={styles.image}
+            source={{
+              uri: "https://cdn.ntlogistics.vn/images/NTX/new_images/danh-gia-shipper-giao-hang-nhanh-qua-viec-dam-bao-an-toan-hang-hoa.jpg",
+            }}
+          ></Image>
         </View>
 
         {/* down */}
@@ -180,7 +186,7 @@ const styles = StyleSheet.create({
   },
   container: {
     flex: 1,
-    backgroundColor: "#F8F8F9",
+    backgroundColor: "#fff",
   },
   topView: {
     flex: 1,
@@ -188,9 +194,9 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   image: {
-    height: 100,
-    width: 100,
-    backgroundColor: "red",
+    height: 200,
+    width: 200,
+    // backgroundColor: "red",
   },
   downView: {
     flex: 2,
