@@ -83,10 +83,10 @@ export default function History({ navigation }) {
         <View style={{ width: "100%" }}>
           <Text style={styles.textHeader}>Lịch sử đơn hàng</Text>
         </View>
-        {/* Ngày tháng */}
-        <View>
+
+        {/* <View>
           <Text>{currentDate}</Text>
-        </View>
+        </View> */}
         {/* Phân loại */}
         <View style={styles.orderStatus}>
           <TouchableOpacity
@@ -181,8 +181,7 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     paddingHorizontal: 20,
     paddingVertical: 10,
-    backgroundColor: "#fff",
-    borderBottomWidth: 1,
+    backgroundColor: "#fbf4ef",
     borderBottomColor: "#ddd",
   },
   tab: {

@@ -48,7 +48,7 @@ function PieChartView(props) {
     <View style={styles.chartContainer}>
       <PieChart
         data={data}
-        width={Dimensions.get("window").width - 20}
+        width={Dimensions.get("window").width}
         height={220}
         chartConfig={chartConfig}
         accessor={"population"}
@@ -62,7 +62,6 @@ function PieChartView(props) {
 
 const styles = StyleSheet.create({
   chartContainer: {
-    width: "96%",
     marginVertical: 5,
     borderRadius: 16,
     padding: 10,

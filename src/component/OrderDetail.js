@@ -6,6 +6,7 @@ import {
   StatusBar,
   TouchableOpacity,
   Alert,
+  Image,
 } from "react-native";
 import { AntDesign } from "@expo/vector-icons";
 import { MaterialCommunityIcons, Ionicons } from "@expo/vector-icons";
@@ -36,7 +37,8 @@ function OrderDetail({ navigation, route }) {
 
   function checkStatus(status) {
     const now = new Date();
-    const currentHour = now.getHours;
+    // const currentHour = now.getHours;
+    const currentHour = 7;
     const isBetween6to8 = currentHour >= 6 && currentHour < 8;
     const isBetween12to2 = currentHour >= 12 && currentHour < 14;
     const showButton =
@@ -142,6 +144,19 @@ function OrderDetail({ navigation, route }) {
             <Text style={styles.timeText}>Thông tin đơn hàng</Text>
           </View>
           <View style={styles.customerView}>
+            <View style={{ alignItems: "center" }}>
+              <Image
+                style={{
+                  width: 180,
+                  height: 180,
+                  borderRadius: 40,
+                  backgroundColor: "red",
+                }}
+                source={{
+                  uri: "https://png.pngtree.com/png-vector/20190115/ourlarge/pngtree-vector-package-icon-png-image_319707.jpg",
+                }}
+              />
+            </View>
             <Text style={styles.customerText}>Thời gian: {data.dateAdded}</Text>
             <Text style={styles.customerText}>
               Tên đơn hàng: {data.orderName}
@@ -150,7 +165,9 @@ function OrderDetail({ navigation, route }) {
               Địa chỉ: {data.deliveryAddress}
             </Text>
             <Text style={styles.customerText}>Kho: {data.storage}</Text>
-            <Text style={styles.customerText}>Trọng lượng: {data.weight}</Text>
+            <Text style={styles.customerText}>
+              Trọng lượng: {data.weight}kg
+            </Text>
           </View>
         </View>
         {/* thông tin người nhận */}

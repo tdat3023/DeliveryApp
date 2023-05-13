@@ -180,7 +180,7 @@ export default function Order({ navigation }) {
               setReload={setReload}
             />
           )}
-          keyExtractor={(item) => item._id}
+          keyExtractor={(item, index) => index}
         />
       </View>
       <LoadingModal visible={isLoading} />

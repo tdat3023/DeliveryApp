@@ -99,25 +99,19 @@ export default RootComponent = function () {
         initialRouteName="Login"
         screenOptions={{ headerShown: false }}
       >
-        {shipper ? (
-          <>
-            <Stack.Screen
-              name="HomeTabs"
-              component={MyTabs}
-              screenOptions={{ headerShown: false }}
-            />
-            <Stack.Screen name="OrderDetail" component={OrderDetail} />
-            <Stack.Screen
-              name="CongratulationScreen"
-              component={CongratulationScreen}
-            />
-          </>
-        ) : (
-          <>
-            <Stack.Screen name="Login" component={Login} />
-            <Stack.Screen name="Recover" component={Recover} />
-          </>
-        )}
+        <Stack.Screen
+          name="HomeTabs"
+          component={MyTabs}
+          screenOptions={{ headerShown: false }}
+        />
+        <Stack.Screen name="OrderDetail" component={OrderDetail} />
+        <Stack.Screen
+          name="CongratulationScreen"
+          component={CongratulationScreen}
+        />
+
+        <Stack.Screen name="Login" component={Login} />
+        <Stack.Screen name="Recover" component={Recover} />
       </Stack.Navigator>
     </NavigationContainer>
   );

@@ -12,6 +12,8 @@ import { FontAwesome, MaterialIcons, Ionicons } from "@expo/vector-icons";
 import { useDispatch, useSelector } from "react-redux";
 import { logoutShipper } from "./redux/reducers/inforShipper";
 import orderApi from "./api/orderApi";
+import Login from "./Login/Login";
+// import VerifyOTPModal from "./component/VerifyOTPModal";
 export default function About({ navigation }) {
   const [changePassword, setChangPassword] = useState(false);
   const [moreProfile, setMoreProfile] = useState(false);
@@ -178,6 +180,12 @@ export default function About({ navigation }) {
         </View>
         <View style={{ display: "flex", height: 20 }}></View>
       </View>
+      {/* <VerifyOTPModal
+        visible={verifyModal}
+        setVisible={setVerifyModal}
+        phone={sdtOrEmail}
+        setResult={setResult}
+      /> */}
     </View>
   );
 }

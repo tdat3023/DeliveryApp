@@ -36,7 +36,6 @@ function OrderItem({ navigation, item, reload, setReload }) {
       const now = new Date();
       const currentHour = now.getHours();
       if (currentHour != hour) {
-        // setHour(currentHour);
       }
     }, 1000);
     return () => {

@@ -34,18 +34,18 @@ export default function HomeScreen() {
   const [appStateVisible, setAppStateVisible] = useState(appState.current);
   const [selectedMonth, setSelectedMonth] = useState("1");
   const months = [
-    { label: "Tháng 1", value: "1" },
-    { label: "Tháng 2", value: "2" },
-    { label: "Tháng 3", value: "3" },
-    { label: "Tháng 4", value: "4" },
-    { label: "Tháng 5", value: "5" },
-    { label: "Tháng 6", value: "6" },
-    { label: "Tháng 7", value: "7" },
-    { label: "Tháng 8", value: "8" },
-    { label: "Tháng 9", value: "9" },
-    { label: "Tháng 10", value: "10" },
-    { label: "Tháng 11", value: "11" },
-    { label: "Tháng 12", value: "12" },
+    { label: "1", value: "1" },
+    { label: "2", value: "2" },
+    { label: "3", value: "3" },
+    { label: "4", value: "4" },
+    { label: "5", value: "5" },
+    { label: "6", value: "6" },
+    { label: "7", value: "7" },
+    { label: "8", value: "8" },
+    { label: "9", value: "9" },
+    { label: "10", value: "10" },
+    { label: "11", value: "11" },
+    { label: "12", value: "12" },
   ];
 
   // lấy location
@@ -117,7 +117,7 @@ export default function HomeScreen() {
 
   // hàm lấy lương
   async function getSalarry() {
-    const response = await orderApi.getSalarry(shipperID, "5");
+    const response = await orderApi.getSalarry(shipperID, selectedMonth);
     if (response) {
       setStatistical(response);
     }
@@ -125,7 +125,7 @@ export default function HomeScreen() {
   useEffect(() => {
     getSalarry();
     return () => {};
-  }, []);
+  }, [selectedMonth]);
 
   useEffect(() => {
     if (socketIo) {
@@ -141,23 +141,36 @@ export default function HomeScreen() {
         <View style={{ width: "100%" }}>
           <Text style={styles.textHeader}>Thống Kê</Text>
         </View>
-
-        <View style={styles.viewCustomization}>
-          <View style={styles}>
-            <Picker
-              selectedValue={selectedMonth}
-              onValueChange={(itemValue) => setSelectedMonth(itemValue)}
-              style={{ height: 50, width: 150 }}
-            >
-              {months.map((month) => (
-                <Picker.Item
-                  key={month.value}
-                  label={month.label}
-                  value={month.value}
-                />
-              ))}
-            </Picker>
+        <View style={styles.statisticalView}>
+          <View
+            style={{
+              alignItems: "center",
+              justifyContent: "center",
+              // backgroundColor: "red",
+            }}
+          >
+            <Text style={{ fontSize: 17 }}>Thống kê đơn hàng tháng </Text>
           </View>
+
+          <Picker
+            selectedValue={selectedMonth}
+            onValueChange={(itemValue) => setSelectedMonth(itemValue)}
+            style={{
+              height: 50,
+              width: 110,
+              // backgroundColor: "red",
+            }}
+          >
+            {months.map((month) => (
+              <Picker.Item
+                key={month.value}
+                label={month.label}
+                value={month.value}
+              />
+            ))}
+          </Picker>
+        </View>
+        <View style={styles.viewCustomization}>
           <View style={styles.viewItem}>
             <View style={styles.viewCustomItem}>
               <Text style={{ fontSize: 15 }}>
@@ -187,48 +200,48 @@ export default function HomeScreen() {
               <Text style={{ fontSize: 15 }}>Tiền thưởng theo đơn: </Text>
             </View>
           </View>
-        </View>
 
-        {/* biểu đồ  */}
-        <View style={styles.pickerView}>
-          <Picker
-            style={styles.picker}
-            selectedValue={selectedValue}
-            onValueChange={(itemValue) => setSelectedValue(itemValue)}
-            mode="dropdown"
-            itemStyle={{ color: "blue" }} // thay đổi màu chữ của các item
-          >
-            <Picker.Item
-              // style={{ borderRadius: 4 }}
-              label="Thống kê theo đơn hàng"
-              value="Don"
-            />
-            <Picker.Item
-              // style={{ borderRadius: 4 }}
-              label="Thống kê theo doanh thu"
-              value="Tien"
-            />
-          </Picker>
+          {/* biểu đồ  */}
+          <View style={styles.pickerView}>
+            <Picker
+              style={styles.picker}
+              selectedValue={selectedValue}
+              onValueChange={(itemValue) => setSelectedValue(itemValue)}
+              mode="dropdown"
+              itemStyle={{ color: "blue" }} // thay đổi màu chữ của các item
+            >
+              <Picker.Item
+                // style={{ borderRadius: 4 }}
+                label="Thống kê theo đơn hàng"
+                value="Don"
+              />
+              <Picker.Item
+                // style={{ borderRadius: 4 }}
+                label="Thống kê theo doanh thu"
+                value="Tien"
+              />
+            </Picker>
 
-          {selectedValue === "Don" ? (
-            <>
-              {statistical && statistical.message == null ? (
-                <PieChartView statistical={statistical} />
-              ) : (
-                <PieChartView
-                  statistical={{
-                    salarry: 0,
-                    maxWeight: 0,
-                    minWeight: 0,
-                    mediumWeight: 0,
-                    numOfFailure: 0,
-                  }}
-                />
-              )}
-            </>
-          ) : selectedValue === "Tien" ? (
-            <LineChartView />
-          ) : null}
+            {selectedValue === "Don" ? (
+              <>
+                {statistical && statistical.message == null ? (
+                  <PieChartView statistical={statistical} />
+                ) : (
+                  <PieChartView
+                    statistical={{
+                      salarry: 0,
+                      maxWeight: 0,
+                      minWeight: 0,
+                      mediumWeight: 0,
+                      numOfFailure: 0,
+                    }}
+                  />
+                )}
+              </>
+            ) : selectedValue === "Tien" ? (
+              <LineChartView />
+            ) : null}
+          </View>
         </View>
       </View>
 
@@ -248,7 +261,7 @@ const styles = StyleSheet.create({
   },
   container: {
     flex: 1,
-    backgroundColor: "#F8F8F9",
+    backgroundColor: "#fbf4ef",
     alignItems: "center",
   },
 
@@ -258,6 +271,9 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     marginHorizontal: "5%",
     marginVertical: "1%",
+  },
+  statisticalView: {
+    flexDirection: "row",
   },
   pickerView: {
     width: "100%",
