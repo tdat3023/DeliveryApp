@@ -1,6 +1,7 @@
 import { useEffect } from "react";
 import { createContext, useContext, useState } from "react";
 import { io } from "socket.io-client";
+import { baseURL } from "../api/axiosClient";
 
 const GlobalContext = createContext();
 
@@ -9,7 +10,7 @@ function GlobalContextProvider({ children }) {
   const [socketIo, setSocketIo] = useState(null);
 
   function handelIo(shipper) {
-    const socket = io(`http://${process.env.SERVER_HOST}:${process.env.PORT}`);
+    const socket = io(baseURL);
     socket.on("connect", () => {
       console.log(socket.id);
     });

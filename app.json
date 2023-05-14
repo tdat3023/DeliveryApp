@@ -5,14 +5,14 @@
     "version": "1.0.0",
     "orientation": "portrait",
     "userInterfaceStyle": "light",
-    
     "splash": {
-      "image": "./assets/splash.png",
+      "image": "./assets/marker.png",
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
     "updates": {
-      "fallbackToCacheTimeout": 0
+      "fallbackToCacheTimeout": 0,
+      "url": "https://u.expo.dev/8ff03e6d-79d0-421d-9730-063029bb281a"
     },
     "assetBundlePatterns": [
       "**/*"
@@ -22,12 +22,18 @@
     },
     "android": {
       "adaptiveIcon": {
-       
         "backgroundColor": "#FFFFFF"
+      },
+      "package": "com.tdat3023.ShipperMobieApp"
+    },
+    "web": {},
+    "extra": {
+      "eas": {
+        "projectId": "8ff03e6d-79d0-421d-9730-063029bb281a"
       }
     },
-    "web": {
-    
+    "runtimeVersion": {
+      "policy": "sdkVersion"
     }
   }
 }

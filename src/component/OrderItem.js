@@ -6,6 +6,7 @@ import { setLocation } from "../redux/reducers/CurentLocation";
 import orderApi from "../api/orderApi";
 import { setOrder } from "../redux/reducers/oneOrder";
 import { useGlobalContext } from "../redux/GlobalContext";
+import { socket } from "../socket";
 function OrderItem({ navigation, item, reload, setReload }) {
   const { socketIo } = useGlobalContext();
   // const [hour, setHour] = useState(new Date().getHours());

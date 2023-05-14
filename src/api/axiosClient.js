@@ -4,6 +4,8 @@ import axios from "axios";
 let baseURL = "https://gobadelivery-v1.onrender.com/";
 // let baseURL = "http://192.168.1.131:4940/";
 
+export { baseURL };
+
 const axiosClient = axios.create({
   baseURL: baseURL,
   headers: {
