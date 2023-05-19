@@ -42,8 +42,8 @@ function OrderDetail({ navigation, route }) {
     const response = await orderApi.updateStatus(data._id, "danhan");
     if (response) {
       let res = await orderApi.addHeldOrder(shipperID, data._id);
-      if (res.message) {
-        Alert.alert("Thông báo", res.message);
+      if (res.shipperId == null) {
+        Alert.alert("Thông báo", "Bạn đã nhận 10 đơn trong ca này!");
         await orderApi.updateStatus(data._id, "chuanhan");
         await orderApi.removeFromHeldOrder(shipperID, data._id);
       } else {
