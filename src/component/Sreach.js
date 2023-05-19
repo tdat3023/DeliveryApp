@@ -1,26 +1,29 @@
 import React, { useState, useEffect, useRef } from "react";
-import { View, TextInput, StyleSheet, TouchableOpacity } from "react-native";
+import {
+  View,
+  TextInput,
+  StyleSheet,
+  TouchableOpacity,
+  // Text,
+} from "react-native";
 import { AntDesign } from "@expo/vector-icons";
+// import { BarCodeScanner } from "expo-barcode-scanner";
 
-const SearchBar = ({ onTermSubmit }) => {
-  const [term, setTerm] = useState("");
-  const [isFocused, setIsFocused] = useState(false);
+const SearchBar = ({ term, setTerm, setOpenQr }) => {
   const inputRef = useRef(null);
-
-  useEffect(() => {
-    if (isFocused) {
-      inputRef.current.focus();
-    }
-  }, [isFocused]);
 
   const handleSubmit = () => {
     onTermSubmit(term);
-    setIsFocused(false);
+    inputRef.current.blur();
   };
 
   return (
     <View style={styles.backgroundStyle}>
-      <TouchableOpacity onPress={() => setIsFocused(true)}>
+      <TouchableOpacity
+        onPress={() => {
+          setOpenQr(true);
+        }}
+      >
         <AntDesign
           style={styles.iconStyle}
           name="scan1"
@@ -36,16 +39,30 @@ const SearchBar = ({ onTermSubmit }) => {
         placeholder="Search"
         value={term}
         onChangeText={(term) => setTerm(term)}
-        onFocus={() => setIsFocused(true)}
       />
-      <TouchableOpacity onPress={handleSubmit}>
-        <AntDesign
-          style={styles.iconStyle}
-          name="search1"
-          size={20}
-          color="black"
-        />
-      </TouchableOpacity>
+      {term ? (
+        <TouchableOpacity
+          onPress={() => {
+            setTerm("");
+          }}
+        >
+          <AntDesign
+            style={styles.iconStyle}
+            name="close"
+            size={20}
+            color="black"
+          />
+        </TouchableOpacity>
+      ) : (
+        <TouchableOpacity onPress={handleSubmit}>
+          <AntDesign
+            style={styles.iconStyle}
+            name="search1"
+            size={20}
+            color="black"
+          />
+        </TouchableOpacity>
+      )}
     </View>
   );
 };

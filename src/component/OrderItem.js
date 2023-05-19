@@ -7,7 +7,8 @@ import orderApi from "../api/orderApi";
 import { setOrder } from "../redux/reducers/oneOrder";
 import { useGlobalContext } from "../redux/GlobalContext";
 import { socket } from "../socket";
-function OrderItem({ navigation, item, reload, setReload }) {
+import HighlightedText from "./HighlightedText ";
+function OrderItem({ navigation, item, reload, setReload, filterName }) {
   const { socketIo } = useGlobalContext();
   // const [hour, setHour] = useState(new Date().getHours());
   const [hour, setHour] = useState(7);
@@ -16,13 +17,13 @@ function OrderItem({ navigation, item, reload, setReload }) {
   const storage = shipper.storage;
 
   const dispatch = useDispatch();
-  const location = useSelector((state) => state.locationCurrent.location);
   const [isLoading, setIsLoading] = useState(false);
-  const lat1 = location?.latitude;
-  const lon1 = location?.longitude;
-  const lat2 = parseFloat(item.coords.lat);
-  const lon2 = parseFloat(item.coords.lng);
+  const location = useSelector((state) => state.locationCurrent.location);
   const calculateDistance = () => {
+    const lat1 = location?.latitude;
+    const lon1 = location?.longitude;
+    const lat2 = parseFloat(item.coords.lat);
+    const lon2 = parseFloat(item.coords.lng);
     if (lat1 && lon1) {
       const dis = getDistance(
         { latitude: lat1, longitude: lon1 },
@@ -54,7 +55,7 @@ function OrderItem({ navigation, item, reload, setReload }) {
       {
         accuracy: Location.Accuracy.High,
         timeInterval: 1000 * 60 * 5,
-        distanceInterval: 100,
+        distanceInterval: 1000,
       },
       // socket Tracking Location
       (location) => {
@@ -171,17 +172,18 @@ function OrderItem({ navigation, item, reload, setReload }) {
   return (
     <TouchableOpacity
       onPress={() => {
-        let kc = calculateDistance();
         navigation.navigate("OrderDetail", {
           data: item,
-          kc,
         });
       }}
     >
       <View style={styles.oneOrderView}>
         <View style={styles.inforView}>
           <Text>Mã đơn hàng: ...{item._id.slice(-10)}</Text>
-          <Text>Tên đơn hàng: {item.orderName}</Text>
+
+          <HighlightedText text={item.orderName} highlightText={filterName} />
+
+          {/* <Text>Tên đơn hàng: {item.orderName}</Text> */}
           <Text>Địa chỉ: {item.deliveryAddress}</Text>
           {checkHistory(item.status) == null ? (
             <Text>Khoảng cách: {calculateDistance()}</Text>

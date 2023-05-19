@@ -14,6 +14,7 @@ import { useDispatch, useSelector } from "react-redux";
 import orderApi from "../api/orderApi";
 import LoadingModal from "../component/LoadingModal";
 import { useGlobalContext } from "../redux/GlobalContext";
+import Qrcode from "../component/QRCodeScanner";
 
 export default function Order({ navigation }) {
   const { socketIo } = useGlobalContext();
@@ -23,8 +24,9 @@ export default function Order({ navigation }) {
   const [orders, setOrders] = useState([]);
   const [ordersOfShipper, setOrdersOfShipper] = useState([]);
   const [reload, setReload] = useState(false);
-  const [term, setTerm] = useState("");
+
   const [selectedTab, setSelectedTab] = useState("chuanhan");
+  const [openQr, setOpenQr] = useState(false);
 
   // api gọi các order của shipper
   const getOrderOfShipper = async () => {
@@ -72,18 +74,13 @@ export default function Order({ navigation }) {
     return () => {};
   }, [reload, selectedTab]);
 
-  const handleTermSubmit = (term) => {
-    setTerm(term);
-    alert(term);
-  };
-
   // // đã nhận
   function getDNOrders() {
     return ordersOfShipper.filter(
       (ordersOfShipper) => ordersOfShipper.status === "danhan"
     );
   }
-  const dnOrders = getDNOrders();
+  // const dnOrders = getDNOrders();
 
   // tạm giữ
   function getTGOrders() {
@@ -91,15 +88,21 @@ export default function Order({ navigation }) {
       (ordersOfShipper) => ordersOfShipper.status === "tamgiu"
     );
   }
-  const tGOrders = getTGOrders();
+  // const tGOrders = getTGOrders();
 
   let dataToRender;
   if (selectedTab === "chuanhan") {
     dataToRender = orders;
   } else if (selectedTab === "tamgiu") {
-    dataToRender = tGOrders;
+    dataToRender = getTGOrders();
   } else {
-    dataToRender = dnOrders;
+    dataToRender = getDNOrders();
+  }
+  const [term, setTerm] = useState("");
+  if (term) {
+    dataToRender = dataToRender?.filter((item) =>
+      item.orderName.toUpperCase().includes(term.toUpperCase())
+    );
   }
 
   useEffect(() => {
@@ -164,11 +167,10 @@ export default function Order({ navigation }) {
 
         {/* Tìm kiếm */}
         <View style={{ width: "100%" }}>
-          <SearchBar onTermSubmit={handleTermSubmit} />
+          <SearchBar setTerm={setTerm} term={term} setOpenQr={setOpenQr} />
         </View>
 
         {/* Danh sách */}
-
         <FlatList
           style={styles.list}
           data={dataToRender}
@@ -178,12 +180,14 @@ export default function Order({ navigation }) {
               navigation={navigation}
               reload={reload}
               setReload={setReload}
+              filterName={term}
             />
           )}
           keyExtractor={(item, index) => index}
         />
       </View>
       <LoadingModal visible={isLoading} />
+      <Qrcode visible={openQr} setOpenQr={setOpenQr} navigation={navigation} />
     </View>
   );
 }
@@ -230,14 +234,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
     borderRadius: 10,
     marginHorizontal: 5,
-    // shadowColor: "#000000",
-    // shadowOffset: {
-    //   width: 0,
-    //   height: 18,
-    // },
-    // shadowOpacity:  0.25,
-    // shadowRadius: 20.00,
-    // elevation: 24
   },
   textStatus: {
     fontSize: 16,

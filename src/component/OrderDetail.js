@@ -13,13 +13,30 @@ import { MaterialCommunityIcons, Ionicons } from "@expo/vector-icons";
 import orderApi from "../api/orderApi";
 import { useSelector, useDispatch } from "react-redux";
 import { removeOneOrder, setOrder } from "../redux/reducers/oneOrder";
+import { getDistance } from "geolib";
 
 function OrderDetail({ navigation, route }) {
   const shipperID = useSelector((state) => state.shipperInfor.shipper._id);
+  const location = useSelector((state) => state.locationCurrent.location);
   const data = route.params.data;
-  const kc = route.params.kc;
-  const status = data.status;
+  let kc = calculateDistance();
+  // const status = data.status;
   const dispatch = useDispatch();
+
+  // tính khaonrg cách
+  function calculateDistance() {
+    const lat1 = location?.latitude;
+    const lon1 = location?.longitude;
+    const lat2 = parseFloat(data.coords.lat);
+    const lon2 = parseFloat(data.coords.lng);
+    if (lat1 && lon1) {
+      const dis = getDistance(
+        { latitude: lat1, longitude: lon1 },
+        { latitude: lat2, longitude: lon2 }
+      );
+      return `${dis / 1000} km`;
+    }
+  }
 
   const handleReceive = async () => {
     const response = await orderApi.updateStatus(data._id, "danhan");

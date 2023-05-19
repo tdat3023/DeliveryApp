@@ -49,6 +49,16 @@ export default function About({ navigation }) {
     ]);
   };
 
+  // useEffect(() => {
+  //   if (socketIo) {
+  //     socketIo.on("update_order_list", () => {
+  //       setReload(!reload);
+  //     });
+  //   }
+
+  //   return () => {};
+  // }, [socketIo]);
+
   return (
     <View style={styles.AndroidSafeArea}>
       <View style={styles.container}>

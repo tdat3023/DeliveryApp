@@ -1,5 +1,13 @@
 {
   "expo": {
+    "plugins": [
+      [
+        "expo-barcode-scanner",
+        {
+          "cameraPermission": "Allow ShipperMobieApp to access camera."
+        }
+      ]
+    ],
     "name": "ShipperMobieApp",
     "slug": "ShipperMobieApp",
     "version": "1.0.0",

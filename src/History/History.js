@@ -12,11 +12,13 @@ import SearchBar from "../component/Sreach";
 import OrderItem from "../component/OrderItem";
 import { useSelector } from "react-redux";
 import orderApi from "../api/orderApi";
+import Qrcode from "../component/QRCodeScanner";
 export default function History({ navigation }) {
   const shipperID = useSelector((state) => state.shipperInfor.shipper._id);
   const [selectedTab, setSelectedTab] = useState("All");
   const [isLoading, setIsLoading] = useState(false);
   const [orderHistoryOfShipper, setOrderHistoryOfShipper] = useState([]);
+  const [openQr, setOpenQr] = useState(false);
 
   const getOrderOfShipper = async () => {
     try {
@@ -47,7 +49,6 @@ export default function History({ navigation }) {
       (orderHistoryOfShipper) => orderHistoryOfShipper.status === "thanhcong"
     );
   }
-  const deliveredOrders = getDeliveredOrders();
 
   // Filter function to get only cancelled orders
   function getCancelledOrders() {
@@ -55,25 +56,22 @@ export default function History({ navigation }) {
       (orderHistoryOfShipper) => orderHistoryOfShipper.status === "thatbai"
     );
   }
-  const cancelledOrders = getCancelledOrders();
 
   let dataToRender;
   if (selectedTab === "All") {
     dataToRender = orderHistoryOfShipper;
   } else if (selectedTab === "Cancelled") {
-    dataToRender = cancelledOrders;
+    dataToRender = getCancelledOrders();
   } else {
-    dataToRender = deliveredOrders;
+    dataToRender = getDeliveredOrders();
   }
 
   const [term, setTerm] = useState("");
-
-  const handleTermSubmit = (term) => {
-    setTerm(term);
-  };
-
-  // Tìm
-  const searchResult = orderHistoryOfShipper.filter((item) => item.id === term);
+  if (term) {
+    dataToRender = dataToRender?.filter((item) =>
+      item.orderName.toUpperCase().includes(term.toUpperCase())
+    );
+  }
 
   // ngày
   const currentDate = moment().format("DD/MM/YYYY");
@@ -84,9 +82,6 @@ export default function History({ navigation }) {
           <Text style={styles.textHeader}>Lịch sử đơn hàng</Text>
         </View>
 
-        {/* <View>
-          <Text>{currentDate}</Text>
-        </View> */}
         {/* Phân loại */}
         <View style={styles.orderStatus}>
           <TouchableOpacity
@@ -128,7 +123,7 @@ export default function History({ navigation }) {
 
         {/* Tìm kiếm */}
         <View style={{ width: "100%" }}>
-          <SearchBar onTermSubmit={handleTermSubmit} />
+          <SearchBar setTerm={setTerm} term={term} setOpenQr={setOpenQr} />
         </View>
 
         {/* Danh sách */}
@@ -137,6 +132,7 @@ export default function History({ navigation }) {
             <ActivityIndicator size="large" color="#0000ff" />
           </View>
         ) : null}
+
         <FlatList
           style={styles.list}
           data={dataToRender}
@@ -146,6 +142,7 @@ export default function History({ navigation }) {
           keyExtractor={(item) => item._id}
         />
       </View>
+      <Qrcode visible={openQr} setOpenQr={setOpenQr} navigation={navigation} />
     </View>
   );
 }

@@ -25,6 +25,11 @@ class OrderApi {
     return axiosClient.patch(url, { shipperId, status });
   }
 
+  getOneById(id) {
+    let url = `order/id/${id}`;
+    return axiosClient.get(url, { id });
+  }
+
   getHistoryOrderByShipperId(shipperId) {
     let url = `historyOrder/getHistoryOrderByShipperId/${shipperId}`;
     return axiosClient.get(url, { shipperId });

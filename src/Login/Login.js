@@ -22,8 +22,8 @@ export default function Login({ navigation }) {
   const dispatch = useDispatch();
   const { handleIo, socketIo } = useGlobalContext();
   const [getPassWordVisible, setPassWordVisible] = useState(false);
-  const [username, setUsername] = useState("+84352747896");
-  const [password, setPassword] = useState("+84352747896");
+  const [username, setUsername] = useState("0123456789");
+  const [password, setPassword] = useState("123456789");
   const [errorUsername, setErrorUsername] = useState("");
   const [errorPassword, setErrorPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);

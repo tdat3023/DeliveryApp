@@ -174,19 +174,19 @@ export default function Tracking({ navigation }) {
             </Marker>
 
             {/* <MapViewDirections
-                origin={{
-                  latitude: location?.coords?.latitude,
-                  longitude: location?.coords?.longitude,
-                }}
-                destination={{
-                  latitude: lat,
-                  longitude: lon,
-                }}
-                strokeWidth={7}
-                strokeColor="red"
-                optimizeWaypoints={true}
-                apikey="AIzaSyCz05MCIlmnpbQgr32Am783YW4muKdaiKQ"
-              /> */}
+              origin={{
+                latitude: location?.coords?.latitude,
+                longitude: location?.coords?.longitude,
+              }}
+              destination={{
+                latitude: lat,
+                longitude: lon,
+              }}
+              strokeWidth={7}
+              strokeColor="red"
+              optimizeWaypoints={true}
+              apikey="AIzaSyAqT35-kt0gv18cw42StN0wbwagmt3blmQ"
+            /> */}
           </MapView>
         </View>
 

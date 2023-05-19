@@ -100,6 +100,7 @@ export default function HomeScreen() {
         await Location.watchPositionAsync(
           {
             accuracy: Location.Accuracy.High,
+            // accuracy: true,
             timeInterval: 1000 * 60 * 5,
             distanceInterval: 100,
           },
@@ -197,7 +198,17 @@ export default function HomeScreen() {
 
           <View style={styles.viewItem}>
             <View style={styles.viewCustomItem}>
-              <Text style={{ fontSize: 15 }}>Tiền thưởng theo đơn: </Text>
+              <Text style={{ fontSize: 15 }}>
+                Tổng khối lượng đơn hàng đã giao trong tháng:
+                {statistical?.sumWeight} kg
+              </Text>
+            </View>
+          </View>
+          <View style={styles.viewItem}>
+            <View style={styles.viewCustomItem}>
+              <Text style={{ fontSize: 15 }}>
+                Tiền thưởng theo đơn: {statistical?.salarry} VND
+              </Text>
             </View>
           </View>
 
