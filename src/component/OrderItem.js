@@ -163,11 +163,23 @@ function OrderItem({ navigation, item, reload, setReload, filterName }) {
 
   function checkHistory(status) {
     const text = {
-      thanhcong: { text: "Thành công" },
-      thatbai: { text: "Thất bại" },
+      thanhcong: { text: "Thành công", color: "green" },
+      thatbai: { text: "Thất bại", color: "red" },
     };
     const textConfig = text[status];
-    return textConfig ? <Text>{textConfig.text}</Text> : null;
+    return textConfig ? (
+      <View
+        style={{
+          alignItems: "center",
+          borderRadius: 5,
+          borderWidth: 1,
+          width: "30%",
+          padding: 2,
+        }}
+      >
+        <Text style={{ color: textConfig.color }}>{textConfig.text}</Text>
+      </View>
+    ) : null;
   }
   return (
     <TouchableOpacity

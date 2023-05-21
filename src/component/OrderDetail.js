@@ -183,7 +183,7 @@ function OrderDetail({ navigation, route }) {
             </Text>
             <Text style={styles.customerText}>Kho: {data.storage}</Text>
             <Text style={styles.customerText}>
-              Trọng lượng: {data.weight}kg
+              Trọng lượng: {data.weight} kg
             </Text>
           </View>
         </View>

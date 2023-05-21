@@ -70,7 +70,6 @@ export default function Login({ navigation }) {
         {/* top */}
         <View style={styles.topView}>
           <Image
-            // resizeMode="center"
             style={styles.image}
             source={{
               uri: "https://cdn.ntlogistics.vn/images/NTX/new_images/danh-gia-shipper-giao-hang-nhanh-qua-viec-dam-bao-an-toan-hang-hoa.jpg",
@@ -181,7 +180,7 @@ export default function Login({ navigation }) {
 const styles = StyleSheet.create({
   AndroidSafeArea: {
     flex: 1,
-    paddingTop: Platform.OS === "android" ? StatusBar.currentHeight : 0,
+    paddingTop: Platform.OS === "android" ? StatusBar.currentHeight : 20,
     backgroundColor: "#fbf4ef",
   },
   container: {

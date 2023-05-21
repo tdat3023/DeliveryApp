@@ -10,8 +10,6 @@ import React, { useState, useRef } from "react";
 import PieChartView from "./PieChart";
 import LineChartView from "./LineChart";
 import { Picker } from "@react-native-picker/picker";
-// import MyDatePicker from "./Calendar";
-import { Ionicons } from "@expo/vector-icons";
 import { useSelector, useDispatch } from "react-redux";
 import { useEffect } from "react";
 import { socket } from "../socket";
@@ -32,7 +30,7 @@ export default function HomeScreen() {
   const [selectedValue, setSelectedValue] = useState("Don");
   const appState = useRef(AppState.currentState);
   const [appStateVisible, setAppStateVisible] = useState(appState.current);
-  const [selectedMonth, setSelectedMonth] = useState("1");
+  const [selectedMonth, setSelectedMonth] = useState("5");
   const months = [
     { label: "1", value: "1" },
     { label: "2", value: "2" },
@@ -147,29 +145,36 @@ export default function HomeScreen() {
             style={{
               alignItems: "center",
               justifyContent: "center",
-              // backgroundColor: "red",
+              marginHorizontal: 10,
             }}
           >
-            <Text style={{ fontSize: 17 }}>Thống kê đơn hàng tháng </Text>
+            <Text style={{ fontSize: 17 }}>Thống kê đơn hàng tháng:</Text>
           </View>
 
-          <Picker
-            selectedValue={selectedMonth}
-            onValueChange={(itemValue) => setSelectedMonth(itemValue)}
+          <View
             style={{
-              height: 50,
-              width: 110,
-              // backgroundColor: "red",
+              width: 90,
             }}
           >
-            {months.map((month) => (
-              <Picker.Item
-                key={month.value}
-                label={month.label}
-                value={month.value}
-              />
-            ))}
-          </Picker>
+            <Picker
+              selectedValue={selectedMonth}
+              onValueChange={(itemValue) => setSelectedMonth(itemValue)}
+              style={{
+                height: 50,
+                width: "100%",
+                color: "",
+              }}
+              mode="dropdown"
+            >
+              {months.map((month) => (
+                <Picker.Item
+                  key={month.value}
+                  label={month.label}
+                  value={month.value}
+                />
+              ))}
+            </Picker>
+          </View>
         </View>
         <View style={styles.viewCustomization}>
           <View style={styles.viewItem}>
@@ -267,7 +272,7 @@ export default function HomeScreen() {
 const styles = StyleSheet.create({
   AndroidSafeArea: {
     flex: 1,
-    paddingTop: Platform.OS === "android" ? StatusBar.currentHeight : 0,
+    paddingTop: Platform.OS === "android" ? StatusBar.currentHeight : 20,
     backgroundColor: "#fbf4ef",
   },
   container: {
@@ -285,18 +290,20 @@ const styles = StyleSheet.create({
   },
   statisticalView: {
     flexDirection: "row",
+    width: "90%",
   },
+
   pickerView: {
     width: "100%",
     marginTop: 10,
-    marginHorizontal: 4,
+    marginHorizontal: 5,
     justifyContent: "center",
     alignItems: "center",
   },
 
   picker: {
     height: 50,
-    width: "95%",
+    width: "90%",
     backgroundColor: "#fff",
     borderWidth: 1,
     borderColor: "#ccc",
