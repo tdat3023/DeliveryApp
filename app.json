@@ -8,15 +8,16 @@
         }
       ]
     ],
-    "name": "ShipperMobieApp",
+    "name": "GoBa Delivery",
+    "icon": "./assets/logo.png",
     "slug": "ShipperMobieApp",
     "version": "1.0.0",
     "orientation": "portrait",
     "userInterfaceStyle": "light",
     "splash": {
-      "image": "./assets/marker.png",
+      "image": "./assets/intro.png",
       "resizeMode": "contain",
-      "backgroundColor": "#ffffff"
+      "backgroundColor": "#e6e6fe"
     },
     "updates": {
       "fallbackToCacheTimeout": 0,

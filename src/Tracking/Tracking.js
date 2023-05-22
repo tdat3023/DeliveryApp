@@ -38,7 +38,20 @@ export default function Tracking({ navigation }) {
       await orderApi.addHistoryOrder(shipperID, order._id);
       await orderApi.updateStatus(order._id, status);
       await orderApi.removeFromHeldOrder(shipperID, order._id);
-      dispatch(removeOneOrder());
+
+      Alert.alert(
+        "Thông báo",
+        `Đơn hàng đã giao ${status}. Vui lòng chọn đơn hàng khác.`,
+        [
+          {
+            text: "OK",
+            onPress: () => {
+              navigation.navigate("Order");
+              dispatch(removeOneOrder());
+            },
+          },
+        ]
+      );
       setIndex(1);
     } catch (error) {
       console.error(error);
@@ -47,8 +60,19 @@ export default function Tracking({ navigation }) {
 
   const handT = async (status) => {
     await orderApi.updateStatus(order._id, "tamgiu");
-    navigation.navigate("CongratulationScreen");
-    dispatch(removeOneOrder());
+    Alert.alert(
+      "Thông báo",
+      "Đơn hàng đã chuyển sang trạng thái tạm giữ. Vui lòng chọn đơn hàng khác.",
+      [
+        {
+          text: "OK",
+          onPress: () => {
+            navigation.navigate("Order");
+            dispatch(removeOneOrder());
+          },
+        },
+      ]
+    );
   };
 
   useEffect(() => {
@@ -227,7 +251,6 @@ export default function Tracking({ navigation }) {
                     />
                     <Text style={{ marginLeft: 10 }}>
                       Mã đơn hàng: ... {order?._id.slice(-15)}
-                      {/* {data.id} */}
                     </Text>
                   </View>
                 </View>
@@ -358,7 +381,7 @@ export default function Tracking({ navigation }) {
 const styles = StyleSheet.create({
   AndroidSafeArea: {
     flex: 1,
-    paddingTop: Platform.OS === "android" ? StatusBar.currentHeight : 0,
+    paddingTop: Platform.OS === "android" ? StatusBar.currentHeight : 20,
   },
   container: {
     flex: 1,

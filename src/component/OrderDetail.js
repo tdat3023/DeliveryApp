@@ -197,7 +197,7 @@ function OrderDetail({ navigation, route }) {
           </View>
           <View style={styles.customerView}>
             <Text style={styles.customerText}>
-              Tên người nhận: {data.dateAdded}
+              Tên người nhận: {data.orderName}
             </Text>
             <Text style={styles.customerText}>
               Số điện thoại: {data.phoneReceive}

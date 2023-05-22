@@ -98,7 +98,6 @@ export default function HomeScreen() {
         await Location.watchPositionAsync(
           {
             accuracy: Location.Accuracy.High,
-            // accuracy: true,
             timeInterval: 1000 * 60 * 5,
             distanceInterval: 100,
           },

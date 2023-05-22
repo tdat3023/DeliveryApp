@@ -1,8 +1,8 @@
 import axios from "axios";
 
 // `http://192.168.1.174:4940/`;
-// let baseURL = "https://gobadelivery-v1.onrender.com/";
-let baseURL = "http://192.168.1.102:4940/";
+let baseURL = "https://gobadelivery-v1.onrender.com/";
+// let baseURL = "http://192.168.1.102:4940/";
 
 export { baseURL };
 
