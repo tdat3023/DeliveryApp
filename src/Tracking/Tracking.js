@@ -46,7 +46,6 @@ export default function Tracking({ navigation }) {
           {
             text: "OK",
             onPress: () => {
-              navigation.navigate("Order");
               dispatch(removeOneOrder());
             },
           },
@@ -67,7 +66,6 @@ export default function Tracking({ navigation }) {
         {
           text: "OK",
           onPress: () => {
-            navigation.navigate("Order");
             dispatch(removeOneOrder());
           },
         },

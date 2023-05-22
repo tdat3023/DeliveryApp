@@ -4,7 +4,7 @@
       [
         "expo-barcode-scanner",
         {
-          "cameraPermission": "Allow ShipperMobieApp to access camera."
+          "cameraPermission": "Allow GoBaDelivery to access camera."
         }
       ]
     ],
@@ -31,6 +31,7 @@
     },
     "android": {
       "adaptiveIcon": {
+        "foregroundImage": "./assets/logo.png",
         "backgroundColor": "#FFFFFF"
       },
       "package": "com.tdat3023.ShipperMobieApp"
