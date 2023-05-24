@@ -19,7 +19,7 @@ export default function History({ navigation }) {
   const [isLoading, setIsLoading] = useState(false);
   const [orderHistoryOfShipper, setOrderHistoryOfShipper] = useState([]);
   const [openQr, setOpenQr] = useState(false);
-
+  const [reload, setReload] = useState(false);
   const getOrderOfShipper = async () => {
     try {
       const response = await orderApi.getHistoryOrderByShipperId(shipperID);
@@ -137,7 +137,13 @@ export default function History({ navigation }) {
           style={styles.list}
           data={dataToRender}
           renderItem={({ item }) => (
-            <OrderItem item={item} navigation={navigation} />
+            <OrderItem
+              item={item}
+              navigation={navigation}
+              reload={reload}
+              setReload={setReload}
+              filterName={term}
+            />
           )}
           keyExtractor={(item) => item._id}
         />
@@ -173,21 +179,23 @@ const styles = StyleSheet.create({
   },
 
   orderStatus: {
-    width: "100%",
     flexDirection: "row",
-    justifyContent: "space-between",
-    paddingHorizontal: 20,
+
+    marginHorizontal: 10,
     paddingVertical: 10,
+
     backgroundColor: "#fbf4ef",
     borderBottomColor: "#ddd",
   },
   tab: {
-    paddingVertical: 5,
-    width: 100,
+    height: 40,
+    padding: 5,
+    width: 110,
     borderWidth: 1,
     justifyContent: "center",
     alignItems: "center",
     borderRadius: 10,
+    marginHorizontal: 5,
   },
   textStatus: {
     fontSize: 16,

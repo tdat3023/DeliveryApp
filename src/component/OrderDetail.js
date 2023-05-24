@@ -174,7 +174,17 @@ function OrderDetail({ navigation, route }) {
                 }}
               />
             </View>
-            <Text style={styles.customerText}>Thời gian: {data.dateAdded}</Text>
+            <Text style={styles.customerText}>ID: {data._id}</Text>
+            <Text style={styles.customerText}>
+              Thời gian tạo: {data.dateAdded}
+            </Text>
+            {checkStatus(data.status) ? (
+              <></>
+            ) : (
+              <Text style={styles.customerText}>
+                Thời gian giao: {data.dateDeliver}
+              </Text>
+            )}
             <Text style={styles.customerText}>
               Tên đơn hàng: {data.orderName}
             </Text>

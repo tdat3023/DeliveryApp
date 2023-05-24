@@ -26,11 +26,14 @@ export default function HomeScreen() {
   const dispatch = useDispatch();
   const location = useSelector((state) => state.locationCurrent.location);
   const shipper = useSelector((state) => state.shipperInfor.shipper);
+
   const shipperID = shipper._id;
   const [selectedValue, setSelectedValue] = useState("Don");
   const appState = useRef(AppState.currentState);
   const [appStateVisible, setAppStateVisible] = useState(appState.current);
   const [selectedMonth, setSelectedMonth] = useState("5");
+  const { oneOrder } = useSelector((state) => state.order);
+  const order = oneOrder;
   const months = [
     { label: "1", value: "1" },
     { label: "2", value: "2" },
@@ -120,10 +123,11 @@ export default function HomeScreen() {
       setStatistical(response);
     }
   }
+
   useEffect(() => {
     getSalarry();
     return () => {};
-  }, [selectedMonth]);
+  }, [selectedMonth, order]);
 
   useEffect(() => {
     if (socketIo) {

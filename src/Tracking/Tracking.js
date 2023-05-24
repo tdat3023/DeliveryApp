@@ -28,7 +28,6 @@ export default function Tracking({ navigation }) {
   const location = useSelector((state) => state.locationCurrent.location);
   const [index, setIndex] = useState(1);
   const [moreProfile, setMoreProfile] = useState(true);
-
   const order = oneOrder;
   const mapViewRef = useRef();
   const [isFocus, setIsFocus] = useState(false);
@@ -38,7 +37,6 @@ export default function Tracking({ navigation }) {
       await orderApi.addHistoryOrder(shipperID, order._id);
       await orderApi.updateStatus(order._id, status);
       await orderApi.removeFromHeldOrder(shipperID, order._id);
-
       Alert.alert(
         "Thông báo",
         `Đơn hàng đã giao ${status}. Vui lòng chọn đơn hàng khác.`,

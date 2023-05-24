@@ -219,6 +219,7 @@ const styles = StyleSheet.create({
 
   orderStatus: {
     flexDirection: "row",
+
     marginHorizontal: 10,
     paddingVertical: 10,
     backgroundColor: "#fbf4ef",

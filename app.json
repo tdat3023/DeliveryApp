@@ -27,7 +27,8 @@
       "**/*"
     ],
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.tdat3023.ShipperMobieApp"
     },
     "android": {
       "adaptiveIcon": {
