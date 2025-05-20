@@ -16,11 +16,11 @@
 
 ## 🛠️ Công nghệ sử dụng
 
-- **Frontend**: React Native, TypeScript
+- **Frontend**: React Native,
 - **Backend**: Node.js, Firebase
 - **Quản lý trạng thái**: Redux
 - **Realtime**: Socket.io
-- **Cơ sở dữ liệu**: Firebase
+- **Cơ sở dữ liệu**: MongoDB
 - **Công cụ hỗ trợ**: Git, Trello, Postman
 
 ## 📦 Cài đặt và chạy ứng dụng
